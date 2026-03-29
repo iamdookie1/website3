@@ -1292,9 +1292,7 @@ function addFromModal(w) {
 
 function openSettings() {
   const c = cfg();
-  document.getElementById('s-host').value  = c.host;
-  document.getElementById('s-model').value = c.model;
-  document.getElementById('s-model-pick').style.display = 'none';
+  document.getElementById('s-host').value = c.host;
   document.getElementById('s-conn-status').textContent = 'Not tested yet';
   document.getElementById('s-conn-status').style.color = 'var(--text-dim)';
   document.getElementById('modal-settings').classList.add('open');
