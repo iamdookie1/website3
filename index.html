@@ -275,6 +275,8 @@ input[type=text]:focus,input[type=number]:focus,textarea:focus,select:focus { bo
 .btn-send { background:linear-gradient(135deg,var(--accent),var(--accent2)); border:none; border-radius:12px; color:white; width:42px; height:42px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:1rem; transition:all 0.2s; flex-shrink:0; }
 .btn-send:hover { opacity:0.88; transform:scale(1.05); }
 .btn-send:disabled { opacity:0.35; cursor:not-allowed; transform:none; }
+.btn-stop { background:rgba(248,113,113,0.15); border:1px solid rgba(248,113,113,0.4); border-radius:12px; color:var(--red); width:42px; height:42px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:0.85rem; transition:all 0.2s; flex-shrink:0; }
+.btn-stop:hover { background:rgba(248,113,113,0.3); }
 .chat-hint { font-size:0.66rem; color:var(--text-dim); margin-top:5px; }
 .chat-hint .token { color:var(--accent); }
 
@@ -531,6 +533,7 @@ input[type=text]:focus,input[type=number]:focus,textarea:focus,select:focus { bo
         <div class="chat-input-row">
           <textarea id="chat-in" rows="1" placeholder="Say something… *italics*, **demands**"></textarea>
           <button class="btn-send" id="send-btn" onclick="sendMsg()">➤</button>
+          <button class="btn-stop" id="stop-btn" onclick="stopGen()" style="display:none" title="Stop generating">◼</button>
         </div>
         <div class="chat-hint">
           <span class="token">*text*</span> italic/narrative &nbsp;·&nbsp;
@@ -621,6 +624,7 @@ const S = {
   loading: false,
   wordsTarget: 'bot',
   editId: null,
+  abortCtrl: null,
 };
 
 // ══════════════════════════════════════════════
@@ -1151,11 +1155,17 @@ async function sendMsg() {
   await generateResponse(b);
 }
 
+function stopGen() {
+  if(S.abortCtrl) { S.abortCtrl.abort(); S.abortCtrl = null; }
+}
+
 async function generateResponse(b) {
   if(S.loading) return;
   const un = uname();
-  S.loading=true;
-  document.getElementById('send-btn').disabled=true;
+  S.loading = true;
+  S.abortCtrl = new AbortController();
+  document.getElementById('send-btn').style.display = 'none';
+  document.getElementById('stop-btn').style.display = 'flex';
   const tyEl = addTyping(b);
 
   try {
@@ -1171,6 +1181,7 @@ async function generateResponse(b) {
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({model:c.model,messages:apiMsgs,stream:true,temperature:0.85,top_p:0.9,repeat_penalty:1.15}),
+      signal: S.abortCtrl.signal,
     });
     if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.error?.message||`HTTP ${res.status}`);}
 
@@ -1194,19 +1205,25 @@ async function generateResponse(b) {
       }
     }
 
-    // Strip common model artifacts / refusal preambles
-    full = cleanModelOutput(full);
-    bubble.innerHTML = fmtMsg(full, b.cname, un);
-    pushMsg('bot', full);
-    // Re-render last few messages to get correct redo button placement
-    refreshLastMessages(b, un);
+    // Save whatever was streamed (even if aborted mid-way)
+    if(full.trim()) {
+      full = cleanModelOutput(full);
+      bubble.innerHTML = fmtMsg(full, b.cname, un);
+      pushMsg('bot', full);
+      refreshLastMessages(b, un);
+    }
 
-  }catch(e){
+  } catch(e) {
     tyEl?.remove();
-    const el=document.createElement('div');el.className='msg-error';el.textContent='Error: '+e.message;
-    document.getElementById('chat-msgs').appendChild(el);scrollChat();
-  }finally{
-    S.loading=false;document.getElementById('send-btn').disabled=false;
+    if(e.name !== 'AbortError') {
+      const el=document.createElement('div');el.className='msg-error';el.textContent='Error: '+e.message;
+      document.getElementById('chat-msgs').appendChild(el);scrollChat();
+    }
+  } finally {
+    S.loading=false;
+    S.abortCtrl=null;
+    document.getElementById('send-btn').style.display = 'flex';
+    document.getElementById('stop-btn').style.display = 'none';
     document.getElementById('chat-in').focus();
   }
 }
@@ -1254,38 +1271,40 @@ function mkStreamBubble(b,un,msgIdx){
 function buildSys(b, un) {
   const up = loadUP();
 
-  let userDesc = `The user's name is ${un}`;
+  let userDesc = `${un} is the person you are talking to`;
   if(up) {
     userDesc += `, a ${up.age} year old ${up.gender}`;
-    if(up.personality?.length) userDesc += ` with a ${up.personality.join(', ')} personality`;
-    if(up.info) userDesc += `. About ${un}: ${replTok(up.info, b.cname, un)}`;
+    if(up.personality?.length) userDesc += ` (${up.personality.join(', ')})`;
+    if(up.info) userDesc += `. ${replTok(up.info, b.cname, un)}`;
   }
   userDesc += '.';
 
-  let charDesc = `You are ${b.cname}, a ${b.age} year old ${b.gender}. Your personality: ${b.personality.join(', ')}.`;
-  if(b.info) charDesc += `\n${replTok(b.info, b.cname, un)}`;
+  let charDesc = `You are ${b.cname}. ${b.age} years old. ${cap(b.gender)}. Personality: ${b.personality.join(', ')}.`;
+  if(b.info) charDesc += ` ${replTok(b.info, b.cname, un)}`;
 
   return `${charDesc}
 
 ${userDesc}
 
----
-FORMATTING — use this in every reply without exception:
-- Spoken words go in "double quotes": "like this"
-- Everything else (actions, thoughts, feelings, body language, descriptions) goes in *single asterisks*: *like this*
-- If ${un} writes **something in double asterisks** treat it as a demand and carry it out.
+YOU ARE ${b.cname.toUpperCase()}. YOU ARE NOT ${un.toUpperCase()}. NEVER write from ${un}'s perspective. NEVER write ${un}'s actions, words, or thoughts. ${un} controls themselves. You only ever write what ${b.cname} says, does, thinks, or feels.
 
-BEHAVIOR — critical rules:
-- You are ONLY ${b.cname}. Never write ${un}'s lines, actions, or thoughts. Never speak as ${un}.
-- READ the full message carefully. Respond to exactly what is happening in the scene. Do not ignore, skip over, or redirect away from what ${un} described.
-- If the scene is sexual, romantic, tense, or explicit — stay IN that scene. Do not pivot to something unrelated. Do not soften or sanitize what is happening.
-- Keep full awareness of the physical situation at all times. If something is happening to ${b.cname}'s body, react to it directly and honestly.
-- ${b.cname}'s response must make sense given what ${un} just did or said. Never give a response that ignores the actual content of the message.
-- Never break character. Never mention being an AI.
-- ${b.cname} is ${b.age} years old. Never act younger than 18.
+FORMATTING — every reply must follow this:
+- ${b.cname}'s spoken words: "in double quotes like this"
+- ${b.cname}'s actions, feelings, thoughts, descriptions: *in single asterisks like this*
+- If ${un} writes **double asterisks**, treat it as a command and carry it out as ${b.cname}.
 
-EXAMPLE of correct behavior:
-If ${un} describes a physical or intimate action, ${b.cname} reacts to THAT action specifically — with the appropriate emotion, sensation, or response — not with something vague or off-topic.`;
+BEHAVIOR:
+- Read ${un}'s message carefully. React directly and specifically to what they said or did.
+- If the scene is intimate, sexual, tense, or physical — stay in that scene. Do not soften it, dodge it, or change the subject.
+- React to physical actions done to ${b.cname}'s body as ${b.cname} — with real reactions, real feelings.
+- Never say you are an AI. Never break character.
+- ${b.cname} is ${b.age}. Never act younger than 18.
+
+OUTPUT FORMAT EXAMPLE:
+*she freezes for a second, breath catching* "Oh— yeah, I can help with that." *her eyes drop down, then back up slowly*
+
+DO NOT output anything like:
+${un}: [anything] — you are not ${un}.`;
 }
 
 // ══════════════════════════════════════════════
