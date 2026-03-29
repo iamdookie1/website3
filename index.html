@@ -846,7 +846,7 @@ const saveCH    = (id, h) => localStorage.setItem('pna_ch_' + id, JSON.stringify
 const loadUP    = () => JSON.parse(localStorage.getItem('pna_userp') || 'null');
 const saveUP    = p  => localStorage.setItem('pna_userp', JSON.stringify(p));
 const cfg = () => ({
-  host:  localStorage.getItem('pna_host')  || 'http://localhost:11434',
+  host:  localStorage.getItem('pna_host')  || '/api/proxy',
   model: 'huihui_ai/qwen2.5-abliterate:1.5b-instruct',
 });
 
@@ -1015,7 +1015,7 @@ async function runSpellCorrect() {
   statusEl.className = 'spell-status'; statusEl.textContent = 'Sending to Ollama…';
 
   try {
-    const res = await fetch(`${c.host}/v1/chat/completions`, {
+    const res = await fetch(`/api/proxy?path=/v1/chat/completions`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ model: c.model, messages: [{ role:'user', content: prompt }], stream: false }),
@@ -1220,7 +1220,7 @@ async function sendMsg() {
     const msgs = [{ role:'system', content: buildSys(b, un) }];
     S.chatHist.slice(-24).forEach(m => msgs.push({ role: m.role==='bot'?'assistant':'user', content: replTok(m.content, b.cname, un) }));
 
-    const res = await fetch(`${c.host}/v1/chat/completions`, {
+    const res = await fetch(`/api/proxy?path=/v1/chat/completions`, {
       method: 'POST',
       headers: { 'Content-Type':'application/json' },
       body: JSON.stringify({ model: c.model, messages: msgs, stream: true }),
@@ -1299,11 +1299,10 @@ function openSettings() {
 }
 
 async function testOllama() {
-  const host = document.getElementById('s-host').value.trim() || 'http://localhost:11434';
   const st = document.getElementById('s-conn-status');
   st.textContent = 'Testing…'; st.style.color = 'var(--text-dim)';
   try {
-    const res = await fetch(`${host}/api/tags`, { signal: AbortSignal.timeout(4000) });
+    const res = await fetch(`/api/proxy?path=/api/tags`, { signal: AbortSignal.timeout(5000) });
     if (res.ok) {
       const data = await res.json();
       const count = (data.models||[]).length;
@@ -1338,8 +1337,7 @@ function updateDot(state) {
 
 async function pingOllama() {
   try {
-    const c = cfg();
-    const res = await fetch(`${c.host}/api/tags`, { signal: AbortSignal.timeout(3000) });
+    const res = await fetch(`/api/proxy?path=/api/tags`, { signal: AbortSignal.timeout(4000) });
     updateDot(res.ok ? 'ok' : 'missing');
   } catch { updateDot('missing'); }
 }
