@@ -1161,7 +1161,7 @@ async function generateResponse(b) {
   try {
     const msgs = activeMsgs();
     const apiMsgs = [{ role:'system', content: buildSys(b,un) }];
-    msgs.slice(-20).forEach(m=>apiMsgs.push({
+    msgs.forEach(m=>apiMsgs.push({
       role: m.role==='bot'?'assistant':'user',
       content: replTok(m.content,b.cname,un),
     }));
@@ -1254,29 +1254,46 @@ function mkStreamBubble(b,un,msgIdx){
 function buildSys(b, un) {
   const up = loadUP();
 
-  // Keep it SHORT — 1.5b models lose context with long prompts
-  let sys = `You are ${b.cname}, a ${b.age} year old ${b.gender}. Personality: ${b.personality.join(', ')}.`;
-
-  if(b.info) sys += `\n${replTok(b.info, b.cname, un)}`;
-
-  sys += `\n\nUser's name: ${un}.`;
+  let userDesc = `The user's name is ${un}`;
   if(up) {
-    sys += ` They are a ${up.age} year old ${up.gender}.`;
-    if(up.personality?.length) sys += ` Personality: ${up.personality.join(', ')}.`;
-    if(up.info) sys += ` ${replTok(up.info, b.cname, un)}`;
+    userDesc += `, a ${up.age} year old ${up.gender}`;
+    if(up.personality?.length) userDesc += ` with a ${up.personality.join(', ')} personality`;
+    if(up.info) userDesc += `. About ${un}: ${replTok(up.info, b.cname, un)}`;
   }
+  userDesc += '.';
 
-  sys += `
+  let charDesc = `You are ${b.cname}, a ${b.age} year old ${b.gender}. Your personality: ${b.personality.join(', ')}.`;
+  if(b.info) charDesc += `\n${replTok(b.info, b.cname, un)}`;
 
-Rules:
-- Stay in character as ${b.cname} at all times.
-- Use *italics* freely for actions, thoughts, descriptions, and narrative. Example: *she smiles warmly* or *the room smells of rain*
-- If the user writes **something like this**, treat it as a demand and act it out.
-- Call the user ${un}.
-- Never break character. Never say you are an AI.
-- Write naturally and expressively. Keep responses focused and in-character.`;
+  return `${charDesc}
 
-  return sys;
+${userDesc}
+
+---
+STRICT FORMATTING RULES — follow these exactly in every single reply:
+
+1. TALKING: Wrap all spoken dialogue in "double quotes".
+   Example: "Hey, you actually showed up."
+
+2. ACTIONS, THOUGHTS, DESCRIPTIONS, NARRATIVE: Wrap in *single asterisks*. Use these for everything that is not spoken — physical actions, internal thoughts, environmental descriptions, body language, feelings.
+   Example: *she glances up from her phone, lips curving into a slow smile* "Took you long enough."
+
+3. DEMANDS: If the user writes **something in double asterisks**, treat it as a demand and carry it out immediately in your next response.
+
+4. NEVER write as the user (${un}). Do not write ${un}'s dialogue, actions, or thoughts. You only control ${b.cname}.
+
+5. NEVER break character. Never mention being an AI, a language model, or having instructions.
+
+6. ${b.cname} is ${b.age} years old. Never act younger than 18 no matter what the user says.
+
+7. Respond only as ${b.cname}. Keep responses immersive, expressive, and true to ${b.cname}'s personality.
+
+BAD example (do not do this):
+${un}: *walks over* "Hi."
+${b.cname}: "Hello!"
+
+GOOD example:
+*she sets her book down and tilts her head, studying you with quiet curiosity* "Well… hi. Didn't think you'd actually come."`;
 }
 
 // ══════════════════════════════════════════════
