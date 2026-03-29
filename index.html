@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Persona — AI Roleplay</title>
+<title>Persona — AI Roleplay (Ollama)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Nunito:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
 <style>
@@ -602,7 +602,7 @@ input[type=text]:focus, input[type=number]:focus, textarea:focus, select:focus {
             </div>
             <textarea class="spell-prompt-ta" id="spell-prompt" rows="3"></textarea>
             <div class="spell-note">
-              <span class="tk">{{moreinfo}}</span> is swapped for your More Info text wrapped in <strong style="color:var(--text)">"quotes"</strong> (unless already quoted). Only the text inside the quotes is put back in. Write whatever instruction you want around it.
+              Use <span class="tk">{{moreinfo}}</span> where your More Info text goes. It'll be wrapped in <strong style="color:var(--text)">"quotes"</strong> automatically if not already. Ollama returns the corrected text which replaces your field.
             </div>
             <div class="spell-actions">
               <button class="btn-spell" id="spell-btn" onclick="runSpellCorrect()">
@@ -766,22 +766,32 @@ input[type=text]:focus, input[type=number]:focus, textarea:focus, select:focus {
 
 <!-- MODAL: SETTINGS -->
 <div class="modal-overlay" id="modal-settings">
-  <div class="modal" style="max-width:440px">
+  <div class="modal" style="max-width:460px">
     <button class="modal-close" onclick="closeModal('modal-settings')">✕</button>
     <div class="modal-title">⚙ Settings</div>
+
     <div class="settings-grp">
-      <label>xAI / Grok API Key</label>
-      <input type="text" id="s-key" placeholder="xai-…">
-      <div class="helper" style="margin-top:6px">Get yours at <a href="https://console.x.ai" target="_blank" style="color:var(--accent)">console.x.ai</a>. Stored in your browser only.</div>
+      <label>Ollama Host</label>
+      <input type="text" id="s-host" placeholder="http://localhost:11434">
+      <div class="helper" style="margin-top:6px">Default is <span class="token">http://localhost:11434</span>. Change if Ollama is running on a different port or machine.</div>
     </div>
+
     <div class="settings-grp">
       <label>Model</label>
       <select id="s-model">
-        <option value="grok-3">grok-3 (recommended)</option>
-        <option value="grok-3-mini">grok-3-mini (faster)</option>
-        <option value="grok-2">grok-2</option>
+        <option value="huihui_ai/qwen2.5-abliterate:1.5b-instruct">huihui_ai/qwen2.5-abliterate:1.5b-instruct</option>
       </select>
+      <div class="helper" style="margin-top:6px">Only one model available on this server.</div>
     </div>
+
+    <div class="settings-grp">
+      <label>Connection</label>
+      <div style="display:flex;align-items:center;gap:10px">
+        <button class="btn-secondary btn-sm" style="padding:8px 14px" onclick="testOllama()">Test Connection</button>
+        <span id="s-conn-status" style="font-size:0.76rem;color:var(--text-dim)">Not tested yet</span>
+      </div>
+    </div>
+
     <div class="form-actions">
       <button class="btn-primary" onclick="saveSettings()">Save Settings</button>
     </div>
@@ -835,7 +845,10 @@ const getCH     = id => JSON.parse(localStorage.getItem('pna_ch_' + id) || '[]')
 const saveCH    = (id, h) => localStorage.setItem('pna_ch_' + id, JSON.stringify(h));
 const loadUP    = () => JSON.parse(localStorage.getItem('pna_userp') || 'null');
 const saveUP    = p  => localStorage.setItem('pna_userp', JSON.stringify(p));
-const cfg       = () => ({ key: localStorage.getItem('pna_key') || '', model: localStorage.getItem('pna_model') || 'grok-3' });
+const cfg = () => ({
+  host:  localStorage.getItem('pna_host')  || 'http://localhost:11434',
+  model: 'huihui_ai/qwen2.5-abliterate:1.5b-instruct',
+});
 
 // ══════════════════════════════════════════════
 // NAVIGATION
@@ -991,7 +1004,7 @@ async function runSpellCorrect() {
   if (!moreinfo) { toast('More Info is empty — nothing to correct.', 'error'); return; }
 
   const c = cfg();
-  if (!c.key) { toast('Add your API key in Settings ⚙ first.', 'error'); openSettings(); return; }
+  if (!c.model) { toast('Set a model in Settings ⚙ first.', 'error'); openSettings(); return; }
 
   // Wrap in quotes if not already
   const isQuoted = /^".*"$/s.test(moreinfo);
@@ -999,13 +1012,13 @@ async function runSpellCorrect() {
   const prompt   = (promptEl.value || DEFAULT_SPELL).replace(/\{\{moreinfo\}\}/gi, wrapped);
 
   btn.disabled = true; ico.textContent = '…';
-  statusEl.className = 'spell-status'; statusEl.textContent = 'Sending to Grok…';
+  statusEl.className = 'spell-status'; statusEl.textContent = 'Sending to Ollama…';
 
   try {
-    const res = await fetch('https://api.x.ai/v1/chat/completions', {
+    const res = await fetch(`${c.host}/v1/chat/completions`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${c.key}` },
-      body: JSON.stringify({ model: c.model, messages: [{ role:'user', content: prompt }], max_tokens: 800, temperature: 0.2 }),
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model: c.model, messages: [{ role:'user', content: prompt }], stream: false }),
     });
     if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e.error?.message || `HTTP ${res.status}`); }
 
@@ -1020,7 +1033,7 @@ async function runSpellCorrect() {
     toast('Spelling corrected!', 'success');
   } catch(e) {
     statusEl.className = 'spell-status err'; statusEl.textContent = '✕ ' + e.message;
-    toast('Error: ' + e.message, 'error');
+    toast('Ollama error: ' + e.message, 'error');
   } finally {
     btn.disabled = false; ico.textContent = '✦';
   }
@@ -1194,7 +1207,7 @@ async function sendMsg() {
   const text = inp.value.trim();
   if (!text || S.loading) return;
   const c = cfg();
-  if (!c.key) { toast('Set your API key in Settings ⚙ first.', 'error'); openSettings(); return; }
+  if (!c.model) { toast('Set a model in Settings ⚙ first.', 'error'); openSettings(); return; }
   const b = S.bots.find(x=>x.id===S.activeBotId); if (!b) return;
   const un = uname();
 
@@ -1207,10 +1220,10 @@ async function sendMsg() {
     const msgs = [{ role:'system', content: buildSys(b, un) }];
     S.chatHist.slice(-24).forEach(m => msgs.push({ role: m.role==='bot'?'assistant':'user', content: replTok(m.content, b.cname, un) }));
 
-    const res = await fetch('https://api.x.ai/v1/chat/completions', {
+    const res = await fetch(`${c.host}/v1/chat/completions`, {
       method: 'POST',
-      headers: { 'Content-Type':'application/json', 'Authorization':`Bearer ${c.key}` },
-      body: JSON.stringify({ model: c.model, messages: msgs, stream: true, max_tokens: 1200, temperature: 0.92 }),
+      headers: { 'Content-Type':'application/json' },
+      body: JSON.stringify({ model: c.model, messages: msgs, stream: true }),
     });
     if (!res.ok) { const e=await res.json().catch(()=>({})); throw new Error(e.error?.message||`HTTP ${res.status}`); }
 
@@ -1278,16 +1291,38 @@ function addFromModal(w) {
 }
 
 function openSettings() {
-  const c=cfg();
-  document.getElementById('s-key').value   = c.key;
+  const c = cfg();
+  document.getElementById('s-host').value  = c.host;
   document.getElementById('s-model').value = c.model;
+  document.getElementById('s-model-pick').style.display = 'none';
+  document.getElementById('s-conn-status').textContent = 'Not tested yet';
+  document.getElementById('s-conn-status').style.color = 'var(--text-dim)';
   document.getElementById('modal-settings').classList.add('open');
 }
+
+async function testOllama() {
+  const host = document.getElementById('s-host').value.trim() || 'http://localhost:11434';
+  const st = document.getElementById('s-conn-status');
+  st.textContent = 'Testing…'; st.style.color = 'var(--text-dim)';
+  try {
+    const res = await fetch(`${host}/api/tags`, { signal: AbortSignal.timeout(4000) });
+    if (res.ok) {
+      const data = await res.json();
+      const count = (data.models||[]).length;
+      st.textContent = `✓ Connected — ${count} model${count!==1?'s':''} available`;
+      st.style.color = 'var(--green)'; updateDot('ok');
+    } else { throw new Error(`HTTP ${res.status}`); }
+  } catch(e) {
+    st.textContent = '✕ ' + e.message + ' — is Ollama running?';
+    st.style.color = 'var(--red)'; updateDot('missing');
+  }
+}
+
 function saveSettings() {
-  localStorage.setItem('pna_key',   document.getElementById('s-key').value.trim());
-  localStorage.setItem('pna_model', document.getElementById('s-model').value);
-  closeModal('modal-settings'); updateDot();
+  localStorage.setItem('pna_host', document.getElementById('s-host').value.trim() || 'http://localhost:11434');
+  closeModal('modal-settings');
   toast('Settings saved!', 'success');
+  pingOllama();
 }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 
@@ -1295,10 +1330,20 @@ document.querySelectorAll('.modal-overlay').forEach(o =>
   o.addEventListener('click', e => { if (e.target===o) o.classList.remove('open'); })
 );
 
-function updateDot() {
-  const d=document.getElementById('api-dot'), has=!!cfg().key;
-  d.className='api-dot '+(has?'ok':'missing');
-  d.title=has?'API key connected':'No API key — click ⚙ to add';
+function updateDot(state) {
+  const d = document.getElementById('api-dot');
+  // state: 'ok' | 'missing' | undefined (unknown)
+  if (state === 'ok')      { d.className='api-dot ok';      d.title='Ollama connected'; }
+  else if (state==='missing') { d.className='api-dot missing'; d.title='Ollama unreachable — check Settings ⚙'; }
+  else                     { d.className='api-dot missing'; d.title='Ollama status unknown — click ⚙ to test'; }
+}
+
+async function pingOllama() {
+  try {
+    const c = cfg();
+    const res = await fetch(`${c.host}/api/tags`, { signal: AbortSignal.timeout(3000) });
+    updateDot(res.ok ? 'ok' : 'missing');
+  } catch { updateDot('missing'); }
 }
 
 // ══════════════════════════════════════════════
@@ -1314,6 +1359,7 @@ function autoResize(el) { el.style.height='auto'; el.style.height=Math.min(el.sc
 // ══════════════════════════════════════════════
 loadBots(); renderBots(); renderPTags(); renderUPTags(); updateDot();
 document.getElementById('spell-prompt').value = DEFAULT_SPELL;
+pingOllama();
 
 document.addEventListener('DOMContentLoaded', () => {
   const ci = document.getElementById('chat-in');
