@@ -403,8 +403,18 @@
 </div><!-- /app -->
 
 <script>
-const NGROK_SOURCE = 'https://raw.githubusercontent.com/iamdookie1/website3/refs/heads/main/Ngrok%20link';
+const NGROK_SOURCE = 'https://raw.githubusercontent.com/iamdookie1/website3/main/Ngrok%20link';
 let API = null; // set after ngrok fetch
+
+// Centralized fetch — always sends ngrok bypass header + JSON content type
+async function apiFetch(path, options = {}) {
+  const headers = {
+    'Content-Type': 'application/json',
+    'ngrok-skip-browser-warning': 'true',
+    ...(options.headers || {})
+  };
+  return fetch(`${API}${path}`, { ...options, headers });
+}
 
 async function initAPI() {
   try {
@@ -413,8 +423,10 @@ async function initAPI() {
     const url = (await res.text()).trim().replace(/\/$/, '');
     if (!url.startsWith('http')) throw new Error('bad url');
     API = url + '/api';
-    // ping the actual backend
-    const ping = await fetch(`${API}/ping`, { signal: AbortSignal.timeout(6000) });
+    const ping = await fetch(`${API}/ping`, {
+      headers: { 'ngrok-skip-browser-warning': 'true' },
+      signal: AbortSignal.timeout(7000)
+    });
     if (!ping.ok) throw new Error('backend down');
     document.getElementById('apiDownModal').style.display = 'none';
   } catch {
@@ -477,9 +489,8 @@ async function connect() {
   showErr('authErr', '');
 
   try {
-    const res = await fetch(`${API}/validate`, {
+    const res = await apiFetch('/validate', {
       method: 'POST',
-      headers: {'Content-Type':'application/json'},
       body: JSON.stringify({ token })
     });
     const data = await res.json();
@@ -521,9 +532,8 @@ async function loadDMs() {
   const list = document.getElementById('dmList');
   list.innerHTML = '<p style="font-size:0.78rem;color:var(--text-dim)">Loading DMs…</p>';
   try {
-    const res = await fetch(`${API}/dms`, {
+    const res = await apiFetch('/dms', {
       method: 'POST',
-      headers: {'Content-Type':'application/json'},
       body: JSON.stringify({ token: state.token })
     });
     const data = await res.json();
@@ -680,9 +690,8 @@ async function startPurge() {
   setJobStatus('starting');
 
   try {
-    const res = await fetch(`${API}/purge/start`, {
+    const res = await apiFetch('/purge/start', {
       method: 'POST',
-      headers: {'Content-Type':'application/json'},
       body: JSON.stringify({
         token: state.token,
         channel_id: state.selectedDm.id,
@@ -709,7 +718,7 @@ async function stopPurge() {
   if (!state.jobId) return;
   log('// Stop signal sent…', 'warn');
   try {
-    await fetch(`${API}/purge/stop/${state.jobId}`, { method: 'POST' });
+    await apiFetch(`/purge/stop/${state.jobId}`, { method: 'POST' });
   } catch {}
 }
 
@@ -718,7 +727,7 @@ function startPolling() {
   state.pollTimer = setInterval(async () => {
     if (!state.jobId) return;
     try {
-      const res = await fetch(`${API}/purge/status/${state.jobId}`);
+      const res = await apiFetch(`/purge/status/${state.jobId}`);
       const data = await res.json();
       if (!data.ok) return;
 
