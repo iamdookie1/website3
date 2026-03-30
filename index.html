@@ -8,199 +8,198 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#09090b;--surface:#101014;--surface2:#17171d;--surface3:#1d1d26;
-  --border:#1f1f2e;--border2:#2a2a3a;
-  --red:#e63946;--red-glow:rgba(230,57,70,.15);--red-dim:#5c161c;
-  --amber:#f4a261;--green:#2ec4b6;--blue:#4cc9f0;--purple:#b28cf8;
-  --muted:#3a3a50;--text:#cccce0;--text-dim:#5a5a78;
-  --mono:'JetBrains Mono',monospace;--display:'Syne',sans-serif
+  --bg:#09090b;--surface:#101014;--surface2:#17171d;--surface3:#1e1e28;
+  --border:#1f1f2e;--border2:#2c2c3e;
+  --red:#e63946;--red-glow:rgba(230,57,70,.18);--red-dim:#5c161c;
+  --amber:#f4a261;--green:#2ec4b6;--blue:#4cc9f0;--purple:#b28cf8;--pink:#f72585;
+  --muted:#3a3a50;--text:#cccce0;--text-dim:#55556e;
+  --mono:'JetBrains Mono',monospace;--disp:'Syne',sans-serif
 }
-body{background:var(--bg);color:var(--text);font-family:var(--mono);min-height:100vh;padding:2rem 1.5rem 4rem}
-.app{max-width:900px;margin:0 auto}
+body{background:var(--bg);color:var(--text);font-family:var(--mono);min-height:100vh;padding:2rem 1.5rem 5rem}
+.app{max-width:920px;margin:0 auto}
 
-/* Header */
-.header{display:flex;align-items:center;gap:1rem;margin-bottom:2rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border)}
-.logo{font-family:var(--display);font-size:1.7rem;font-weight:800;letter-spacing:-.04em}
+/* ── Header ── */
+.header{display:flex;align-items:center;gap:1rem;margin-bottom:1.8rem;padding-bottom:1.4rem;border-bottom:1px solid var(--border)}
+.logo{font-family:var(--disp);font-size:1.65rem;font-weight:800;letter-spacing:-.04em}
 .logo span{color:var(--red)}
-.badge{font-size:.58rem;background:var(--red-dim);color:var(--red);padding:.2rem .5rem;border-radius:3px;border:1px solid #7a1a22;letter-spacing:.12em;font-weight:600;text-transform:uppercase}
-.user-pill{margin-left:auto;display:flex;align-items:center;gap:.5rem;background:var(--surface2);border:1px solid var(--border2);border-radius:20px;padding:.3rem .85rem .3rem .45rem;font-size:.7rem;color:var(--text-dim)}
-.user-dot{width:7px;height:7px;background:var(--green);border-radius:50%;flex-shrink:0}
+.badge{font-size:.57rem;background:var(--red-dim);color:var(--red);padding:.18rem .48rem;border-radius:3px;border:1px solid #7a1a22;letter-spacing:.12em;font-weight:600;text-transform:uppercase}
+.upill{margin-left:auto;display:flex;align-items:center;gap:.45rem;background:var(--surface2);border:1px solid var(--border2);border-radius:20px;padding:.28rem .8rem .28rem .42rem;font-size:.68rem;color:var(--text-dim)}
+.udot{width:7px;height:7px;background:var(--green);border-radius:50%;flex-shrink:0}
 
-/* Section */
-.section{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1.4rem 1.5rem;margin-bottom:.85rem}
-.section-title{font-size:.6rem;text-transform:uppercase;letter-spacing:.18em;color:var(--text-dim);margin-bottom:1rem;display:flex;align-items:center;gap:.6rem}
-.section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+/* ── Sections ── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1.35rem 1.4rem;margin-bottom:.8rem}
+.card-title{font-size:.58rem;text-transform:uppercase;letter-spacing:.18em;color:var(--text-dim);margin-bottom:.95rem;display:flex;align-items:center;gap:.55rem}
+.card-title::after{content:'';flex:1;height:1px;background:var(--border)}
 
-/* Tabs */
-.tabs{display:flex;gap:.4rem;margin-bottom:.85rem}
-.tab-btn{font-family:var(--mono);font-size:.76rem;font-weight:600;padding:.6rem 1.4rem;border-radius:6px;border:1px solid var(--border2);background:transparent;color:var(--text-dim);cursor:pointer;transition:all .15s;letter-spacing:.04em}
-.tab-btn:hover{border-color:var(--text-dim);color:var(--text)}
-.tab-btn.active{background:var(--red);color:#fff;border-color:var(--red)}
+/* ── Tabs ── */
+.tabs{display:flex;gap:.35rem;margin-bottom:.8rem;flex-wrap:wrap}
+.tbtn{font-family:var(--mono);font-size:.72rem;font-weight:600;padding:.55rem 1.1rem;border-radius:6px;border:1px solid var(--border2);background:transparent;color:var(--text-dim);cursor:pointer;transition:all .14s;letter-spacing:.04em}
+.tbtn:hover{border-color:var(--text-dim);color:var(--text)}
+.tbtn.on{background:var(--red);color:#fff;border-color:var(--red)}
 
-/* Inputs */
-label.lbl{font-size:.62rem;color:var(--text-dim);display:block;margin-bottom:.38rem;letter-spacing:.1em;text-transform:uppercase}
+/* ── Inputs ── */
+label.lbl{font-size:.6rem;color:var(--text-dim);display:block;margin-bottom:.35rem;letter-spacing:.1em;text-transform:uppercase}
 input[type=text],input[type=password],input[type=datetime-local],input[type=number],textarea,select{
   width:100%;background:var(--surface2);border:1px solid var(--border2);color:var(--text);
-  font-family:var(--mono);font-size:.8rem;padding:.62rem .9rem;border-radius:5px;outline:none;transition:border-color .15s;
-  -webkit-appearance:none;appearance:none;resize:none}
+  font-family:var(--mono);font-size:.78rem;padding:.6rem .88rem;border-radius:5px;
+  outline:none;transition:border-color .14s;-webkit-appearance:none;appearance:none;resize:none}
 input:focus,textarea:focus,select:focus{border-color:var(--red)}
 input::placeholder,textarea::placeholder{color:var(--muted)}
 input[type=password]{letter-spacing:.2em}
-select{cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235a5a78' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .85rem center;padding-right:2.2rem}
+select{cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2355556e' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .85rem center;padding-right:2.2rem}
 select option{background:#17171d}
 input[type=datetime-local]::-webkit-calendar-picker-indicator{filter:invert(.4);cursor:pointer}
 input[type=number]{-moz-appearance:textfield}
 input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
-.row{display:flex;gap:.65rem;align-items:flex-end}
+.row{display:flex;gap:.6rem;align-items:flex-end}
 .fg{flex:1}
 
-/* Buttons */
-.btn{font-family:var(--mono);font-size:.76rem;font-weight:600;padding:.63rem 1.2rem;border-radius:5px;border:none;cursor:pointer;transition:all .13s;letter-spacing:.04em;white-space:nowrap}
-.btn-primary{background:var(--red);color:#fff}
-.btn-primary:hover{background:#ff4555;box-shadow:0 0 20px var(--red-glow)}
-.btn-primary:disabled{background:var(--red-dim);color:var(--muted);cursor:not-allowed;box-shadow:none}
+/* ── Buttons ── */
+.btn{font-family:var(--mono);font-size:.74rem;font-weight:600;padding:.6rem 1.15rem;border-radius:5px;border:none;cursor:pointer;transition:all .13s;letter-spacing:.04em;white-space:nowrap}
+.btn-red{background:var(--red);color:#fff}
+.btn-red:hover{background:#ff4555;box-shadow:0 0 20px var(--red-glow)}
+.btn-red:disabled{background:var(--red-dim);color:var(--muted);cursor:not-allowed;box-shadow:none}
 .btn-green{background:var(--green);color:#000}
-.btn-green:hover{background:#3de0d0}
+.btn-green:hover{background:#38e0d1}
 .btn-green:disabled{background:#1a5c58;color:var(--muted);cursor:not-allowed}
+.btn-blue{background:var(--blue);color:#000}
+.btn-blue:hover{background:#74d6f7}
+.btn-blue:disabled{background:#1a3d52;color:var(--muted);cursor:not-allowed}
 .btn-ghost{background:transparent;color:var(--text-dim);border:1px solid var(--border2)}
 .btn-ghost:hover{border-color:var(--text-dim);color:var(--text)}
 .btn-stop{background:transparent;color:var(--amber);border:1px solid rgba(244,162,97,.4)}
 .btn-stop:hover{background:rgba(244,162,97,.08);border-color:var(--amber)}
-.btn-sm{padding:.42rem .75rem;font-size:.7rem}
+.btn-sm{padding:.4rem .72rem;font-size:.68rem}
 .btn-full{width:100%}
-.btn-icon{padding:.63rem .85rem}
+.btn-icon{padding:.6rem .82rem}
 
-/* DM selector */
-.dm-search-wrap{margin-bottom:.5rem}
-.dm-list{display:flex;flex-direction:column;gap:.3rem;max-height:240px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border2) transparent}
-.dm-item{display:flex;align-items:center;gap:.7rem;padding:.55rem .8rem;border-radius:5px;border:1px solid transparent;cursor:pointer;transition:all .12s}
-.dm-item:hover{background:var(--surface2);border-color:var(--border)}
-.dm-item.sel{background:rgba(230,57,70,.07);border-color:rgba(230,57,70,.3)}
-.dm-av{width:30px;height:30px;border-radius:50%;background:var(--surface3);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:.65rem;color:var(--text-dim);flex-shrink:0;font-weight:600}
+/* ── DM list ── */
+.dm-list{display:flex;flex-direction:column;gap:.28rem;max-height:220px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border2) transparent;margin-top:.5rem}
+.dmi{display:flex;align-items:center;gap:.65rem;padding:.52rem .78rem;border-radius:5px;border:1px solid transparent;cursor:pointer;transition:all .11s}
+.dmi:hover{background:var(--surface2);border-color:var(--border)}
+.dmi.sel{background:rgba(230,57,70,.07);border-color:rgba(230,57,70,.28)}
+.dm-av{width:29px;height:29px;border-radius:50%;background:var(--surface3);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:.62rem;font-weight:700;flex-shrink:0;color:var(--text-dim)}
 .dm-info{flex:1;min-width:0}
-.dm-display{font-size:.78rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.dm-username{font-size:.62rem;color:var(--text-dim);margin-top:.1rem}
-.dm-tag{font-size:.58rem;color:var(--text-dim);background:var(--surface2);padding:.12rem .35rem;border-radius:3px;flex-shrink:0}
-.dm-sel-dot{color:var(--red);font-size:.65rem;flex-shrink:0}
+.dm-dn{font-size:.76rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dm-un{font-size:.6rem;color:var(--text-dim)}
+.dm-type{font-size:.56rem;color:var(--text-dim);background:var(--surface2);padding:.1rem .32rem;border-radius:3px;flex-shrink:0}
+.dm-dot{color:var(--red);font-size:.62rem;flex-shrink:0}
 
-/* Custom slider */
-.slider-wrap{user-select:none}
-.speed-display{display:flex;align-items:baseline;gap:.5rem;margin-bottom:.65rem}
-.speed-val{font-family:var(--display);font-size:1.8rem;font-weight:700;line-height:1}
-.speed-unit{font-size:.7rem;color:var(--text-dim)}
-.speed-tag{font-size:.68rem;padding:.2rem .55rem;border-radius:4px;font-weight:500}
-.custom-slider{position:relative;height:28px;display:flex;align-items:center;cursor:pointer;margin:.2rem 0}
+/* ── Custom slider ── */
+.spd-disp{display:flex;align-items:baseline;gap:.5rem;margin-bottom:.6rem}
+.spd-val{font-family:var(--disp);font-size:1.75rem;font-weight:700;line-height:1}
+.spd-unit{font-size:.68rem;color:var(--text-dim)}
+.spd-tag{font-size:.66rem;padding:.18rem .52rem;border-radius:4px;font-weight:500}
+.cslider{position:relative;height:26px;display:flex;align-items:center;cursor:pointer;margin:.15rem 0}
 .track{position:absolute;left:0;right:0;height:4px;background:var(--border2);border-radius:4px;pointer-events:none}
-.track-fill{position:absolute;left:0;height:100%;background:linear-gradient(90deg,var(--green),var(--amber),var(--red));border-radius:4px;pointer-events:none}
-.thumb{position:absolute;width:18px;height:18px;background:#fff;border-radius:50%;border:2px solid var(--red);box-shadow:0 0 10px rgba(0,0,0,.5);transform:translateX(-50%);pointer-events:none;transition:box-shadow .1s}
-.custom-slider.dragging .thumb{box-shadow:0 0 14px var(--red-glow)}
-.slider-labels{display:flex;justify-content:space-between;font-size:.6rem;color:var(--text-dim);margin-top:.35rem}
+.tfill{position:absolute;left:0;height:100%;background:linear-gradient(90deg,var(--green),var(--amber),var(--red));border-radius:4px;pointer-events:none}
+.thumb{position:absolute;width:17px;height:17px;background:#fff;border-radius:50%;border:2px solid var(--red);box-shadow:0 0 8px rgba(0,0,0,.45);transform:translateX(-50%);pointer-events:none;transition:box-shadow .1s}
+.cslider.drag .thumb{box-shadow:0 0 14px var(--red-glow)}
+.slbls{display:flex;justify-content:space-between;font-size:.58rem;color:var(--text-dim);margin-top:.32rem}
 
-/* Filter tabs */
-.filter-tabs{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.9rem}
-.ftab{font-family:var(--mono);font-size:.7rem;padding:.42rem .9rem;border-radius:4px;border:1px solid var(--border2);background:transparent;color:var(--text-dim);cursor:pointer;transition:all .12s}
-.ftab:hover{border-color:var(--text-dim);color:var(--text)}
-.ftab.fa{border-color:rgba(230,57,70,.5);color:var(--red);background:rgba(230,57,70,.06)}
-.ftab.fb{border-color:rgba(46,196,182,.5);color:var(--green);background:rgba(46,196,182,.06)}
-.ftab.fc{border-color:rgba(76,201,240,.5);color:var(--blue);background:rgba(76,201,240,.06)}
+/* ── Toggles ── */
+.trow{display:flex;align-items:center;gap:.72rem;padding:.55rem 0}
+.trow+.trow{border-top:1px solid var(--border)}
+.tlabel{flex:1}
+.tname{font-size:.78rem}
+.tsub{font-size:.6rem;color:var(--text-dim);margin-top:.08rem}
+.tog{position:relative;width:34px;height:19px;cursor:pointer;flex-shrink:0}
+.tog input{opacity:0;width:0;height:0}
+.tslid{position:absolute;inset:0;background:var(--surface2);border:1px solid var(--border2);border-radius:20px;transition:.18s}
+.tslid::before{content:'';position:absolute;height:13px;width:13px;left:2px;top:2px;background:var(--muted);border-radius:50%;transition:.18s}
+.tog input:checked+.tslid{background:var(--red-dim);border-color:var(--red-dim)}
+.tog input:checked+.tslid::before{transform:translateX(15px);background:var(--red)}
 
-/* Toggle */
-.toggle-row{display:flex;align-items:center;gap:.75rem;padding:.6rem 0}
-.toggle-row+.toggle-row{border-top:1px solid var(--border)}
-.toggle-label{flex:1}
-.toggle-name{font-size:.8rem}
-.toggle-sub{font-size:.62rem;color:var(--text-dim);margin-top:.1rem}
-.toggle{position:relative;width:36px;height:20px;cursor:pointer;flex-shrink:0}
-.toggle input{opacity:0;width:0;height:0}
-.tslider{position:absolute;inset:0;background:var(--surface2);border:1px solid var(--border2);border-radius:20px;transition:.2s}
-.tslider::before{content:'';position:absolute;height:14px;width:14px;left:2px;top:2px;background:var(--muted);border-radius:50%;transition:.2s}
-.toggle input:checked+.tslider{background:var(--red-dim);border-color:var(--red-dim)}
-.toggle input:checked+.tslider::before{transform:translateX(16px);background:var(--red)}
+/* ── Emoji picker ── */
+.epick{position:relative}
+.ebtn{background:var(--surface2);border:1px solid var(--border2);color:var(--text);font-size:1.05rem;padding:.48rem .72rem;border-radius:5px;cursor:pointer;min-width:44px;transition:border-color .14s}
+.ebtn:hover{border-color:var(--text-dim)}
+.ebtn.has{border-color:var(--green)}
+.epop{position:absolute;top:calc(100% + 5px);left:0;z-index:200;background:var(--surface);border:1px solid var(--border2);border-radius:8px;padding:.7rem;width:300px;box-shadow:0 8px 32px rgba(0,0,0,.55);display:none}
+.epop.open{display:block}
+.epop-hdr{font-size:.58rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.12em;margin-bottom:.55rem}
+.egrid{display:grid;grid-template-columns:repeat(10,1fr);gap:2px;max-height:195px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border2) transparent}
+.egbtn{background:none;border:none;font-size:1.1rem;cursor:pointer;padding:.28rem;border-radius:4px;line-height:1}
+.egbtn:hover{background:var(--surface2)}
+.eclr{margin-top:.45rem;font-size:.63rem;color:var(--text-dim);cursor:pointer;background:none;border:none;font-family:var(--mono);padding:.22rem .48rem;border-radius:3px}
+.eclr:hover{color:var(--red)}
 
-/* Emoji picker */
-.emoji-pick-wrap{position:relative}
-.emoji-btn{background:var(--surface2);border:1px solid var(--border2);color:var(--text);font-size:1.1rem;padding:.5rem .75rem;border-radius:5px;cursor:pointer;min-width:46px;transition:border-color .15s}
-.emoji-btn:hover{border-color:var(--text-dim)}
-.emoji-btn.has-emoji{border-color:var(--green)}
-.emoji-popup{position:absolute;top:calc(100% + 6px);left:0;z-index:100;background:var(--surface);border:1px solid var(--border2);border-radius:8px;padding:.75rem;width:290px;box-shadow:0 8px 30px rgba(0,0,0,.5);display:none}
-.emoji-popup.open{display:block}
-.emoji-popup-hdr{font-size:.6rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.12em;margin-bottom:.6rem}
-.emoji-grid{display:grid;grid-template-columns:repeat(10,1fr);gap:2px;max-height:200px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border2) transparent}
-.egrid-btn{background:none;border:none;font-size:1.15rem;cursor:pointer;padding:.3rem;border-radius:4px;transition:background .1s;line-height:1}
-.egrid-btn:hover{background:var(--surface2)}
-.emoji-clear{margin-top:.5rem;font-size:.65rem;color:var(--text-dim);cursor:pointer;background:none;border:none;font-family:var(--mono);padding:.25rem .5rem;border-radius:3px}
-.emoji-clear:hover{color:var(--red)}
+/* ── Person picker ── */
+.ppick{position:relative}
+.pdrop{background:var(--surface);border:1px solid var(--border2);border-radius:6px;margin-top:.38rem;overflow:hidden;display:none}
+.pdrop.open{display:block}
+.psearch{width:100%;background:var(--surface2);border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:.76rem;padding:.52rem .82rem;outline:none}
+.plist{max-height:150px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border2) transparent}
+.pitem{display:flex;align-items:center;gap:.58rem;padding:.52rem .82rem;cursor:pointer;transition:background .1s;font-size:.76rem}
+.pitem:hover{background:var(--surface2)}
+.pitem.sel{color:var(--green)}
+.pav{width:23px;height:23px;border-radius:50%;background:var(--surface3);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:.58rem;font-weight:700;flex-shrink:0}
+.pdn{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pun{font-size:.6rem;color:var(--text-dim)}
 
-/* Person selector */
-.person-select-wrap{position:relative}
-.person-dropdown{background:var(--surface);border:1px solid var(--border2);border-radius:6px;margin-top:.4rem;overflow:hidden;display:none}
-.person-dropdown.open{display:block}
-.person-search{width:100%;background:var(--surface2);border:none;border-bottom:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:.78rem;padding:.55rem .85rem;outline:none}
-.person-list{max-height:160px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border2) transparent}
-.person-item{display:flex;align-items:center;gap:.6rem;padding:.55rem .85rem;cursor:pointer;transition:background .1s;font-size:.78rem}
-.person-item:hover{background:var(--surface2)}
-.person-item.sel{color:var(--green)}
-.person-av{width:24px;height:24px;border-radius:50%;background:var(--surface3);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:.6rem;flex-shrink:0;font-weight:600}
-.person-info{flex:1;min-width:0}
-.person-display{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.person-username{font-size:.62rem;color:var(--text-dim)}
-
-/* Stats */
-.stats-row{display:flex;gap:2rem;padding:.5rem 0 .9rem}
-.stat-val{font-family:var(--display);font-size:1.45rem;font-weight:700;line-height:1}
-.stat-lbl{font-size:.58rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.1em;margin-top:.2rem}
-.status-row{display:flex;align-items:center;gap:.5rem;margin-bottom:.75rem}
+/* ── Stats + status ── */
+.stats{display:flex;gap:1.8rem;padding:.45rem 0 .85rem}
+.sv{font-family:var(--disp);font-size:1.4rem;font-weight:700;line-height:1}
+.sl{font-size:.56rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.1em;margin-top:.18rem}
+.srow{display:flex;align-items:center;gap:.48rem;margin-bottom:.72rem}
 .sdot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--muted)}
-.sdot.running{background:var(--red);animation:blink 1s ease-in-out infinite}
+.sdot.run{background:var(--red);animation:blink 1s ease-in-out infinite}
 .sdot.done{background:var(--green)}
-.sdot.stopped{background:var(--amber)}
+.sdot.stop{background:var(--amber)}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
-.status-txt{font-size:.72rem;color:var(--text-dim)}
-.ctrl-row{display:flex;gap:.65rem}
+.stxt{font-size:.7rem;color:var(--text-dim)}
+.ctrl{display:flex;gap:.6rem}
 
-/* Console */
-.console{background:#060608;border:1px solid var(--border);border-radius:6px;padding:.8rem 1rem;height:190px;overflow-y:auto;font-size:.7rem;line-height:1.75;scrollbar-width:thin;scrollbar-color:var(--border2) transparent}
-.console-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:.6rem}
-.l{color:var(--text-dim)}.l.ok{color:var(--green)}.l.err{color:var(--red)}.l.warn{color:var(--amber)}.l.sys{color:#3a3a58;font-style:italic}.l.react{color:var(--purple)}
+/* ── Console ── */
+.con{background:#060608;border:1px solid var(--border);border-radius:6px;padding:.75rem .95rem;height:185px;overflow-y:auto;font-size:.68rem;line-height:1.75;scrollbar-width:thin;scrollbar-color:var(--border2) transparent}
+.chdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:.55rem}
+.l{color:var(--text-dim)}.l.ok{color:var(--green)}.l.err{color:var(--red)}.l.warn{color:var(--amber)}.l.sys{color:#353552;font-style:italic}.l.rx{color:var(--purple)}.l.info{color:var(--blue)}
 
-/* Error box */
-.err-box{background:rgba(230,57,70,.07);border:1px solid rgba(230,57,70,.25);color:#e67380;border-radius:5px;padding:.6rem .9rem;font-size:.75rem;margin-top:.7rem;display:none}
+/* ── Error ── */
+.ebox{background:rgba(230,57,70,.07);border:1px solid rgba(230,57,70,.22);color:#e67380;border-radius:5px;padding:.58rem .88rem;font-size:.73rem;margin-top:.65rem;display:none}
 
-/* Grid */
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:.85rem}
-@media(max-width:620px){.g2{grid-template-columns:1fr}.row{flex-wrap:wrap}}
+/* ── Status tab ── */
+.status-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:.6rem;margin-bottom:1rem}
+.sc{background:var(--surface2);border:1px solid var(--border2);border-radius:7px;padding:.9rem .7rem;text-align:center;cursor:pointer;transition:all .14s;font-size:.72rem;color:var(--text-dim)}
+.sc:hover{border-color:var(--text-dim);color:var(--text)}
+.sc.on{border-color:var(--green);color:var(--text);background:rgba(46,196,182,.07)}
+.sc-icon{font-size:1.4rem;display:block;margin-bottom:.4rem}
+.sc-label{font-size:.65rem;font-weight:600;letter-spacing:.06em}
+.sc-dot{width:9px;height:9px;border-radius:50%;margin:.4rem auto 0;border:2px solid var(--bg)}
+.sc-dot.online{background:#23a55a}
+.sc-dot.idle{background:#f0b232}
+.sc-dot.dnd{background:#f23f43}
+.sc-dot.invisible{background:#80848e}
 
-/* Sub-section divider */
-.sub-section{border-top:1px solid var(--border);padding-top:1.2rem;margin-top:1.2rem}
-.sub-title{font-size:.62rem;text-transform:uppercase;letter-spacing:.15em;color:var(--text-dim);margin-bottom:1rem;display:flex;align-items:center;gap:.5rem}
-.sub-title::after{content:'';flex:1;height:1px;background:var(--border)}
+/* ── Grid ── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.8rem}
+@media(max-width:640px){.g2,.g3{grid-template-columns:1fr}.row{flex-wrap:wrap}.status-cards{grid-template-columns:repeat(2,1fr)}}
 
-.note{font-size:.6rem;color:var(--text-dim);margin-top:.5rem}
-.chip{display:inline-block;font-size:.62rem;padding:.15rem .45rem;border-radius:3px;border:1px solid var(--border2);color:var(--text-dim);margin-right:.3rem;margin-top:.3rem}
-
-/* Modal */
-.modal-overlay{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.88);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:1.5rem}
-.modal-box{background:var(--surface);border:1px solid rgba(230,57,70,.35);border-radius:10px;padding:2.2rem 2rem;max-width:420px;width:100%;text-align:center;box-shadow:0 0 60px rgba(230,57,70,.12);animation:mIn .25s cubic-bezier(.34,1.56,.64,1)}
-@keyframes mIn{from{opacity:0;transform:scale(.88) translateY(16px)}to{opacity:1;transform:scale(1) translateY(0)}}
-.modal-icon{font-size:2.4rem;margin-bottom:1rem;animation:pulse2 2s ease-in-out infinite}
-@keyframes pulse2{0%,100%{opacity:1}50%{opacity:.5}}
-.modal-title{font-family:var(--display);font-size:1.4rem;font-weight:800;color:var(--red);letter-spacing:-.02em;margin-bottom:.5rem}
-.modal-sub{font-size:.74rem;color:var(--text-dim);line-height:1.6;margin-bottom:1.5rem}
-.modal-sub strong{color:var(--text)}
-.modal-status{font-size:.65rem;color:var(--text-dim);margin-top:1rem;letter-spacing:.06em}
-.modal-status span{color:var(--red)}
+/* ── Modal ── */
+.mover{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.88);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:1.5rem}
+.mbox{background:var(--surface);border:1px solid rgba(230,57,70,.35);border-radius:10px;padding:2.1rem 1.9rem;max-width:410px;width:100%;text-align:center;box-shadow:0 0 60px rgba(230,57,70,.12);animation:mIn .22s cubic-bezier(.34,1.56,.64,1)}
+@keyframes mIn{from{opacity:0;transform:scale(.88) translateY(14px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.micon{font-size:2.3rem;margin-bottom:.9rem;animation:p2 2s ease-in-out infinite}
+@keyframes p2{0%,100%{opacity:1}50%{opacity:.45}}
+.mtitle{font-family:var(--disp);font-size:1.35rem;font-weight:800;color:var(--red);letter-spacing:-.02em;margin-bottom:.45rem}
+.msub{font-size:.72rem;color:var(--text-dim);line-height:1.65;margin-bottom:1.4rem}
+.msub strong{color:var(--text)}
+.mstat{font-size:.63rem;color:var(--text-dim);margin-top:.9rem;letter-spacing:.06em}
+.mstat span{color:var(--red)}
+.note{font-size:.6rem;color:var(--text-dim);margin-top:.48rem}
 </style>
 </head>
 <body>
 
-<!-- API Down Modal -->
-<div class="modal-overlay" id="apiDownModal">
-  <div class="modal-box">
-    <div class="modal-icon">⚡</div>
-    <div class="modal-title">API Offline</div>
-    <div class="modal-sub">Backend is <strong>unreachable</strong>.<br>Start <strong>purger_backend.py</strong> and make sure ngrok is running, then retry.</div>
-    <button class="btn btn-primary btn-full" id="retryBtn" onclick="retryAPI()">Retry Connection</button>
-    <div class="modal-status">checking <span>purge.gg</span> backend…</div>
+<!-- API Down modal — uncloseable -->
+<div class="mover" id="apiModal">
+  <div class="mbox">
+    <div class="micon">⚡</div>
+    <div class="mtitle">API Offline</div>
+    <div class="msub">Backend is <strong>unreachable</strong>.<br>Run <strong>purger_backend.py</strong>, start ngrok, then retry.</div>
+    <button class="btn btn-red btn-full" id="retryBtn" onclick="retryAPI()">Retry Connection</button>
+    <div class="mstat">checking <span>purge.gg</span> backend…</div>
   </div>
 </div>
 
@@ -210,477 +209,472 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
   <div class="header">
     <div class="logo">purge<span>.gg</span></div>
     <div class="badge">Beta</div>
-    <div class="user-pill" id="userPill" style="display:none">
-      <div class="user-dot"></div>
-      <span id="userPillName">—</span>
-      <button class="btn btn-ghost btn-sm" onclick="disconnect()" style="padding:.15rem .45rem;font-size:.62rem;margin-left:.2rem">✕</button>
+    <div class="upill" id="upill" style="display:none">
+      <div class="udot"></div>
+      <span id="upillName">—</span>
+      <button class="btn btn-ghost btn-sm" onclick="disconnect()" style="padding:.13rem .42rem;font-size:.6rem;margin-left:.18rem">✕</button>
     </div>
   </div>
 
   <!-- Auth -->
-  <div class="section" id="authSection">
-    <div class="section-title">Token Auth</div>
+  <div class="card" id="authCard">
+    <div class="card-title">Token Auth</div>
     <div class="row">
       <div class="fg">
         <label class="lbl">User Token</label>
         <input type="password" id="tokenInput" placeholder="Your Discord user token…" autocomplete="off" onkeydown="if(event.key==='Enter')connect()">
       </div>
       <button class="btn btn-ghost btn-icon btn-sm" onclick="toggleToken()" id="showBtn">👁</button>
-      <button class="btn btn-primary" id="connectBtn" onclick="connect()">Connect</button>
+      <button class="btn btn-red" id="connectBtn" onclick="connect()">Connect</button>
     </div>
-    <div class="err-box" id="authErr"></div>
-    <p class="note">🔒 Your token is <strong style="color:var(--text)">never shared with any third parties</strong>. It is sent only to your own backend — no external servers ever see it.</p>
+    <div class="ebox" id="authErr"></div>
+    <p class="note">🔒 Your token is <strong style="color:var(--text)">never shared with any third parties</strong>. Sent only to your own local backend.</p>
   </div>
 
-  <!-- Main UI -->
+  <!-- Main -->
   <div id="mainUI" style="display:none">
 
     <!-- Tabs -->
     <div class="tabs">
-      <button class="tab-btn active" id="tabBtnPurge" onclick="switchTab('purge')">🗑 Purge</button>
-      <button class="tab-btn" id="tabBtnAuto" onclick="switchTab('auto')">🤖 Auto</button>
+      <button class="tbtn on"  id="t-purge"  onclick="tab('purge')">🗑 Purge</button>
+      <button class="tbtn"     id="t-auto"   onclick="tab('auto')">🤖 Auto Reply</button>
+      <button class="tbtn"     id="t-spam"   onclick="tab('spam')">📤 Spammer</button>
+      <button class="tbtn"     id="t-status" onclick="tab('status')">🟢 Status</button>
     </div>
 
-    <!-- ══════════════ PURGE TAB ══════════════ -->
-    <div id="tabPurge">
-
-      <!-- DM selector -->
-      <div class="section">
-        <div class="section-title">Select DM</div>
-        <div class="dm-search-wrap">
-          <input type="text" id="purgeSearch" placeholder="🔍  Search DMs…" oninput="filterDMs('purge')">
-        </div>
-        <div class="dm-list" id="purgeDmList"><p style="font-size:.78rem;color:var(--text-dim)">Loading…</p></div>
+    <!-- ═══ PURGE ═══ -->
+    <div id="p-purge">
+      <div class="card">
+        <div class="card-title">Select DM</div>
+        <input type="text" id="purgeSearch" placeholder="🔍  Search DMs…" oninput="renderDMs('purge')">
+        <div class="dm-list" id="purgeDMs"></div>
       </div>
-
       <div class="g2">
-        <!-- Speed -->
-        <div class="section">
-          <div class="section-title">Delete Speed</div>
-          <div class="speed-display">
-            <span class="speed-val" id="purgeSpeedVal">1.0</span>
-            <span class="speed-unit">s delay</span>
-            <span class="speed-tag" id="purgeSpeedTag"></span>
+        <div class="card">
+          <div class="card-title">Speed</div>
+          <div class="spd-disp">
+            <span class="spd-val" id="purgeSpeedVal">1.0</span>
+            <span class="spd-unit">s delay</span>
+            <span class="spd-tag" id="purgeSpeedTag"></span>
           </div>
-          <div class="slider-wrap">
-            <div class="custom-slider" id="purgeSlider">
-              <div class="track"><div class="track-fill" id="purgeFill"></div></div>
-              <div class="thumb" id="purgeThumb"></div>
-            </div>
-            <div class="slider-labels"><span>0.1s</span><span>fastest ← → safest</span><span>5s</span></div>
+          <div class="cslider" id="purgeSlider">
+            <div class="track"><div class="tfill" id="purgeFill"></div></div>
+            <div class="thumb" id="purgeThumb"></div>
           </div>
-          <p class="note" id="purgeSpeedNote"></p>
+          <div class="slbls"><span>0.0s</span><span>fastest ← → safest</span><span>5s</span></div>
+          <p class="note" id="purgeSpeedNote" style="margin-top:.5rem"></p>
         </div>
-
-        <!-- Filter -->
-        <div class="section">
-          <div class="section-title">Filter Mode</div>
-          <div class="filter-tabs">
-            <button class="ftab fa" id="pfAll"    onclick="setPurgeFilter('all')">All</button>
-            <button class="ftab"    id="pfBefore" onclick="setPurgeFilter('before')">Before date</button>
-            <button class="ftab"    id="pfAfter"  onclick="setPurgeFilter('after')">After date</button>
-            <button class="ftab"    id="pfCount"  onclick="setPurgeFilter('count')">Last N msgs</button>
+        <div class="card">
+          <div class="card-title">Filter Mode</div>
+          <div style="display:flex;flex-wrap:wrap;gap:.35rem;margin-bottom:.85rem">
+            <button class="btn btn-sm btn-ghost" id="pf-all"    onclick="pfilter('all')"   style="border-color:rgba(230,57,70,.5);color:var(--red)">All msgs</button>
+            <button class="btn btn-sm btn-ghost" id="pf-before" onclick="pfilter('before')">Before date</button>
+            <button class="btn btn-sm btn-ghost" id="pf-after"  onclick="pfilter('after')">After date</button>
+            <button class="btn btn-sm btn-ghost" id="pf-count"  onclick="pfilter('count')">Last N</button>
           </div>
-          <div id="purgeDateRow" style="display:none">
-            <label class="lbl">Date &amp; Time</label>
-            <input type="datetime-local" id="purgeDateInput">
+          <div id="purgeDateWrap" style="display:none">
+            <label class="lbl">Date & Time</label>
+            <input type="datetime-local" id="purgeDateIn">
           </div>
-          <div id="purgeCountRow" style="display:none">
-            <label class="lbl">Number of messages to delete</label>
-            <input type="number" id="purgeCount" value="5" min="1" max="10000" style="width:120px">
+          <div id="purgeCountWrap" style="display:none">
+            <label class="lbl">How many of your messages to delete</label>
+            <input type="number" id="purgeCountIn" value="5" min="1">
           </div>
-          <p class="note" style="margin-top:.6rem" id="purgeFilterNote">Deletes all your messages in this DM.</p>
+          <p class="note" id="purgeFilterNote" style="margin-top:.6rem">Deletes all your messages in the DM.</p>
         </div>
       </div>
-
-      <!-- Controls -->
-      <div class="section">
-        <div class="status-row">
-          <div class="sdot" id="purgeStatusDot"></div>
-          <span class="status-txt" id="purgeStatusTxt">Idle — pick a DM to start</span>
+      <div class="card">
+        <div class="srow"><div class="sdot" id="purgeDot"></div><span class="stxt" id="purgeTxt">Idle</span></div>
+        <div class="stats">
+          <div><div class="sv" style="color:var(--red)" id="purgeDelCnt">0</div><div class="sl">Deleted</div></div>
+          <div><div class="sv" style="color:var(--text-dim)" id="purgeSkipCnt">0</div><div class="sl">Skipped</div></div>
+          <div><div class="sv" style="color:var(--amber);font-size:.8rem;font-family:var(--mono)" id="purgeTargetName">—</div><div class="sl">Target DM</div></div>
         </div>
-        <div class="stats-row">
-          <div><div class="stat-val" style="color:var(--red)" id="purgeDeleted">0</div><div class="stat-lbl">Deleted</div></div>
-          <div><div class="stat-val" style="color:var(--text-dim)" id="purgeSkipped">0</div><div class="stat-lbl">Skipped</div></div>
-          <div><div class="stat-val" style="color:var(--amber);font-size:.85rem;font-family:var(--mono)" id="purgeTarget">—</div><div class="stat-lbl">Target</div></div>
-        </div>
-        <div class="ctrl-row">
-          <button class="btn btn-primary btn-full" id="purgeStartBtn" onclick="startPurge()" disabled>▶ Start Purge</button>
-          <button class="btn btn-stop" id="purgeStopBtn" onclick="stopJob('purge')" style="display:none">■ Stop</button>
+        <div class="ctrl">
+          <button class="btn btn-red btn-full" id="purgeStart" onclick="startPurge()" disabled>▶ Start Purge</button>
+          <button class="btn btn-stop" id="purgeStop" onclick="stopJob('purge')" style="display:none">■ Stop</button>
         </div>
       </div>
-
-      <!-- Console -->
-      <div class="section">
-        <div class="console-hdr">
-          <div class="section-title" style="margin-bottom:0">Console</div>
-          <button class="btn btn-ghost btn-sm" onclick="clearLog('purgeLog')">Clear</button>
-        </div>
-        <div class="console" id="purgeLog"></div>
+      <div class="card">
+        <div class="chdr"><div class="card-title" style="margin:0">Console</div><button class="btn btn-ghost btn-sm" onclick="clrLog('purgeLog')">Clear</button></div>
+        <div class="con" id="purgeLog"></div>
       </div>
-    </div><!-- /tabPurge -->
+    </div>
 
-    <!-- ══════════════ AUTO TAB ══════════════ -->
-    <div id="tabAuto" style="display:none">
-
-      <!-- ── Auto Reply ── -->
-      <div class="section">
-        <div class="section-title">Auto Reply</div>
-
-        <!-- DM to watch -->
-        <div class="g2" style="margin-bottom:.85rem">
+    <!-- ═══ AUTO REPLY ═══ -->
+    <div id="p-auto" style="display:none">
+      <div class="card">
+        <div class="card-title">Auto Reply</div>
+        <div class="g2" style="margin-bottom:.8rem">
+          <!-- Watch DM -->
           <div>
             <label class="lbl">Watch DM</label>
-            <div class="dm-search-wrap" style="margin-bottom:.4rem">
-              <input type="text" id="autoSearch" placeholder="🔍  Search…" oninput="filterDMs('auto')">
-            </div>
-            <div class="dm-list" id="autoDmList" style="max-height:160px"><p style="font-size:.78rem;color:var(--text-dim)">Loading…</p></div>
+            <input type="text" id="autoSearch" placeholder="🔍  Search…" oninput="renderDMs('auto')">
+            <div class="dm-list" id="autoDMs" style="max-height:180px"></div>
           </div>
-
-          <!-- Person to watch -->
+          <!-- Person -->
           <div>
-            <label class="lbl">Watch messages from</label>
-            <div class="person-select-wrap">
-              <button class="btn btn-ghost btn-full" style="text-align:left;justify-content:flex-start;display:flex;align-items:center;gap:.5rem" id="personSelectBtn" onclick="togglePersonDropdown()">
-                <span id="personSelectLabel" style="flex:1;color:var(--text-dim)">Select a DM first…</span>
-                <span style="font-size:.65rem">▾</span>
+            <label class="lbl">Reply to messages from</label>
+            <div class="ppick">
+              <button class="btn btn-ghost btn-full" style="text-align:left;display:flex;align-items:center;gap:.5rem" id="personBtn" onclick="togglePDrop()">
+                <span id="personLabel" style="flex:1;color:var(--text-dim)">Select a DM first…</span>
+                <span style="font-size:.63rem">▾</span>
               </button>
-              <div class="person-dropdown" id="personDropdown">
-                <input type="text" class="person-search" placeholder="Search people…" oninput="filterPersons(this.value)">
-                <div class="person-list" id="personList"></div>
-              </div>
-            </div>
-            <p class="note" style="margin-top:.5rem">Replies only to messages from this person.</p>
-
-            <!-- Trigger -->
-            <div style="margin-top:.85rem">
-              <label class="lbl">Trigger phrase</label>
-              <input type="text" id="autoTrigger" placeholder="e.g. uwu">
-              <div class="toggle-row" style="padding:.5rem 0 0">
-                <label class="toggle"><input type="checkbox" id="autoCaseSen"><span class="tslider"></span></label>
-                <div class="toggle-label"><div class="toggle-name">Case sensitive</div><div class="toggle-sub">ON = "UWU" ≠ "uwu"</div></div>
+              <div class="pdrop" id="personDrop">
+                <input type="text" class="psearch" placeholder="Search…" oninput="filterPersons(this.value)">
+                <div class="plist" id="personList"></div>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Reply message -->
-        <div style="margin-bottom:.85rem">
-          <label class="lbl">Reply with</label>
-          <textarea id="autoReply" rows="2" placeholder="What to send back…"></textarea>
+        <div class="g2" style="margin-bottom:.8rem">
+          <!-- Trigger -->
+          <div>
+            <label class="lbl">Trigger phrase <span style="font-size:.58rem;color:var(--text-dim)">(empty = reply to everything)</span></label>
+            <input type="text" id="autoTrig" placeholder="e.g. uwu">
+            <div class="trow" style="padding:.45rem 0 0">
+              <label class="tog"><input type="checkbox" id="autoCS"><span class="tslid"></span></label>
+              <div class="tlabel"><div class="tname">Case sensitive</div><div class="tsub">ON: "UWU" ≠ "uwu"</div></div>
+            </div>
+          </div>
+          <!-- Reply -->
+          <div>
+            <label class="lbl">Reply with</label>
+            <textarea id="autoReply" rows="3" placeholder="Message to send back…"></textarea>
+          </div>
         </div>
 
-        <!-- Reaction + options -->
-        <div class="g2">
+        <div class="g2" style="margin-bottom:.8rem">
+          <!-- Emoji -->
           <div>
-            <label class="lbl">React with emoji</label>
-            <div class="row">
-              <div class="emoji-pick-wrap">
-                <button class="emoji-btn" id="emojiBtn" onclick="toggleEmojiPicker()" title="Pick emoji">➕</button>
-                <div class="emoji-popup" id="emojiPopup">
-                  <div class="emoji-popup-hdr">Standard emojis only</div>
-                  <div class="emoji-grid" id="emojiGrid"></div>
-                  <button class="emoji-clear" onclick="clearEmoji()">✕ Clear</button>
+            <label class="lbl">React with</label>
+            <div class="row" style="align-items:center">
+              <div class="epick">
+                <button class="ebtn" id="emojiBtn" onclick="toggleEpick()" title="Pick emoji">➕</button>
+                <div class="epop" id="emojiPop">
+                  <div class="epop-hdr">Standard Unicode emojis</div>
+                  <div class="egrid" id="emojiGrid"></div>
+                  <button class="eclr" onclick="clearEmoji()">✕ Clear emoji</button>
                 </div>
               </div>
-              <span id="emojiSelected" style="font-size:.78rem;color:var(--text-dim);flex:1;padding-left:.3rem">None selected</span>
+              <span id="emojiTxt" style="font-size:.76rem;color:var(--text-dim);flex:1;padding-left:.35rem">None</span>
             </div>
-            <div class="toggle-row" style="padding:.6rem 0 0">
-              <label class="toggle"><input type="checkbox" id="autoReactAll"><span class="tslider"></span></label>
-              <div class="toggle-label"><div class="toggle-name">React to ALL their messages</div><div class="toggle-sub">Not just trigger messages</div></div>
+            <div class="trow" style="padding:.5rem 0 0">
+              <label class="tog"><input type="checkbox" id="reactAll"><span class="tslid"></span></label>
+              <div class="tlabel"><div class="tname">React to ALL their msgs</div><div class="tsub">Not just trigger matches</div></div>
             </div>
           </div>
-
+          <!-- Options -->
           <div>
-            <label class="lbl">Extra options</label>
-            <div class="toggle-row" style="padding:.4rem 0">
-              <label class="toggle"><input type="checkbox" id="autoHuman"><span class="tslider"></span></label>
-              <div class="toggle-label"><div class="toggle-name">🧠 Human mode</div><div class="toggle-sub">Typing indicator + random delay</div></div>
+            <label class="lbl">Options</label>
+            <div class="trow" style="padding:.3rem 0">
+              <label class="tog"><input type="checkbox" id="humanMode"><span class="tslid"></span></label>
+              <div class="tlabel"><div class="tname">🧠 Human mode</div><div class="tsub">Typing indicator + random delay</div></div>
             </div>
-            <div class="toggle-row">
-              <label class="toggle"><input type="checkbox" id="autoCaseSenToggle" style="display:none"><span class="tslider"></span></label>
-              <div class="toggle-label" style="flex:0;min-width:70px"><div class="toggle-name" style="font-size:.72rem;white-space:nowrap">Max replies</div></div>
-              <input type="number" id="autoMaxReplies" value="0" min="0" style="width:70px;margin-left:auto" title="0 = unlimited">
+            <div style="margin-top:.6rem">
+              <label class="lbl">Max replies <span style="font-size:.56rem">(0 = ∞)</span></label>
+              <input type="number" id="maxReplies" value="0" min="0" style="width:100px">
             </div>
-            <div style="margin-top:.7rem">
-              <label class="lbl">Blacklist words <span style="font-size:.58rem;color:var(--text-dim)">(comma separated)</span></label>
-              <input type="text" id="autoBlacklist" placeholder="e.g. stop, no, bye">
+            <div style="margin-top:.6rem">
+              <label class="lbl">Blacklist words <span style="font-size:.56rem">(comma separated)</span></label>
+              <input type="text" id="blacklist" placeholder="stop, no, bye">
             </div>
           </div>
         </div>
 
-        <!-- Controls -->
-        <div style="margin-top:1rem">
-          <div class="status-row">
-            <div class="sdot" id="autoStatusDot"></div>
-            <span class="status-txt" id="autoStatusTxt">Idle</span>
-            <div style="margin-left:auto;display:flex;gap:1rem">
-              <span style="font-size:.7rem;color:var(--green)">↩ <span id="autoReplied">0</span> replied</span>
-              <span style="font-size:.7rem;color:var(--purple)"><span id="autoReacted">0</span> reacted</span>
-            </div>
-          </div>
-          <div class="ctrl-row">
-            <button class="btn btn-green btn-full" id="autoStartBtn" onclick="startAuto()" disabled>▶ Start Auto Reply</button>
-            <button class="btn btn-stop" id="autoStopBtn" onclick="stopJob('auto')" style="display:none">■ Stop</button>
-          </div>
+        <div class="srow">
+          <div class="sdot" id="autoDot"></div>
+          <span class="stxt" id="autoTxt">Idle</span>
+          <span style="margin-left:auto;font-size:.68rem;color:var(--green)">↩ <span id="autoReplied">0</span></span>
+          <span style="margin-left:.8rem;font-size:.68rem;color:var(--purple)"><span id="autoReacted">0</span> reacted</span>
+        </div>
+        <div class="ctrl">
+          <button class="btn btn-green btn-full" id="autoStart" onclick="startAuto()" disabled>▶ Start Auto Reply</button>
+          <button class="btn btn-stop" id="autoStop" onclick="stopJob('auto')" style="display:none">■ Stop</button>
         </div>
 
-        <!-- Auto log -->
-        <div style="margin-top:.85rem">
-          <div class="console-hdr">
-            <div class="section-title" style="margin-bottom:0">Log</div>
-            <button class="btn btn-ghost btn-sm" onclick="clearLog('autoLog')">Clear</button>
-          </div>
-          <div class="console" id="autoLog"></div>
+        <div style="margin-top:.8rem">
+          <div class="chdr"><div class="card-title" style="margin:0">Log</div><button class="btn btn-ghost btn-sm" onclick="clrLog('autoLog')">Clear</button></div>
+          <div class="con" id="autoLog"></div>
         </div>
       </div>
+    </div>
 
-      <!-- ── Spammer ── -->
-      <div class="section">
-        <div class="section-title">Spammer</div>
+    <!-- ═══ SPAMMER ═══ -->
+    <div id="p-spam" style="display:none">
+      <div class="card">
+        <div class="card-title">Spammer</div>
         <div class="g2">
           <div>
             <label class="lbl">Target DM</label>
-            <div class="dm-search-wrap" style="margin-bottom:.4rem">
-              <input type="text" id="spamSearch" placeholder="🔍  Search…" oninput="filterDMs('spam')">
-            </div>
-            <div class="dm-list" id="spamDmList" style="max-height:160px"><p style="font-size:.78rem;color:var(--text-dim)">Loading…</p></div>
+            <input type="text" id="spamSearch" placeholder="🔍  Search…" oninput="renderDMs('spam')">
+            <div class="dm-list" id="spamDMs" style="max-height:180px"></div>
           </div>
           <div>
             <label class="lbl">Message to spam</label>
-            <textarea id="spamMsg" rows="3" placeholder="What to send…" style="margin-bottom:.75rem"></textarea>
+            <textarea id="spamMsg" rows="4" placeholder="What to send…"></textarea>
+          </div>
+        </div>
+        <div class="g3" style="margin-top:.8rem">
+          <div>
+            <div class="spd-disp" style="margin-bottom:.5rem">
+              <span class="spd-val" id="spamSpeedVal">1.0</span>
+              <span class="spd-unit">s</span>
+              <span class="spd-tag" id="spamSpeedTag"></span>
+            </div>
+            <div class="cslider" id="spamSlider">
+              <div class="track"><div class="tfill" id="spamFill"></div></div>
+              <div class="thumb" id="spamThumb"></div>
+            </div>
+            <div class="slbls"><span>0s</span><span>delay</span><span>5s</span></div>
+            <p class="note" id="spamSpeedNote" style="margin-top:.4rem"></p>
+          </div>
+          <div>
+            <label class="lbl">Max count <span style="font-size:.56rem">(0 = ∞)</span></label>
+            <input type="number" id="spamMax" value="0" min="0">
+            <p class="note" style="margin-top:.4rem">0 runs forever until stopped.</p>
+          </div>
+          <div>
+            <label class="lbl">Burst mode</label>
+            <div class="trow" style="padding:.35rem 0">
+              <label class="tog"><input type="checkbox" id="spamBurst"><span class="tslid"></span></label>
+              <div class="tlabel"><div class="tname">🔥 Instant fire</div><div class="tsub">0 delay, max speed</div></div>
+            </div>
+            <p class="note">⚠️ Very high rate limit risk</p>
+          </div>
+        </div>
+        <div class="srow" style="margin-top:.85rem">
+          <div class="sdot" id="spamDot"></div>
+          <span class="stxt" id="spamTxt">Idle</span>
+          <span style="margin-left:auto;font-size:.68rem;color:var(--amber)">📤 <span id="spamSent">0</span> sent</span>
+        </div>
+        <div class="ctrl">
+          <button class="btn btn-red btn-full" id="spamStart" onclick="startSpam()" disabled>▶ Start Spammer</button>
+          <button class="btn btn-stop" id="spamStop" onclick="stopJob('spam')" style="display:none">■ Stop</button>
+        </div>
+        <div style="margin-top:.8rem">
+          <div class="chdr"><div class="card-title" style="margin:0">Log</div><button class="btn btn-ghost btn-sm" onclick="clrLog('spamLog')">Clear</button></div>
+          <div class="con" id="spamLog"></div>
+        </div>
+      </div>
+    </div>
 
-            <div class="g2">
-              <div>
-                <label class="lbl">Delay (s)</label>
-                <input type="number" id="spamDelay" value="1.0" min="0.1" step="0.1">
+    <!-- ═══ STATUS ═══ -->
+    <div id="p-status" style="display:none">
+      <div class="card">
+        <div class="card-title">Online Status</div>
+        <div class="status-cards">
+          <div class="sc on" id="sc-online" onclick="pickStatus('online')">
+            <span class="sc-icon">😊</span>
+            <div class="sc-label">ONLINE</div>
+            <div class="sc-dot online"></div>
+          </div>
+          <div class="sc" id="sc-idle" onclick="pickStatus('idle')">
+            <span class="sc-icon">🌙</span>
+            <div class="sc-label">IDLE</div>
+            <div class="sc-dot idle"></div>
+          </div>
+          <div class="sc" id="sc-dnd" onclick="pickStatus('dnd')">
+            <span class="sc-icon">🔕</span>
+            <div class="sc-label">DO NOT DISTURB</div>
+            <div class="sc-dot dnd"></div>
+          </div>
+          <div class="sc" id="sc-invisible" onclick="pickStatus('invisible')">
+            <span class="sc-icon">👻</span>
+            <div class="sc-label">INVISIBLE</div>
+            <div class="sc-dot invisible"></div>
+          </div>
+        </div>
+
+        <div class="g2">
+          <div>
+            <label class="lbl">Custom status text</label>
+            <input type="text" id="statusText" placeholder="What are you up to?" maxlength="128">
+          </div>
+          <div>
+            <label class="lbl">Status emoji</label>
+            <div class="row">
+              <div class="epick">
+                <button class="ebtn" id="statusEmojiBtn" onclick="toggleStatusEpick()" title="Pick emoji">➕</button>
+                <div class="epop" id="statusEmojiPop">
+                  <div class="epop-hdr">Status emoji</div>
+                  <div class="egrid" id="statusEmojiGrid"></div>
+                  <button class="eclr" onclick="clearStatusEmoji()">✕ Clear</button>
+                </div>
               </div>
-              <div>
-                <label class="lbl">Max count <span style="font-size:.58rem">(0=∞)</span></label>
-                <input type="number" id="spamMax" value="0" min="0">
-              </div>
+              <span id="statusEmojiTxt" style="font-size:.76rem;color:var(--text-dim);flex:1;padding-left:.35rem">None</span>
             </div>
           </div>
         </div>
 
-        <div style="margin-top:.85rem">
-          <div class="status-row">
-            <div class="sdot" id="spamStatusDot"></div>
-            <span class="status-txt" id="spamStatusTxt">Idle</span>
-            <span style="margin-left:auto;font-size:.7rem;color:var(--amber)">📤 <span id="spamSent">0</span> sent</span>
-          </div>
-          <div class="ctrl-row">
-            <button class="btn btn-primary btn-full" id="spamStartBtn" onclick="startSpam()" disabled>▶ Start Spammer</button>
-            <button class="btn btn-stop" id="spamStopBtn" onclick="stopJob('spam')" style="display:none">■ Stop</button>
-          </div>
+        <div style="margin-top:1rem;display:flex;gap:.6rem;align-items:center">
+          <button class="btn btn-blue" onclick="applyStatus()" id="statusApplyBtn">✓ Apply Status</button>
+          <button class="btn btn-ghost btn-sm" onclick="clearStatus()">✕ Clear status</button>
+          <span id="statusResult" style="font-size:.72rem;color:var(--text-dim);margin-left:auto"></span>
         </div>
 
-        <div style="margin-top:.85rem">
-          <div class="console-hdr">
-            <div class="section-title" style="margin-bottom:0">Log</div>
-            <button class="btn btn-ghost btn-sm" onclick="clearLog('spamLog')">Clear</button>
-          </div>
-          <div class="console" id="spamLog"></div>
+        <div style="margin-top:1.2rem;padding-top:1.2rem;border-top:1px solid var(--border)">
+          <div class="card-title">Quick Presets</div>
+          <div style="display:flex;flex-wrap:wrap;gap:.45rem" id="presetBtns"></div>
         </div>
       </div>
-
-    </div><!-- /tabAuto -->
+    </div>
 
   </div><!-- /mainUI -->
 
-  <p style="text-align:center;font-size:.58rem;color:var(--text-dim);margin-top:1.5rem">
-    ⚠️ Self-botting may violate Discord's ToS &nbsp;·&nbsp; Your token is never shared with any third parties
+  <p style="text-align:center;font-size:.56rem;color:var(--text-dim);margin-top:1.5rem">
+    ⚠️ Self-botting may violate Discord's ToS &nbsp;·&nbsp; Your token is never shared with third parties
   </p>
 </div><!-- /app -->
 
 <script>
-// ── Config ─────────────────────────────────────────────────────────
+// ── API init ───────────────────────────────────────────────────────
 const NGROK_SRC = 'https://raw.githubusercontent.com/iamdookie1/website3/main/Ngrok%20link';
 let API = null;
 
-async function apiFetch(path, opts = {}) {
+async function apiFetch(path, opts={}) {
   return fetch(`${API}${path}`, {
     ...opts,
-    headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true', ...(opts.headers || {}) }
+    headers: {'Content-Type':'application/json','ngrok-skip-browser-warning':'true', ...(opts.headers||{})}
   });
 }
-
 async function initAPI() {
   try {
-    const r = await fetch(NGROK_SRC, { cache: 'no-store' });
+    const r = await fetch(NGROK_SRC, {cache:'no-store'});
     if (!r.ok) throw 0;
-    const url = (await r.text()).trim().replace(/\/$/, '');
+    const url = (await r.text()).trim().replace(/\/$/,'');
     if (!url.startsWith('http')) throw 0;
     API = url + '/api';
-    const ping = await fetch(`${API}/ping`, { headers: { 'ngrok-skip-browser-warning': 'true' }, signal: AbortSignal.timeout(7000) });
-    if (!ping.ok) throw 0;
-    document.getElementById('apiDownModal').style.display = 'none';
-  } catch { showModal(); }
+    const p = await fetch(`${API}/ping`, {headers:{'ngrok-skip-browser-warning':'true'}, signal:AbortSignal.timeout(7000)});
+    if (!p.ok) throw 0;
+    document.getElementById('apiModal').style.display = 'none';
+  } catch { showApiDown(); }
 }
-function showModal() { document.getElementById('apiDownModal').style.display = 'flex'; }
-async function retryAPI() {
-  const btn = document.getElementById('retryBtn');
-  btn.textContent = 'Checking…'; btn.disabled = true;
-  await initAPI();
-  btn.textContent = 'Retry Connection'; btn.disabled = false;
+function showApiDown(){ document.getElementById('apiModal').style.display = 'flex'; }
+async function retryAPI(){
+  const b=document.getElementById('retryBtn'); b.textContent='Checking…'; b.disabled=true;
+  await initAPI(); b.textContent='Retry Connection'; b.disabled=false;
 }
 
-// ── State ───────────────────────────────────────────────────────────
+// ── State ──────────────────────────────────────────────────────────
 const S = {
-  token: localStorage.getItem('dc_token') || '',
+  token: localStorage.getItem('dc_token')||'',
   user: null, dms: [],
-  purge: { dm: null, speed: 1.0, filter: 'all', jobId: null, status: 'idle', seen: new Set() },
-  auto:  { dm: null, person: null, jobId: null, status: 'idle', seen: new Set(), emoji: '' },
-  spam:  { dm: null, jobId: null, status: 'idle', seen: new Set() },
+  purge: {dm:null, speed:1.0, filter:'all', jobId:null, status:'idle', seen:new Set()},
+  auto:  {dm:null, person:null, jobId:null, status:'idle', seen:new Set(), emoji:''},
+  spam:  {dm:null, speed:1.0, jobId:null, status:'idle', seen:new Set()},
+  statusChoice: 'online', statusEmoji: '',
 };
 const polls = {};
 
-// ── Init ────────────────────────────────────────────────────────────
-window.addEventListener('DOMContentLoaded', () => {
+// ── DOMContentLoaded ───────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', ()=>{
   if (S.token) document.getElementById('tokenInput').value = S.token;
-  initSlider('purgeSlider', 'purgeFill', 'purgeThumb', 'purgeSpeedVal', 'purgeSpeedTag', 'purgeSpeedNote', v => S.purge.speed = v);
-  setPurgeFilter('all');
-  buildEmojiGrid();
-  log('purgeLog', '// Purger ready.', 'sys');
-  log('autoLog',  '// Auto bot ready.', 'sys');
-  log('spamLog',  '// Spammer ready.', 'sys');
+  initSlider('purgeSlider','purgeFill','purgeThumb','purgeSpeedVal','purgeSpeedTag','purgeSpeedNote', v=>S.purge.speed=v, 0, 5);
+  initSlider('spamSlider','spamFill','spamThumb','spamSpeedVal','spamSpeedTag','spamSpeedNote', v=>S.spam.speed=v, 0, 5);
+  pfilter('all');
+  buildEmojis('emojiGrid', pickEmoji);
+  buildEmojis('statusEmojiGrid', pickStatusEmoji);
+  buildPresets();
+  ['purgeLog','autoLog','spamLog'].forEach(id=>log(id,'// Ready.','sys'));
   initAPI();
 });
 
-// ── Auth ────────────────────────────────────────────────────────────
-function toggleToken() {
-  const i = document.getElementById('tokenInput'), b = document.getElementById('showBtn');
-  i.type = i.type === 'password' ? 'text' : 'password';
-  b.textContent = i.type === 'password' ? '👁' : '🙈';
+// ── Auth ──────────────────────────────────────────────────────────
+function toggleToken(){
+  const i=document.getElementById('tokenInput'),b=document.getElementById('showBtn');
+  i.type=i.type==='password'?'text':'password'; b.textContent=i.type==='password'?'👁':'🙈';
 }
-async function connect() {
-  if (!API) { showModal(); return; }
-  const token = document.getElementById('tokenInput').value.trim();
-  if (!token) return;
-  S.token = token;
-  const btn = document.getElementById('connectBtn');
-  btn.disabled = true; btn.textContent = '…'; showErr('authErr', '');
+async function connect(){
+  if(!API){showApiDown();return;}
+  const token=document.getElementById('tokenInput').value.trim(); if(!token) return;
+  S.token=token;
+  const btn=document.getElementById('connectBtn'); btn.disabled=true; btn.textContent='…'; showErr('authErr','');
   try {
-    const r = await apiFetch('/validate', { method: 'POST', body: JSON.stringify({ token }) });
-    const d = await r.json();
-    if (d.ok) {
-      S.user = d.user;
-      localStorage.setItem('dc_token', token);
-      document.getElementById('userPillName').textContent = d.user.global_name || d.user.username;
-      document.getElementById('userPill').style.display = 'flex';
-      document.getElementById('mainUI').style.display = 'block';
-      document.getElementById('authSection').style.display = 'none';
-      log('purgeLog', `// Authenticated as ${d.user.username}`, 'sys');
+    const r=await apiFetch('/validate',{method:'POST',body:JSON.stringify({token})});
+    const d=await r.json();
+    if(d.ok){
+      S.user=d.user; localStorage.setItem('dc_token',token);
+      document.getElementById('upillName').textContent=d.user.global_name||d.user.username;
+      document.getElementById('upill').style.display='flex';
+      document.getElementById('mainUI').style.display='block';
+      document.getElementById('authCard').style.display='none';
+      log('purgeLog',`// Connected as ${d.user.username}`,'sys');
       loadDMs();
-    } else { showErr('authErr', 'Invalid token — check and try again.'); }
-  } catch { showErr('authErr', 'Cannot reach backend. Is purger_backend.py running?'); }
-  btn.disabled = false; btn.textContent = 'Connect';
+    } else { showErr('authErr','Invalid token — double-check and try again.'); }
+  } catch { showErr('authErr','Cannot reach backend — is purger_backend.py running?'); }
+  btn.disabled=false; btn.textContent='Connect';
 }
-function disconnect() {
-  S.user = null; S.dms = []; localStorage.removeItem('dc_token');
-  ['purge','auto','spam'].forEach(k => { S[k].dm = null; S[k].jobId = null; S[k].status = 'idle'; clearInterval(polls[k]); });
-  document.getElementById('userPill').style.display = 'none';
-  document.getElementById('mainUI').style.display = 'none';
-  document.getElementById('authSection').style.display = 'block';
-  document.getElementById('tokenInput').value = '';
-}
-
-// ── DMs ─────────────────────────────────────────────────────────────
-async function loadDMs() {
-  ['purgeDmList','autoDmList','spamDmList'].forEach(id => { document.getElementById(id).innerHTML = '<p style="font-size:.78rem;color:var(--text-dim)">Loading…</p>'; });
-  const r = await apiFetch('/dms', { method: 'POST', body: JSON.stringify({ token: S.token }) });
-  const d = await r.json();
-  if (d.ok) {
-    S.dms = d.dms;
-    renderDMs('purge'); renderDMs('auto'); renderDMs('spam');
-    log('purgeLog', `// Loaded ${d.dms.length} DM channels`, 'sys');
-  }
+function disconnect(){
+  S.user=null; S.dms=[]; localStorage.removeItem('dc_token');
+  ['purge','auto','spam'].forEach(k=>{S[k].dm=null;S[k].jobId=null;S[k].status='idle';clearInterval(polls[k]);});
+  document.getElementById('upill').style.display='none';
+  document.getElementById('mainUI').style.display='none';
+  document.getElementById('authCard').style.display='block';
+  document.getElementById('tokenInput').value='';
 }
 
-function filterDMs(ctx) {
-  const q = document.getElementById(`${ctx}Search`).value.toLowerCase();
-  renderDMs(ctx, q);
+// ── DMs ───────────────────────────────────────────────────────────
+async function loadDMs(){
+  try {
+    const r=await apiFetch('/dms',{method:'POST',body:JSON.stringify({token:S.token})});
+    const d=await r.json();
+    if(d.ok){ S.dms=d.dms; renderDMs('purge'); renderDMs('auto'); renderDMs('spam'); }
+  } catch {}
 }
-
-function renderDMs(ctx, q = '') {
-  const listId = ctx === 'purge' ? 'purgeDmList' : ctx === 'auto' ? 'autoDmList' : 'spamDmList';
-  const el = document.getElementById(listId);
-  const filtered = q ? S.dms.filter(d => d.name.toLowerCase().includes(q)) : S.dms;
-  if (!filtered.length) { el.innerHTML = '<p style="font-size:.78rem;color:var(--text-dim)">No DMs found.</p>'; return; }
-  el.innerHTML = filtered.map(dm => {
-    const sel = S[ctx].dm?.id === dm.id;
-    const initials = dm.name.slice(0,2).toUpperCase();
-    const userStr = dm.recipients.length === 1 ? `@${dm.recipients[0].username}` : `${dm.recipients.length} people`;
-    return `<div class="dm-item ${sel?'sel':''}" onclick="selectDM('${ctx}','${dm.id}')">
-      <div class="dm-av">${initials}</div>
-      <div class="dm-info">
-        <div class="dm-display">${esc(dm.name)}</div>
-        <div class="dm-username">${esc(userStr)}</div>
-      </div>
-      <span class="dm-tag">${dm.type===3?'GROUP':'DM'}</span>
-      ${sel?'<span class="dm-sel-dot">●</span>':''}
+function renderDMs(ctx){
+  const q=(document.getElementById(`${ctx}Search`)||{}).value?.toLowerCase()||'';
+  const el=document.getElementById(`${ctx}DMs`);
+  const list=q?S.dms.filter(d=>d.name.toLowerCase().includes(q)):S.dms;
+  if(!list.length){el.innerHTML='<p style="font-size:.76rem;color:var(--text-dim);padding:.4rem 0">No DMs found.</p>';return;}
+  el.innerHTML=list.map(dm=>{
+    const sel=S[ctx].dm?.id===dm.id;
+    const ustr=dm.recipients.length===1?`@${dm.recipients[0].username}`:`${dm.recipients.length} people`;
+    return `<div class="dmi${sel?' sel':''}" onclick="selDM('${ctx}','${dm.id}')">
+      <div class="dm-av">${dm.name.slice(0,2).toUpperCase()}</div>
+      <div class="dm-info"><div class="dm-dn">${esc(dm.name)}</div><div class="dm-un">${esc(ustr)}</div></div>
+      <span class="dm-type">${dm.type===3?'GROUP':'DM'}</span>
+      ${sel?'<span class="dm-dot">●</span>':''}
     </div>`;
   }).join('');
 }
-
-function selectDM(ctx, id) {
-  S[ctx].dm = S.dms.find(d => d.id === id) || null;
-  renderDMs(ctx, document.getElementById(`${ctx}Search`).value.toLowerCase());
-  if (ctx === 'purge') {
-    document.getElementById('purgeTarget').textContent = S.purge.dm?.name || '—';
-    document.getElementById('purgeStartBtn').disabled = !S.purge.dm;
-  }
-  if (ctx === 'auto') { populatePersons(); checkAutoReady(); }
-  if (ctx === 'spam') { document.getElementById('spamStartBtn').disabled = !S.spam.dm; }
+function selDM(ctx,id){
+  S[ctx].dm=S.dms.find(d=>d.id===id)||null;
+  renderDMs(ctx);
+  if(ctx==='purge'){document.getElementById('purgeTargetName').textContent=S.purge.dm?.name||'—';document.getElementById('purgeStart').disabled=!S.purge.dm;}
+  if(ctx==='auto'){fillPersons();checkAutoReady();}
+  if(ctx==='spam'){document.getElementById('spamStart').disabled=!S.spam.dm;}
 }
 
-// ── Person picker ───────────────────────────────────────────────────
-function populatePersons() {
-  const dm = S.auto.dm;
-  if (!dm) return;
-  S.auto.person = null;
-  document.getElementById('personSelectLabel').textContent = 'Pick a person…';
-  document.getElementById('personSelectLabel').style.color = 'var(--text-dim)';
-  renderPersons('');
-  document.getElementById('personSelectBtn').disabled = false;
+// ── Person picker ──────────────────────────────────────────────────
+function fillPersons(q=''){
+  const dm=S.auto.dm; if(!dm) return;
+  const list=document.getElementById('personList');
+  const recs=q?dm.recipients.filter(r=>r.global_name.toLowerCase().includes(q)||r.username.toLowerCase().includes(q)):dm.recipients;
+  list.innerHTML=recs.map(r=>`
+    <div class="pitem${S.auto.person?.id===r.id?' sel':''}" onclick="selPerson('${r.id}','${esc(r.global_name)}','${esc(r.username)}')">
+      <div class="pav">${r.global_name.slice(0,2).toUpperCase()}</div>
+      <div><div class="pdn">${esc(r.global_name)}</div><div class="pun">@${esc(r.username)}</div></div>
+    </div>`).join('')||'<p style="font-size:.72rem;color:var(--text-dim);padding:.5rem .82rem">No results</p>';
 }
-
-function renderPersons(q) {
-  const dm = S.auto.dm;
-  if (!dm) return;
-  const list = document.getElementById('personList');
-  const recs = q ? dm.recipients.filter(r => r.global_name.toLowerCase().includes(q) || r.username.toLowerCase().includes(q)) : dm.recipients;
-  list.innerHTML = recs.map(r => `
-    <div class="person-item ${S.auto.person?.id === r.id ? 'sel' : ''}" onclick="selectPerson('${r.id}','${esc(r.global_name)}','${esc(r.username)}')">
-      <div class="person-av">${r.global_name.slice(0,2).toUpperCase()}</div>
-      <div class="person-info">
-        <div class="person-display">${esc(r.global_name)}</div>
-        <div class="person-username">@${esc(r.username)}</div>
-      </div>
-    </div>`).join('') || '<p style="font-size:.75rem;color:var(--text-dim);padding:.5rem .85rem">No results</p>';
-}
-
-function filterPersons(q) { renderPersons(q.toLowerCase()); }
-
-function selectPerson(id, display, username) {
-  S.auto.person = { id, display, username };
-  document.getElementById('personSelectLabel').textContent = `${display}  @${username}`;
-  document.getElementById('personSelectLabel').style.color = 'var(--text)';
-  document.getElementById('personDropdown').classList.remove('open');
+function filterPersons(q){ fillPersons(q.toLowerCase()); }
+function selPerson(id,dn,un){
+  S.auto.person={id,dn,un};
+  document.getElementById('personLabel').textContent=`${dn}  @${un}`;
+  document.getElementById('personLabel').style.color='var(--text)';
+  document.getElementById('personDrop').classList.remove('open');
   checkAutoReady();
 }
-
-function togglePersonDropdown() {
-  if (!S.auto.dm) return;
-  document.getElementById('personDropdown').classList.toggle('open');
+function togglePDrop(){
+  if(!S.auto.dm) return;
+  fillPersons();
+  document.getElementById('personDrop').classList.toggle('open');
 }
-document.addEventListener('click', e => {
-  if (!e.target.closest('.person-select-wrap')) document.getElementById('personDropdown')?.classList.remove('open');
-  if (!e.target.closest('.emoji-pick-wrap')) document.getElementById('emojiPopup')?.classList.remove('open');
-});
+function checkAutoReady(){ document.getElementById('autoStart').disabled=!S.auto.dm||!S.auto.person; }
 
-// ── Emoji picker ─────────────────────────────────────────────────────
-const EMOJIS = [
+// ── Emoji picker ───────────────────────────────────────────────────
+const EMOJIS=[
   '😀','😂','🤣','😅','😊','🥹','😇','😍','🥰','🤩',
   '😎','🥳','🤪','😜','😏','😒','🙄','😤','😡','🤬',
   '😭','😢','😪','😴','🤔','🤫','🤭','🫡','😬','🥺',
@@ -690,245 +684,258 @@ const EMOJIS = [
   '✅','❌','🎉','💫','⭐','🌟','💥','🎊','🏆','💎',
   '🎯','🚀','🌈','💬','📌','🔔','❓','❗','💤','🎵',
   '🎶','🌊','💨','⚡','🫧','🍀','🦋','🐉','🌸','🎮',
+  '🍕','🍔','🧋','🍜','🍣','🍩','🎂','🍭','🍪','🧁',
 ];
-
-function buildEmojiGrid() {
-  const g = document.getElementById('emojiGrid');
-  g.innerHTML = EMOJIS.map(e => `<button class="egrid-btn" onclick="pickEmoji('${e}')">${e}</button>`).join('');
-}
-function toggleEmojiPicker() { document.getElementById('emojiPopup').classList.toggle('open'); }
-function pickEmoji(e) {
-  S.auto.emoji = e;
-  document.getElementById('emojiBtn').textContent = e;
-  document.getElementById('emojiBtn').classList.add('has-emoji');
-  document.getElementById('emojiSelected').textContent = e + ' selected';
-  document.getElementById('emojiSelected').style.color = 'var(--text)';
-  document.getElementById('emojiPopup').classList.remove('open');
-}
-function clearEmoji() {
-  S.auto.emoji = '';
-  document.getElementById('emojiBtn').textContent = '➕';
-  document.getElementById('emojiBtn').classList.remove('has-emoji');
-  document.getElementById('emojiSelected').textContent = 'None selected';
-  document.getElementById('emojiSelected').style.color = 'var(--text-dim)';
-  document.getElementById('emojiPopup').classList.remove('open');
+function buildEmojis(gridId, onPick){
+  document.getElementById(gridId).innerHTML=EMOJIS.map(e=>`<button class="egbtn" onclick="(${onPick.name})(this,'${e}')">${e}</button>`).join('');
 }
 
-// ── Custom Slider ────────────────────────────────────────────────────
-function initSlider(sliderId, fillId, thumbId, valId, tagId, noteId, onUpdate) {
-  const slider = document.getElementById(sliderId);
-  const fill = document.getElementById(fillId);
-  const thumb = document.getElementById(thumbId);
-  const MIN = 0.1, MAX = 5.0;
+// Auto emoji
+function toggleEpick(){ document.getElementById('emojiPop').classList.toggle('open'); }
+function pickEmoji(_,e){ S.auto.emoji=e; document.getElementById('emojiBtn').textContent=e; document.getElementById('emojiBtn').classList.add('has'); document.getElementById('emojiTxt').textContent=e+' selected'; document.getElementById('emojiTxt').style.color='var(--text)'; document.getElementById('emojiPop').classList.remove('open'); }
+function clearEmoji(){ S.auto.emoji=''; document.getElementById('emojiBtn').textContent='➕'; document.getElementById('emojiBtn').classList.remove('has'); document.getElementById('emojiTxt').textContent='None'; document.getElementById('emojiTxt').style.color='var(--text-dim)'; document.getElementById('emojiPop').classList.remove('open'); }
 
-  function toP(v) { return (Math.log(v) - Math.log(MIN)) / (Math.log(MAX) - Math.log(MIN)); }
-  function fromP(p) { return Math.exp(Math.log(MIN) + p * (Math.log(MAX) - Math.log(MIN))); }
+// Status emoji
+function toggleStatusEpick(){ document.getElementById('statusEmojiPop').classList.toggle('open'); }
+function pickStatusEmoji(_,e){ S.statusEmoji=e; document.getElementById('statusEmojiBtn').textContent=e; document.getElementById('statusEmojiBtn').classList.add('has'); document.getElementById('statusEmojiTxt').textContent=e; document.getElementById('statusEmojiTxt').style.color='var(--text)'; document.getElementById('statusEmojiPop').classList.remove('open'); }
+function clearStatusEmoji(){ S.statusEmoji=''; document.getElementById('statusEmojiBtn').textContent='➕'; document.getElementById('statusEmojiBtn').classList.remove('has'); document.getElementById('statusEmojiTxt').textContent='None'; document.getElementById('statusEmojiTxt').style.color='var(--text-dim)'; document.getElementById('statusEmojiPop').classList.remove('open'); }
 
-  function update(speed) {
-    const p = toP(speed) * 100;
-    fill.style.width = p + '%';
-    thumb.style.left = p + '%';
-    document.getElementById(valId).textContent = speed.toFixed(speed < 1 ? 2 : 1);
-    let tag, note, col;
-    if      (speed < 0.25) { tag = '🔴 Extreme'; col = '#e63946'; note = '⚠️ Very high ban risk.'; }
-    else if (speed < 0.5)  { tag = '⚡ Fast';    col = '#f4a261'; note = '⚡ Fast but risky.'; }
-    else if (speed < 1.2)  { tag = '🟡 Normal';  col = '#f4de65'; note = '🟡 Balanced speed.'; }
-    else if (speed < 3)    { tag = '🟢 Safe';    col = '#2ec4b6'; note = '🟢 Low risk.'; }
-    else                   { tag = '🐢 Very Safe';col = '#2ec4b6'; note = '🟢 Very safe for long runs.'; }
-    const tagEl = document.getElementById(tagId);
-    tagEl.textContent = tag; tagEl.style.color = col; tagEl.style.background = col + '18';
-    document.getElementById(noteId).textContent = note;
-    onUpdate(parseFloat(speed.toFixed(2)));
+// Close dropdowns on outside click
+document.addEventListener('click', e=>{
+  if(!e.target.closest('.ppick')) document.getElementById('personDrop')?.classList.remove('open');
+  if(!e.target.closest('#emojiBtn')&&!e.target.closest('#emojiPop')) document.getElementById('emojiPop')?.classList.remove('open');
+  if(!e.target.closest('#statusEmojiBtn')&&!e.target.closest('#statusEmojiPop')) document.getElementById('statusEmojiPop')?.classList.remove('open');
+});
+
+// ── Slider ─────────────────────────────────────────────────────────
+// Slider supports full range 0–5, linear (no log needed since 0 is valid)
+function initSlider(sid,fid,tid,vid,tagid,noteid,onUpdate,MIN,MAX){
+  const sl=document.getElementById(sid),fill=document.getElementById(fid),thumb=document.getElementById(tid);
+  function toP(v){ return (v-MIN)/(MAX-MIN); }
+  function fromP(p){ return MIN+p*(MAX-MIN); }
+  function update(v){
+    v=Math.max(MIN,Math.min(MAX,+v.toFixed(2)));
+    const p=toP(v)*100;
+    fill.style.width=p+'%'; thumb.style.left=p+'%';
+    document.getElementById(vid).textContent=v===0?'0.0':v.toFixed(v<1?2:1);
+    let tag,note,col;
+    if(v===0){tag='💀 Instant';col='#f72585';note='⚠️ 0 delay — will get rate limited fast!';}
+    else if(v<0.25){tag='🔴 Extreme';col='#e63946';note='⚠️ Very high ban risk.';}
+    else if(v<0.5){tag='⚡ Fast';col='#f4a261';note='⚡ Fast but risky.';}
+    else if(v<1.2){tag='🟡 Normal';col='#f4de65';note='🟡 Balanced.';}
+    else if(v<3){tag='🟢 Safe';col='#2ec4b6';note='🟢 Low risk.';}
+    else{tag='🐢 Very Safe';col='#2ec4b6';note='🟢 Great for long runs.';}
+    const t=document.getElementById(tagid); t.textContent=tag; t.style.color=col; t.style.background=col+'18';
+    if(noteid) document.getElementById(noteid).textContent=note;
+    onUpdate(v);
   }
-
-  function fromEvent(e) {
-    const rect = slider.getBoundingClientRect();
-    const cx = e.touches ? e.touches[0].clientX : e.clientX;
-    let p = Math.max(0, Math.min(1, (cx - rect.left) / rect.width));
-    update(fromP(p));
+  function fromEv(e){
+    const rect=sl.getBoundingClientRect(),cx=e.touches?e.touches[0].clientX:e.clientX;
+    update(fromP(Math.max(0,Math.min(1,(cx-rect.left)/rect.width))));
   }
-
-  let drag = false;
-  slider.addEventListener('mousedown',  e => { drag = true; slider.classList.add('dragging'); fromEvent(e); e.preventDefault(); });
-  slider.addEventListener('touchstart', e => { drag = true; slider.classList.add('dragging'); fromEvent(e); }, { passive: true });
-  window.addEventListener('mousemove',  e => { if (drag) fromEvent(e); });
-  window.addEventListener('touchmove',  e => { if (drag) fromEvent(e); }, { passive: true });
-  window.addEventListener('mouseup',    () => { drag = false; slider.classList.remove('dragging'); });
-  window.addEventListener('touchend',   () => { drag = false; slider.classList.remove('dragging'); });
-  slider.setAttribute('tabindex', '0');
-  slider.addEventListener('keydown', e => {
-    let p = toP(S.purge.speed);
-    if      (e.key === 'ArrowRight') p = Math.min(1, p + 0.02);
-    else if (e.key === 'ArrowLeft')  p = Math.max(0, p - 0.02);
-    else return;
-    update(fromP(p)); e.preventDefault();
+  let drag=false;
+  sl.addEventListener('mousedown',e=>{drag=true;sl.classList.add('drag');fromEv(e);e.preventDefault();});
+  sl.addEventListener('touchstart',e=>{drag=true;sl.classList.add('drag');fromEv(e);},{passive:true});
+  window.addEventListener('mousemove',e=>{if(drag)fromEv(e);});
+  window.addEventListener('touchmove',e=>{if(drag)fromEv(e);},{passive:true});
+  window.addEventListener('mouseup',()=>{drag=false;sl.classList.remove('drag');});
+  window.addEventListener('touchend',()=>{drag=false;sl.classList.remove('drag');});
+  sl.setAttribute('tabindex','0');
+  sl.addEventListener('keydown',e=>{
+    let cur=MIN==='purge'?S.purge.speed:S.spam.speed; // handled per-slider via onUpdate
+    // Re-read from display
+    cur=parseFloat(document.getElementById(vid).textContent)||1;
+    const step=e.shiftKey?0.5:0.05;
+    if(e.key==='ArrowRight') update(Math.min(MAX,cur+step));
+    else if(e.key==='ArrowLeft') update(Math.max(MIN,cur-step));
   });
   update(1.0);
 }
 
-// ── Purge filter ─────────────────────────────────────────────────────
-function setPurgeFilter(f) {
-  S.purge.filter = f;
-  ['pfAll','pfBefore','pfAfter','pfCount'].forEach(id => document.getElementById(id).className = 'ftab');
-  document.getElementById('purgeDateRow').style.display  = 'none';
-  document.getElementById('purgeCountRow').style.display = 'none';
-  const notes = { all:'Deletes all your messages in this DM.', before:'Deletes your messages sent before the chosen date.', after:'Deletes your messages sent after the chosen date.', count:'Deletes your last N messages.' };
-  document.getElementById('purgeFilterNote').textContent = notes[f];
-  if (f === 'all')    { document.getElementById('pfAll').className    = 'ftab fa'; }
-  if (f === 'before') { document.getElementById('pfBefore').className = 'ftab fa'; document.getElementById('purgeDateRow').style.display = 'block'; }
-  if (f === 'after')  { document.getElementById('pfAfter').className  = 'ftab fb'; document.getElementById('purgeDateRow').style.display = 'block'; }
-  if (f === 'count')  { document.getElementById('pfCount').className  = 'ftab fc'; document.getElementById('purgeCountRow').style.display = 'block'; }
+// ── Purge filter ──────────────────────────────────────────────────
+function pfilter(f){
+  S.purge.filter=f;
+  const styles={all:'btn-ghost',before:'btn-ghost',after:'btn-ghost',count:'btn-ghost'};
+  ['all','before','after','count'].forEach(k=>{ const b=document.getElementById(`pf-${k}`); b.className='btn btn-sm btn-ghost'; });
+  const active=document.getElementById(`pf-${f}`);
+  if(f==='all'||f==='before'){active.style.borderColor='rgba(230,57,70,.5)';active.style.color='var(--red)';}
+  else if(f==='after'){active.style.borderColor='rgba(46,196,182,.5)';active.style.color='var(--green)';}
+  else {active.style.borderColor='rgba(76,201,240,.5)';active.style.color='var(--blue)';}
+  document.getElementById('purgeDateWrap').style.display=f==='before'||f==='after'?'block':'none';
+  document.getElementById('purgeCountWrap').style.display=f==='count'?'block':'none';
+  const notes={all:'Deletes all your messages in this DM.',before:'Deletes your messages before the date.',after:'Deletes your messages after the date.',count:'Deletes your last N messages.'};
+  document.getElementById('purgeFilterNote').textContent=notes[f];
 }
 
-// ── Tab switch ──────────────────────────────────────────────────────
-function switchTab(t) {
-  document.getElementById('tabPurge').style.display = t === 'purge' ? 'block' : 'none';
-  document.getElementById('tabAuto').style.display  = t === 'auto'  ? 'block' : 'none';
-  ['Purge','Auto'].forEach(n => {
-    document.getElementById(`tabBtn${n}`).className = 'tab-btn' + (t === n.toLowerCase() ? ' active' : '');
+// ── Tab switch ────────────────────────────────────────────────────
+function tab(t){
+  ['purge','auto','spam','status'].forEach(k=>{
+    document.getElementById(`p-${k}`).style.display=k===t?'block':'none';
+    document.getElementById(`t-${k}`).className='tbtn'+(k===t?' on':'');
   });
 }
 
-// ── Purge ────────────────────────────────────────────────────────────
-async function startPurge() {
-  if (!S.purge.dm || !S.user) return;
-  const filter = S.purge.filter;
-  const dateVal = document.getElementById('purgeDateInput').value;
-  if ((filter === 'before' || filter === 'after') && !dateVal) { log('purgeLog','// Set a date first.','warn'); return; }
-  const count = parseInt(document.getElementById('purgeCount').value) || 5;
+// ── Purge ─────────────────────────────────────────────────────────
+async function startPurge(){
+  if(!S.purge.dm||!S.user) return;
+  const f=S.purge.filter, dv=document.getElementById('purgeDateIn').value;
+  if((f==='before'||f==='after')&&!dv){log('purgeLog','// Please set a date first.','warn');return;}
+  const count=parseInt(document.getElementById('purgeCountIn').value)||5;
   S.purge.seen.clear();
-  document.getElementById('purgeDeleted').textContent = '0';
-  document.getElementById('purgeSkipped').textContent = '0';
-  log('purgeLog', `// Purging: ${S.purge.dm.name} [${filter}]`, 'sys');
+  document.getElementById('purgeDelCnt').textContent='0';
+  document.getElementById('purgeSkipCnt').textContent='0';
+  log('purgeLog',`// Purging ${S.purge.dm.name} [${f}]`,'sys');
   try {
-    const r = await apiFetch('/purge/start', { method:'POST', body: JSON.stringify({
-      token: S.token, channel_id: S.purge.dm.id, user_id: S.user.id,
-      delay: S.purge.speed, filter_type: filter,
-      filter_date: dateVal ? new Date(dateVal).toISOString() : null, count
+    const r=await apiFetch('/purge/start',{method:'POST',body:JSON.stringify({
+      token:S.token, channel_id:S.purge.dm.id, user_id:S.user.id,
+      delay:S.purge.speed, filter_type:f,
+      filter_date:dv?new Date(dv).toISOString():null, count
     })});
-    const d = await r.json();
-    if (d.ok) { S.purge.jobId = d.job_id; setStatus('purge','starting'); pollJob('purge'); }
-  } catch { log('purgeLog','// ERROR: Failed to start.','err'); }
+    const d=await r.json();
+    if(d.ok){S.purge.jobId=d.job_id;setStatus('purge','starting');startPoll('purge');}
+  } catch {log('purgeLog','// ERROR: Failed to start purge.','err');}
 }
 
-// ── Auto Reply ────────────────────────────────────────────────────────
-function checkAutoReady() {
-  document.getElementById('autoStartBtn').disabled = !S.auto.dm || !S.auto.person;
-}
-async function startAuto() {
-  if (!S.auto.dm || !S.auto.person) return;
+// ── Auto ──────────────────────────────────────────────────────────
+async function startAuto(){
+  if(!S.auto.dm||!S.auto.person) return;
   S.auto.seen.clear();
-  document.getElementById('autoReplied').textContent = '0';
-  document.getElementById('autoReacted').textContent = '0';
-  log('autoLog', `// Auto reply: watching ${S.auto.dm.name} for msgs from ${S.auto.person.display}`, 'sys');
+  document.getElementById('autoReplied').textContent='0';
+  document.getElementById('autoReacted').textContent='0';
+  log('autoLog',`// Watching ${S.auto.dm.name} for messages from ${S.auto.person.dn}…`,'sys');
+  const trig=document.getElementById('autoTrig').value;
+  if(!trig) log('autoLog','// No trigger set — will reply to EVERY message from target.','warn');
   try {
-    const r = await apiFetch('/auto/start', { method:'POST', body: JSON.stringify({
-      token: S.token, channel_id: S.auto.dm.id,
-      target_user_id: S.auto.person.id,
-      trigger: document.getElementById('autoTrigger').value,
-      case_sensitive: document.getElementById('autoCaseSen').checked,
-      reply_msg: document.getElementById('autoReply').value,
-      react_emoji: S.auto.emoji,
-      react_to_all: document.getElementById('autoReactAll').checked,
-      human_mode: document.getElementById('autoHuman').checked,
-      max_replies: parseInt(document.getElementById('autoMaxReplies').value) || 0,
-      blacklist: document.getElementById('autoBlacklist').value,
+    const r=await apiFetch('/auto/start',{method:'POST',body:JSON.stringify({
+      token:S.token, channel_id:S.auto.dm.id, target_user_id:S.auto.person.id,
+      trigger:trig, case_sensitive:document.getElementById('autoCS').checked,
+      reply_msg:document.getElementById('autoReply').value,
+      react_emoji:S.auto.emoji, react_to_all:document.getElementById('reactAll').checked,
+      human_mode:document.getElementById('humanMode').checked,
+      max_replies:parseInt(document.getElementById('maxReplies').value)||0,
+      blacklist:document.getElementById('blacklist').value,
     })});
-    const d = await r.json();
-    if (d.ok) { S.auto.jobId = d.job_id; setStatus('auto','starting'); pollJob('auto'); }
-  } catch { log('autoLog','// ERROR: Failed to start.','err'); }
+    const d=await r.json();
+    if(d.ok){S.auto.jobId=d.job_id;setStatus('auto','starting');startPoll('auto');}
+  } catch {log('autoLog','// ERROR: Failed to start auto reply.','err');}
 }
 
-// ── Spam ────────────────────────────────────────────────────────────
-async function startSpam() {
-  if (!S.spam.dm) return;
-  const msg = document.getElementById('spamMsg').value;
-  if (!msg.trim()) { log('spamLog','// Enter a message first.','warn'); return; }
+// ── Spam ──────────────────────────────────────────────────────────
+async function startSpam(){
+  if(!S.spam.dm) return;
+  const msg=document.getElementById('spamMsg').value;
+  if(!msg.trim()){log('spamLog','// Enter a message first.','warn');return;}
+  const burst=document.getElementById('spamBurst').checked;
   S.spam.seen.clear();
-  document.getElementById('spamSent').textContent = '0';
-  log('spamLog', `// Spamming: ${S.spam.dm.name}`, 'sys');
+  document.getElementById('spamSent').textContent='0';
+  log('spamLog',`// Spamming ${S.spam.dm.name}${burst?' [BURST MODE]':''}…`,'sys');
   try {
-    const r = await apiFetch('/spam/start', { method:'POST', body: JSON.stringify({
-      token: S.token, channel_id: S.spam.dm.id,
-      message: msg,
-      delay: parseFloat(document.getElementById('spamDelay').value) || 1,
-      max_count: parseInt(document.getElementById('spamMax').value) || 0,
+    const r=await apiFetch('/spam/start',{method:'POST',body:JSON.stringify({
+      token:S.token, channel_id:S.spam.dm.id, message:msg,
+      delay:burst?0:S.spam.speed,
+      max_count:parseInt(document.getElementById('spamMax').value)||0,
     })});
-    const d = await r.json();
-    if (d.ok) { S.spam.jobId = d.job_id; setStatus('spam','starting'); pollJob('spam'); }
-  } catch { log('spamLog','// ERROR: Failed to start.','err'); }
+    const d=await r.json();
+    if(d.ok){S.spam.jobId=d.job_id;setStatus('spam','starting');startPoll('spam');}
+  } catch {log('spamLog','// ERROR: Failed to start spammer.','err');}
 }
 
-// ── Stop / poll ──────────────────────────────────────────────────────
-async function stopJob(ctx) {
-  const jid = S[ctx].jobId;
-  if (!jid) return;
-  const ep = ctx === 'purge' ? 'purge' : ctx === 'auto' ? 'auto' : 'spam';
-  log(`${ctx}Log`, '// Stop signal sent…', 'warn');
-  try { await apiFetch(`/${ep}/stop/${jid}`, { method:'POST' }); } catch {}
+// ── Stop + Poll ───────────────────────────────────────────────────
+async function stopJob(ctx){
+  const jid=S[ctx].jobId; if(!jid) return;
+  const ep=ctx==='auto'?'auto':ctx==='spam'?'spam':'purge';
+  log(`${ctx}Log`,'// Stopping…','warn');
+  try { await apiFetch(`/${ep}/stop/${jid}`,{method:'POST'}); } catch {}
 }
-
-function pollJob(ctx) {
+function startPoll(ctx){
   clearInterval(polls[ctx]);
-  const ep = ctx === 'purge' ? 'purge' : ctx === 'auto' ? 'auto' : 'spam';
-  const jid = S[ctx].jobId;
-  polls[ctx] = setInterval(async () => {
+  const ep=ctx==='auto'?'auto':ctx==='spam'?'spam':'purge';
+  const jid=S[ctx].jobId;
+  polls[ctx]=setInterval(async()=>{
     try {
-      const r = await apiFetch(`/${ep}/status/${jid}`);
-      const d = await r.json();
-      if (!d.ok) return;
-      setStatus(ctx, d.status);
-      if (ctx === 'purge') {
-        document.getElementById('purgeDeleted').textContent = d.deleted;
-        document.getElementById('purgeSkipped').textContent = d.skipped;
-      } else if (ctx === 'auto') {
-        document.getElementById('autoReplied').textContent = d.replied;
-        document.getElementById('autoReacted').textContent = d.reacted;
-      } else {
-        document.getElementById('spamSent').textContent = d.sent;
-      }
-      if (d.log) {
-        d.log.forEach(line => {
-          if (S[ctx].seen.has(line)) return;
-          S[ctx].seen.add(line);
-          const t = line.startsWith('✓') ? 'ok' : line.startsWith('✗') || line.startsWith('//') ? 'err' : line.startsWith('⏳') ? 'warn' : line.startsWith('↩') || line.startsWith('📤') ? 'ok' : line.includes('Reacted') ? 'react' : line.startsWith('⛔') ? 'warn' : 'log';
-          log(`${ctx}Log`, line, t);
-        });
-      }
-      if (d.status === 'done' || d.status === 'stopped') clearInterval(polls[ctx]);
+      const r=await apiFetch(`/${ep}/status/${jid}`);
+      const d=await r.json(); if(!d.ok) return;
+      setStatus(ctx,d.status);
+      if(ctx==='purge'){document.getElementById('purgeDelCnt').textContent=d.deleted;document.getElementById('purgeSkipCnt').textContent=d.skipped;}
+      else if(ctx==='auto'){document.getElementById('autoReplied').textContent=d.replied;document.getElementById('autoReacted').textContent=d.reacted;}
+      else {document.getElementById('spamSent').textContent=d.sent;}
+      (d.log||[]).forEach(line=>{
+        if(S[ctx].seen.has(line)) return; S[ctx].seen.add(line);
+        const t=line.startsWith('✓')||line.startsWith('↩')||line.startsWith('📤')||line.startsWith('✅')?'ok':line.startsWith('✗')?'err':line.startsWith('⏳')||line.startsWith('⛔')?'warn':line.includes('Reacted')||line.includes('react')?'rx':line.startsWith('//')?'sys':'info';
+        log(`${ctx}Log`,line,t);
+      });
+      if(d.status==='done'||d.status==='stopped') clearInterval(polls[ctx]);
     } catch {}
-  }, 1200);
+  },800); // poll every 800ms for faster feedback
+}
+function setStatus(ctx,s){
+  S[ctx].status=s;
+  const dot=document.getElementById(`${ctx}Dot`),txt=document.getElementById(`${ctx}Txt`);
+  const start=document.getElementById(`${ctx}Start`),stop=document.getElementById(`${ctx}Stop`);
+  dot.className='sdot'+(s==='running'||s==='starting'?' run':s==='done'?' done':s==='stopped'?' stop':'');
+  txt.textContent={idle:'Idle',starting:'Starting…',running:'Running…',done:'Done ✓',stopped:'Stopped.'}[s]||s;
+  const run=s==='running'||s==='starting';
+  start.disabled=run||(ctx==='purge'?!S.purge.dm:ctx==='auto'?!S.auto.dm||!S.auto.person:!S.spam.dm);
+  stop.style.display=run?'block':'none';
 }
 
-function setStatus(ctx, s) {
-  S[ctx].status = s;
-  const dot = document.getElementById(`${ctx}StatusDot`);
-  const txt = document.getElementById(`${ctx}StatusTxt`);
-  const startBtn = document.getElementById(`${ctx}StartBtn`);
-  const stopBtn  = document.getElementById(`${ctx}StopBtn`);
-  dot.className = 'sdot' + (s === 'running'||s === 'starting' ? ' running' : s === 'done' ? ' done' : s === 'stopped' ? ' stopped' : '');
-  txt.textContent = { idle:'Idle', starting:'Starting…', running:'Running…', done:'Done ✓', stopped:'Stopped.' }[s] || s;
-  const running = s === 'running' || s === 'starting';
-  startBtn.disabled = running || (ctx === 'purge' ? !S.purge.dm : ctx === 'auto' ? !S.auto.dm || !S.auto.person : !S.spam.dm);
-  stopBtn.style.display = running ? 'block' : 'none';
+// ── Status tab ────────────────────────────────────────────────────
+const STATUS_PRESETS=[
+  {status:'online', text:'', emoji:'', label:'🟢 Online'},
+  {status:'idle',   text:'brb',emoji:'🌙',label:'🌙 BRB'},
+  {status:'dnd',    text:'Do not disturb',emoji:'🔕',label:'🔕 DND'},
+  {status:'invisible',text:'',emoji:'',label:'👻 Ghost'},
+  {status:'online', text:'Gaming',emoji:'🎮',label:'🎮 Gaming'},
+  {status:'online', text:'Listening to music',emoji:'🎵',label:'🎵 Music'},
+  {status:'idle',   text:'Studying',emoji:'📚',label:'📚 Studying'},
+  {status:'online', text:'Coding',emoji:'💻',label:'💻 Coding'},
+];
+function buildPresets(){
+  document.getElementById('presetBtns').innerHTML=STATUS_PRESETS.map((p,i)=>`<button class="btn btn-ghost btn-sm" onclick="applyPreset(${i})">${p.label}</button>`).join('');
+}
+function pickStatus(s){
+  S.statusChoice=s;
+  ['online','idle','dnd','invisible'].forEach(k=>document.getElementById(`sc-${k}`).className='sc'+(k===s?' on':''));
+}
+async function applyPreset(i){
+  const p=STATUS_PRESETS[i];
+  pickStatus(p.status);
+  document.getElementById('statusText').value=p.text;
+  if(p.emoji) pickStatusEmoji(null,p.emoji); else clearStatusEmoji();
+  await applyStatus();
+}
+async function applyStatus(){
+  if(!S.user){document.getElementById('statusResult').textContent='Not connected';return;}
+  const btn=document.getElementById('statusApplyBtn'); btn.disabled=true; btn.textContent='Applying…';
+  const text=document.getElementById('statusText').value;
+  try {
+    const r=await apiFetch('/status',{method:'POST',body:JSON.stringify({
+      token:S.token, status:S.statusChoice, text, emoji:S.statusEmoji
+    })});
+    const d=await r.json();
+    const res=document.getElementById('statusResult');
+    if(d.ok){ res.textContent='✓ Status updated!'; res.style.color='var(--green)'; }
+    else { res.textContent=`✗ Failed (${d.code})`; res.style.color='var(--red)'; }
+    setTimeout(()=>res.textContent='',3000);
+  } catch { document.getElementById('statusResult').textContent='✗ Error'; }
+  btn.disabled=false; btn.textContent='✓ Apply Status';
+}
+async function clearStatus(){
+  document.getElementById('statusText').value=''; clearStatusEmoji(); pickStatus('online');
+  await applyStatus();
 }
 
-// ── Console ────────────────────────────────────────────────────────
-function log(id, msg, type = 'log') {
-  const c = document.getElementById(id);
-  const d = document.createElement('div');
-  d.className = 'l ' + type; d.textContent = msg;
-  c.appendChild(d); c.scrollTop = c.scrollHeight;
+// ── Console ───────────────────────────────────────────────────────
+function log(id,msg,type='log'){
+  const c=document.getElementById(id); if(!c) return;
+  const d=document.createElement('div'); d.className='l '+type; d.textContent=msg;
+  c.appendChild(d); c.scrollTop=c.scrollHeight;
 }
-function clearLog(id) {
-  document.getElementById(id).innerHTML = '';
-  const ctx = id.replace('Log','');
-  if (S[ctx]) S[ctx].seen?.clear();
-}
+function clrLog(id){ document.getElementById(id).innerHTML=''; const k=id.replace('Log',''); if(S[k]) S[k].seen?.clear(); }
 
-// ── Utils ──────────────────────────────────────────────────────────
-function showErr(id, msg) { const e = document.getElementById(id); e.textContent = msg; e.style.display = msg ? 'block' : 'none'; }
-function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+// ── Utils ─────────────────────────────────────────────────────────
+function showErr(id,msg){ const e=document.getElementById(id); e.textContent=msg; e.style.display=msg?'block':'none'; }
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 </script>
 </body>
 </html>
