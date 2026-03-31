@@ -8,211 +8,213 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#070709;--s1:#0e0e12;--s2:#14141a;--s3:#1a1a22;--s4:#21212c;
-  --bd:#202030;--bd2:#2d2d3f;
-  --red:#e63946;--rg:rgba(230,57,70,.14);--rd:#4a1018;
-  --amber:#f4a261;--green:#2ec4b6;--blue:#4cc9f0;--purple:#b28cf8;--pink:#f72585;
-  --dim:#4e4e6a;--text:#c8c8de;--bright:#e8e8f8;
+  --bg:#07070a;--s1:#0d0d11;--s2:#13131a;--s3:#191921;--s4:#1f1f2a;
+  --bd:#1e1e2d;--bd2:#2a2a3d;
+  --red:#e63946;--rg:rgba(230,57,70,.14);--rd:#3d0f14;
+  --amber:#f4a261;--green:#2ec4b6;--blue:#4cc9f0;--purple:#b28cf8;
+  --dim:#4a4a66;--text:#c4c4dc;--bright:#e4e4f8;
   --mono:'JetBrains Mono',monospace;--head:'Syne',sans-serif
 }
-html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font-family:var(--mono);min-height:100vh;padding:2rem 1.25rem 6rem;font-size:14px}
-.wrap{max-width:940px;margin:0 auto}
+body{background:var(--bg);color:var(--text);font-family:var(--mono);min-height:100vh;padding:1.8rem 1.25rem 5rem;font-size:13px}
+.wrap{max-width:960px;margin:0 auto}
 
-/* ─── HEADER ─── */
-.hdr{display:flex;align-items:center;gap:.9rem;padding-bottom:1.4rem;margin-bottom:1.6rem;border-bottom:1px solid var(--bd)}
-.logo{font-family:var(--head);font-size:1.7rem;font-weight:800;letter-spacing:-.05em;color:var(--bright)}
+/* Header */
+.hdr{display:flex;align-items:center;gap:.85rem;padding-bottom:1.35rem;margin-bottom:1.5rem;border-bottom:1px solid var(--bd)}
+.logo{font-family:var(--head);font-size:1.65rem;font-weight:800;letter-spacing:-.05em;color:var(--bright)}
 .logo em{color:var(--red);font-style:normal}
-.chip{display:inline-flex;align-items:center;font-size:.55rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;padding:.18rem .52rem;border-radius:3px;border:1px solid}
-.chip-red{background:var(--rd);color:var(--red);border-color:#7a1a22}
-.upill{margin-left:auto;display:flex;align-items:center;gap:.45rem;background:var(--s2);border:1px solid var(--bd2);border-radius:20px;padding:.28rem .8rem .28rem .42rem;font-size:.68rem;color:var(--dim)}
-.online-dot{width:7px;height:7px;background:var(--green);border-radius:50%;flex-shrink:0;box-shadow:0 0 6px var(--green)}
+.ver{font-size:.54rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;padding:.17rem .48rem;border-radius:3px;background:var(--rd);color:var(--red);border:1px solid #7a1a22}
+.upill{margin-left:auto;display:flex;align-items:center;gap:.4rem;background:var(--s2);border:1px solid var(--bd2);border-radius:20px;padding:.26rem .75rem .26rem .4rem;font-size:.66rem;color:var(--dim)}
+.on-dot{width:7px;height:7px;background:var(--green);border-radius:50%;flex-shrink:0;box-shadow:0 0 5px var(--green)}
+.ws-warn{font-size:.62rem;color:var(--amber);background:rgba(244,162,97,.08);border:1px solid rgba(244,162,97,.25);border-radius:5px;padding:.45rem .85rem;margin-bottom:.75rem;display:none}
 
-/* ─── CARD ─── */
-.card{background:var(--s1);border:1px solid var(--bd);border-radius:10px;padding:1.3rem 1.4rem;margin-bottom:.75rem}
-.ctitle{font-size:.57rem;text-transform:uppercase;letter-spacing:.2em;color:var(--dim);margin-bottom:1rem;display:flex;align-items:center;gap:.55rem}
-.ctitle::after{content:'';flex:1;height:1px;background:var(--bd)}
-.sub{border-top:1px solid var(--bd);padding-top:1.1rem;margin-top:1.1rem}
+/* Card */
+.card{background:var(--s1);border:1px solid var(--bd);border-radius:10px;padding:1.25rem 1.35rem;margin-bottom:.7rem}
+.ct{font-size:.56rem;text-transform:uppercase;letter-spacing:.2em;color:var(--dim);margin-bottom:.9rem;display:flex;align-items:center;gap:.5rem}
+.ct::after{content:'';flex:1;height:1px;background:var(--bd)}
 
-/* ─── TABS ─── */
-.tabs{display:flex;gap:.3rem;margin-bottom:.75rem;background:var(--s1);border:1px solid var(--bd);border-radius:8px;padding:.35rem}
-.tab{font-family:var(--mono);font-size:.72rem;font-weight:600;padding:.52rem 1.15rem;border-radius:6px;border:none;background:transparent;color:var(--dim);cursor:pointer;transition:all .15s;letter-spacing:.03em;flex:1;text-align:center}
+/* Tabs */
+.tabs{display:flex;gap:.28rem;margin-bottom:.7rem;background:var(--s1);border:1px solid var(--bd);border-radius:9px;padding:.32rem}
+.tab{font-family:var(--mono);font-size:.7rem;font-weight:700;padding:.5rem 1rem;border-radius:6px;border:none;background:transparent;color:var(--dim);cursor:pointer;transition:all .14s;letter-spacing:.03em;flex:1;text-align:center}
 .tab:hover{color:var(--text)}
-.tab.on{background:var(--red);color:#fff;box-shadow:0 2px 12px var(--rg)}
+.tab.on{background:var(--red);color:#fff;box-shadow:0 2px 14px var(--rg)}
 
-/* ─── INPUTS ─── */
-label.L{font-size:.58rem;color:var(--dim);display:block;margin-bottom:.33rem;letter-spacing:.1em;text-transform:uppercase}
-input,textarea,select{width:100%;background:var(--s2);border:1px solid var(--bd2);color:var(--text);font-family:var(--mono);font-size:.78rem;padding:.58rem .85rem;border-radius:6px;outline:none;transition:border-color .15s,-webkit-appearance .15s;-webkit-appearance:none;appearance:none;resize:none}
+/* Inputs */
+label.L{font-size:.57rem;color:var(--dim);display:block;margin-bottom:.3rem;letter-spacing:.1em;text-transform:uppercase}
+input,textarea,select{width:100%;background:var(--s2);border:1px solid var(--bd2);color:var(--text);font-family:var(--mono);font-size:.76rem;padding:.56rem .82rem;border-radius:6px;outline:none;transition:border-color .14s;-webkit-appearance:none;appearance:none;resize:none}
 input:focus,textarea:focus,select:focus{border-color:var(--red)}
 input::placeholder,textarea::placeholder{color:var(--dim)}
 input[type=password]{letter-spacing:.22em}
-select{cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' stroke='%234e4e6a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .82rem center;padding-right:2rem}
-select option{background:#14141a}
+select{cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%234a4a66' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .8rem center;padding-right:2rem}
+select option{background:#13131a}
 input[type=datetime-local]::-webkit-calendar-picker-indicator{filter:invert(.4);cursor:pointer}
 input[type=number]{-moz-appearance:textfield}
 input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
-input[type=range]{-webkit-appearance:auto;appearance:auto;background:none;border:none;padding:0}
-.row{display:flex;gap:.55rem;align-items:flex-end}
+.row{display:flex;gap:.52rem;align-items:flex-end}
 .fg{flex:1}
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
-.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.75rem}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.7rem}
 @media(max-width:620px){.g2,.g3{grid-template-columns:1fr}.row{flex-wrap:wrap}.tabs{flex-direction:column}}
 
-/* ─── BUTTONS ─── */
-.btn{font-family:var(--mono);font-size:.72rem;font-weight:700;padding:.58rem 1.1rem;border-radius:6px;border:none;cursor:pointer;transition:all .13s;letter-spacing:.03em;white-space:nowrap;display:inline-flex;align-items:center;gap:.4rem}
-.b-red{background:var(--red);color:#fff}.b-red:hover{background:#ff4452;box-shadow:0 0 18px var(--rg)}.b-red:disabled{background:var(--rd);color:var(--dim);cursor:not-allowed;box-shadow:none}
-.b-green{background:var(--green);color:#000}.b-green:hover{background:#3ad9ca}.b-green:disabled{background:#164f4a;color:var(--dim);cursor:not-allowed}
-.b-purple{background:var(--purple);color:#000}.b-purple:hover{background:#c4a8ff}.b-purple:disabled{background:#2e2050;color:var(--dim);cursor:not-allowed}
+/* Buttons */
+.btn{font-family:var(--mono);font-size:.7rem;font-weight:700;padding:.56rem 1.05rem;border-radius:6px;border:none;cursor:pointer;transition:all .12s;letter-spacing:.03em;white-space:nowrap;display:inline-flex;align-items:center;gap:.38rem}
+.b-red{background:var(--red);color:#fff}.b-red:hover{background:#ff4452;box-shadow:0 0 16px var(--rg)}.b-red:disabled{background:var(--rd);color:var(--dim);cursor:not-allowed;box-shadow:none}
+.b-green{background:var(--green);color:#000}.b-green:hover{background:#3ad9ca}.b-green:disabled{background:#143f3b;color:var(--dim);cursor:not-allowed}
+.b-purple{background:var(--purple);color:#000}.b-purple:hover{background:#c6aeff}.b-purple:disabled{background:#1e1535;color:var(--dim);cursor:not-allowed}
 .b-ghost{background:transparent;color:var(--dim);border:1px solid var(--bd2)}.b-ghost:hover{border-color:var(--text);color:var(--text)}
-.b-stop{background:transparent;color:var(--amber);border:1px solid rgba(244,162,97,.35)}.b-stop:hover{background:rgba(244,162,97,.08)}
-.b-sm{padding:.38rem .68rem;font-size:.66rem}
+.b-stop{background:transparent;color:var(--amber);border:1px solid rgba(244,162,97,.3)}.b-stop:hover{background:rgba(244,162,97,.08)}
+.b-sm{padding:.36rem .65rem;font-size:.64rem}
 .b-full{width:100%;justify-content:center}
-.b-icon{padding:.58rem .78rem}
+.b-icon{padding:.56rem .75rem}
 
-/* ─── CUSTOM SLIDER ─── */
-.sldr-wrap{margin:.2rem 0}
-.sldr-hdr{display:flex;align-items:baseline;gap:.5rem;margin-bottom:.55rem}
-.sldr-val{font-family:var(--head);font-size:1.65rem;font-weight:700;line-height:1;color:var(--bright)}
-.sldr-unit{font-size:.66rem;color:var(--dim)}
-.sldr-tag{font-size:.63rem;padding:.16rem .48rem;border-radius:4px;font-weight:600}
-.sldr-track-wrap{position:relative;height:24px;display:flex;align-items:center;cursor:pointer}
-.sldr-track{position:absolute;left:0;right:0;height:4px;background:var(--bd2);border-radius:4px;pointer-events:none;overflow:hidden}
-.sldr-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--amber),var(--red));border-radius:4px;transition:width .04s}
-.sldr-thumb{position:absolute;width:18px;height:18px;background:var(--bright);border-radius:50%;border:2.5px solid var(--red);box-shadow:0 2px 8px rgba(0,0,0,.5);transform:translateX(-50%);pointer-events:none;transition:box-shadow .12s}
-.sldr-track-wrap.dragging .sldr-thumb{box-shadow:0 0 0 4px rgba(230,57,70,.22),0 2px 8px rgba(0,0,0,.5)}
-.sldr-lbls{display:flex;justify-content:space-between;font-size:.57rem;color:var(--dim);margin-top:.3rem}
-.sldr-note{font-size:.58rem;color:var(--dim);margin-top:.4rem}
+/* Slider */
+.sv-hdr{display:flex;align-items:baseline;gap:.45rem;margin-bottom:.52rem}
+.sv-num{font-family:var(--head);font-size:1.6rem;font-weight:700;line-height:1;color:var(--bright)}
+.sv-unit{font-size:.64rem;color:var(--dim)}
+.sv-tag{font-size:.61rem;padding:.15rem .45rem;border-radius:4px;font-weight:600}
+.sldr{position:relative;height:24px;display:flex;align-items:center;cursor:pointer;touch-action:none}
+.str{position:absolute;left:0;right:0;height:4px;background:var(--bd2);border-radius:4px;pointer-events:none;overflow:hidden}
+.sfill{height:100%;background:linear-gradient(90deg,var(--green),var(--amber),var(--red));border-radius:4px}
+.sthumb{position:absolute;width:17px;height:17px;background:var(--bright);border-radius:50%;border:2.5px solid var(--red);box-shadow:0 2px 8px rgba(0,0,0,.5);transform:translateX(-50%);pointer-events:none;transition:box-shadow .1s}
+.sldr.drag .sthumb{box-shadow:0 0 0 4px rgba(230,57,70,.2)}
+.slbls{display:flex;justify-content:space-between;font-size:.56rem;color:var(--dim);margin-top:.28rem}
+.snote{font-size:.56rem;color:var(--dim);margin-top:.38rem}
 
-/* ─── TOGGLE ─── */
-.tog-row{display:flex;align-items:center;gap:.65rem;padding:.5rem 0}
-.tog-row+.tog-row{border-top:1px solid var(--bd)}
-.tog-body{flex:1;min-width:0}
-.tog-name{font-size:.76rem;color:var(--text)}
-.tog-sub{font-size:.58rem;color:var(--dim);margin-top:.07rem}
-.tog{position:relative;width:34px;height:19px;cursor:pointer;flex-shrink:0}
+/* Toggle */
+.trow{display:flex;align-items:center;gap:.62rem;padding:.45rem 0}
+.trow+.trow{border-top:1px solid var(--bd)}
+.tbody{flex:1;min-width:0}
+.tname{font-size:.74rem;color:var(--text)}
+.tsub{font-size:.57rem;color:var(--dim);margin-top:.06rem}
+.tog{position:relative;width:33px;height:18px;cursor:pointer;flex-shrink:0}
 .tog input{opacity:0;width:0;height:0;position:absolute}
-.knob{position:absolute;inset:0;background:var(--s3);border:1px solid var(--bd2);border-radius:20px;transition:.18s}
-.knob::before{content:'';position:absolute;height:13px;width:13px;left:2px;top:2px;background:var(--dim);border-radius:50%;transition:.18s}
+.knob{position:absolute;inset:0;background:var(--s3);border:1px solid var(--bd2);border-radius:20px;transition:.17s}
+.knob::before{content:'';position:absolute;height:12px;width:12px;left:2px;top:2px;background:var(--dim);border-radius:50%;transition:.17s}
 .tog input:checked+.knob{background:var(--rd);border-color:var(--red)}
 .tog input:checked+.knob::before{transform:translateX(15px);background:var(--red)}
 
-/* ─── DM LIST ─── */
-.dm-list{display:flex;flex-direction:column;gap:.25rem;max-height:220px;overflow-y:auto;margin-top:.45rem;scrollbar-width:thin;scrollbar-color:var(--bd2) transparent}
-.dm-item{display:flex;align-items:center;gap:.6rem;padding:.5rem .72rem;border-radius:6px;border:1px solid transparent;cursor:pointer;transition:all .1s;user-select:none}
-.dm-item:hover{background:var(--s2);border-color:var(--bd)}
-.dm-item.sel{background:rgba(230,57,70,.06);border-color:rgba(230,57,70,.25)}
-.dm-av{width:28px;height:28px;border-radius:50%;background:var(--s3);border:1px solid var(--bd2);display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:700;flex-shrink:0;color:var(--dim)}
-.dm-info{flex:1;min-width:0}
-.dm-dn{font-size:.74rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.dm-un{font-size:.58rem;color:var(--dim)}
-.dm-badge{font-size:.54rem;color:var(--dim);background:var(--s3);padding:.1rem .3rem;border-radius:3px;flex-shrink:0}
-.dm-sel{color:var(--red);font-size:.6rem;flex-shrink:0}
+/* DM list */
+.dml{display:flex;flex-direction:column;gap:.22rem;max-height:210px;overflow-y:auto;margin-top:.42rem;scrollbar-width:thin;scrollbar-color:var(--bd2) transparent}
+.dmi{display:flex;align-items:center;gap:.55rem;padding:.46rem .7rem;border-radius:6px;border:1px solid transparent;cursor:pointer;transition:all .1s;user-select:none}
+.dmi:hover{background:var(--s2);border-color:var(--bd)}
+.dmi.sel{background:rgba(230,57,70,.06);border-color:rgba(230,57,70,.22)}
+.dav{width:27px;height:27px;border-radius:50%;background:var(--s3);border:1px solid var(--bd2);display:flex;align-items:center;justify-content:center;font-size:.58rem;font-weight:700;flex-shrink:0;color:var(--dim)}
+.dinfo{flex:1;min-width:0}
+.ddn{font-size:.72rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dun{font-size:.57rem;color:var(--dim)}
+.dbadge{font-size:.52rem;color:var(--dim);background:var(--s3);padding:.08rem .28rem;border-radius:3px;flex-shrink:0}
+.dsel{color:var(--red);font-size:.58rem;flex-shrink:0}
 
-/* ─── PERSON PICKER ─── */
-.pp-wrap{position:relative}
-.pp-btn{width:100%;text-align:left;background:var(--s2);border:1px solid var(--bd2);color:var(--dim);font-family:var(--mono);font-size:.76rem;padding:.58rem .85rem;border-radius:6px;cursor:pointer;transition:border-color .14s;display:flex;align-items:center}
-.pp-btn:hover{border-color:var(--bd2)}
-.pp-btn.has{color:var(--text);border-color:var(--green)}
-.pp-btn span.arr{margin-left:auto;color:var(--dim);font-size:.6rem}
-.pp-drop{position:absolute;top:calc(100% + 4px);left:0;right:0;z-index:100;background:var(--s1);border:1px solid var(--bd2);border-radius:7px;overflow:hidden;display:none;box-shadow:0 8px 28px rgba(0,0,0,.6)}
-.pp-drop.open{display:block}
-.pp-search{width:100%;background:var(--s2);border:none;border-bottom:1px solid var(--bd);color:var(--text);font-family:var(--mono);font-size:.74rem;padding:.5rem .8rem;outline:none}
-.pp-list{max-height:150px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--bd2) transparent}
-.pp-item{display:flex;align-items:center;gap:.55rem;padding:.48rem .8rem;cursor:pointer;font-size:.74rem;transition:background .09s}
-.pp-item:hover{background:var(--s2)}
-.pp-item.sel{color:var(--green)}
-.pp-av{width:22px;height:22px;border-radius:50%;background:var(--s3);display:flex;align-items:center;justify-content:center;font-size:.56rem;font-weight:700;flex-shrink:0}
+/* Person picker */
+.pp{position:relative}
+.ppbtn{width:100%;text-align:left;background:var(--s2);border:1px solid var(--bd2);color:var(--dim);font-family:var(--mono);font-size:.74rem;padding:.56rem .82rem;border-radius:6px;cursor:pointer;transition:border-color .13s;display:flex;align-items:center}
+.ppbtn.has{color:var(--text);border-color:var(--green)}
+.ppbtn .arr{margin-left:auto;font-size:.58rem;color:var(--dim)}
+.ppdrop{position:absolute;top:calc(100% + 4px);left:0;right:0;z-index:100;background:var(--s1);border:1px solid var(--bd2);border-radius:7px;overflow:hidden;display:none;box-shadow:0 8px 28px rgba(0,0,0,.6)}
+.ppdrop.open{display:block}
+.ppsrch{width:100%;background:var(--s2);border:none;border-bottom:1px solid var(--bd);color:var(--text);font-family:var(--mono);font-size:.72rem;padding:.48rem .78rem;outline:none}
+.pplist{max-height:145px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--bd2) transparent}
+.ppitem{display:flex;align-items:center;gap:.52rem;padding:.45rem .78rem;cursor:pointer;font-size:.72rem;transition:background .09s}
+.ppitem:hover{background:var(--s2)}
+.ppitem.sel{color:var(--green)}
+.ppav{width:21px;height:21px;border-radius:50%;background:var(--s3);display:flex;align-items:center;justify-content:center;font-size:.54rem;font-weight:700;flex-shrink:0}
 
-/* ─── EMOJI PICKER ─── */
-.ep-wrap{position:relative;display:inline-block}
-.ep-btn{background:var(--s2);border:1px solid var(--bd2);color:var(--text);font-size:1rem;padding:.48rem .72rem;border-radius:6px;cursor:pointer;transition:border-color .13s;min-width:42px;line-height:1}
-.ep-btn:hover{border-color:var(--text)}
-.ep-btn.has{border-color:var(--green)}
-.ep-pop{position:absolute;top:calc(100% + 5px);left:0;z-index:200;background:var(--s1);border:1px solid var(--bd2);border-radius:9px;padding:.72rem;width:310px;box-shadow:0 10px 36px rgba(0,0,0,.65);display:none}
-.ep-pop.open{display:block}
-.ep-hdr{font-size:.56rem;color:var(--dim);text-transform:uppercase;letter-spacing:.14em;margin-bottom:.52rem}
-.ep-cats{display:flex;gap:.3rem;flex-wrap:wrap;margin-bottom:.55rem}
-.ep-cat{font-size:.6rem;padding:.2rem .5rem;border-radius:4px;border:1px solid var(--bd2);background:transparent;color:var(--dim);cursor:pointer;transition:all .1s}
-.ep-cat:hover,.ep-cat.on{background:var(--s3);border-color:var(--bd2);color:var(--text)}
-.ep-grid{display:grid;grid-template-columns:repeat(10,1fr);gap:2px;max-height:200px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--bd2) transparent}
-.ep-e{background:none;border:none;font-size:1.08rem;cursor:pointer;padding:.28rem;border-radius:4px;line-height:1;transition:background .08s}
-.ep-e:hover{background:var(--s2)}
-.ep-clr{margin-top:.45rem;font-size:.6rem;color:var(--dim);cursor:pointer;background:none;border:none;font-family:var(--mono);padding:.2rem .45rem;border-radius:3px;transition:color .1s}
-.ep-clr:hover{color:var(--red)}
+/* Emoji picker */
+.ep{position:relative;display:inline-block}
+.epbtn{background:var(--s2);border:1px solid var(--bd2);color:var(--text);font-size:.98rem;padding:.46rem .7rem;border-radius:6px;cursor:pointer;min-width:40px;line-height:1;transition:border-color .13s}
+.epbtn:hover{border-color:var(--text)}
+.epbtn.has{border-color:var(--green)}
+.eppop{position:absolute;top:calc(100% + 5px);left:0;z-index:200;background:var(--s1);border:1px solid var(--bd2);border-radius:9px;padding:.68rem;width:306px;box-shadow:0 10px 36px rgba(0,0,0,.7);display:none}
+.eppop.open{display:block}
+.ephdr{font-size:.54rem;color:var(--dim);text-transform:uppercase;letter-spacing:.14em;margin-bottom:.5rem}
+.epcats{display:flex;gap:.28rem;flex-wrap:wrap;margin-bottom:.5rem}
+.epcat{font-size:.58rem;padding:.18rem .45rem;border-radius:4px;border:1px solid var(--bd2);background:transparent;color:var(--dim);cursor:pointer;transition:all .09s}
+.epcat:hover,.epcat.on{background:var(--s3);color:var(--text);border-color:var(--bd2)}
+.epgrid{display:grid;grid-template-columns:repeat(10,1fr);gap:2px;max-height:195px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--bd2) transparent}
+.epe{background:none;border:none;font-size:1.05rem;cursor:pointer;padding:.26rem;border-radius:4px;line-height:1}
+.epe:hover{background:var(--s2)}
+.epclr{margin-top:.42rem;font-size:.58rem;color:var(--dim);cursor:pointer;background:none;border:none;font-family:var(--mono);padding:.18rem .42rem;border-radius:3px}
+.epclr:hover{color:var(--red)}
 
-/* ─── MULTI-EMOJI SLOT ─── */
-.emoji-slots{display:flex;flex-wrap:wrap;gap:.35rem;min-height:38px;align-items:center;padding:.42rem;background:var(--s2);border:1px solid var(--bd2);border-radius:6px;margin-bottom:.55rem}
-.emoji-slot{font-size:1.2rem;cursor:pointer;padding:.18rem;border-radius:4px;transition:background .1s;position:relative;line-height:1}
-.emoji-slot:hover{background:var(--s3)}
-.emoji-slot .rm{position:absolute;top:-4px;right:-4px;font-size:.52rem;background:var(--red);color:#fff;border-radius:50%;width:12px;height:12px;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .1s}
-.emoji-slot:hover .rm{opacity:1}
-.emoji-slot-add{font-size:.7rem;color:var(--dim);cursor:pointer;padding:.25rem .5rem;border-radius:4px;border:1px dashed var(--bd2);transition:all .1s}
-.emoji-slot-add:hover{border-color:var(--text);color:var(--text)}
+/* Multi-emoji slots */
+.eslots{display:flex;flex-wrap:wrap;gap:.3rem;min-height:36px;align-items:center;padding:.38rem;background:var(--s2);border:1px solid var(--bd2);border-radius:6px;margin-bottom:.5rem}
+.eslot{font-size:1.15rem;cursor:pointer;padding:.15rem;border-radius:4px;position:relative;line-height:1}
+.eslot:hover{background:var(--s3)}
+.eslot .rm{position:absolute;top:-3px;right:-3px;font-size:.5rem;background:var(--red);color:#fff;border-radius:50%;width:11px;height:11px;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .09s}
+.eslot:hover .rm{opacity:1}
+.eslot-add{font-size:.67rem;color:var(--dim);cursor:pointer;padding:.22rem .48rem;border-radius:4px;border:1px dashed var(--bd2);transition:all .1s}
+.eslot-add:hover{border-color:var(--text);color:var(--text)}
 
-/* ─── STATS / STATUS ─── */
-.stat-row{display:flex;gap:1.6rem;padding:.4rem 0 .8rem}
-.stat-v{font-family:var(--head);font-size:1.35rem;font-weight:700;line-height:1}
-.stat-l{font-size:.54rem;color:var(--dim);text-transform:uppercase;letter-spacing:.1em;margin-top:.16rem}
-.srow{display:flex;align-items:center;gap:.45rem;margin-bottom:.65rem}
+/* Stats */
+.stats{display:flex;gap:1.5rem;padding:.38rem 0 .75rem}
+.sv2{font-family:var(--head);font-size:1.3rem;font-weight:700;line-height:1}
+.sl{font-size:.52rem;color:var(--dim);text-transform:uppercase;letter-spacing:.1em;margin-top:.14rem}
+.srow{display:flex;align-items:center;gap:.42rem;margin-bottom:.6rem}
 .sdot{width:7px;height:7px;border-radius:50%;background:var(--dim);flex-shrink:0}
 .sdot.run{background:var(--red);animation:blink 1s ease-in-out infinite}
-.sdot.done{background:var(--green)}
+.sdot.done{background:var(--green)}.sdot.conn{background:var(--blue);animation:blink .8s ease-in-out infinite}
 .sdot.stop{background:var(--amber)}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.28}}
-.stxt{font-size:.68rem;color:var(--dim)}
-.ctrl{display:flex;gap:.55rem}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+.stxt{font-size:.67rem;color:var(--dim)}
+.ctrl{display:flex;gap:.52rem}
 
-/* ─── CONSOLE ─── */
-.con{background:#04040608;border:1px solid var(--bd);border-radius:7px;padding:.7rem .9rem;height:200px;overflow-y:auto;font-size:.66rem;line-height:1.8;scrollbar-width:thin;scrollbar-color:var(--bd2) transparent}
-.con-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:.52rem}
-.ce{display:block}.ce.ok{color:var(--green)}.ce.err{color:var(--red)}.ce.warn{color:var(--amber)}.ce.sys{color:var(--dim);font-style:italic}.ce.info{color:var(--blue)}.ce.rx{color:var(--purple)}.ce.dim{color:#38384e}
+/* Console */
+.con{background:#040406;border:1px solid var(--bd);border-radius:7px;padding:.68rem .88rem;height:195px;overflow-y:auto;font-size:.65rem;line-height:1.82;scrollbar-width:thin;scrollbar-color:var(--bd2) transparent}
+.chdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem}
+.ce{display:block;word-break:break-word}
+.ce.ok{color:var(--green)}.ce.err{color:var(--red)}.ce.warn{color:var(--amber)}.ce.sys{color:var(--dim);font-style:italic}.ce.info{color:var(--blue)}.ce.rx{color:var(--purple)}.ce.dim{color:#302f48}
 
-/* ─── ERR BOX ─── */
-.ebox{background:rgba(230,57,70,.07);border:1px solid rgba(230,57,70,.2);color:#e67380;border-radius:6px;padding:.55rem .85rem;font-size:.72rem;margin-top:.6rem;display:none}
+/* Error box */
+.ebox{background:rgba(230,57,70,.07);border:1px solid rgba(230,57,70,.18);color:#e67380;border-radius:6px;padding:.52rem .82rem;font-size:.7rem;margin-top:.58rem;display:none}
 
-/* ─── MODAL ─── */
-.modal{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.9);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;padding:1.5rem}
-.mbox{background:var(--s1);border:1px solid rgba(230,57,70,.3);border-radius:12px;padding:2.1rem 1.9rem;max-width:400px;width:100%;text-align:center;box-shadow:0 0 80px rgba(230,57,70,.1);animation:mIn .22s cubic-bezier(.34,1.56,.64,1)}
+/* Modal */
+.modal{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.92);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;padding:1.5rem}
+.mbox{background:var(--s1);border:1px solid rgba(230,57,70,.28);border-radius:12px;padding:2rem 1.85rem;max-width:400px;width:100%;text-align:center;box-shadow:0 0 80px rgba(230,57,70,.08);animation:mIn .22s cubic-bezier(.34,1.56,.64,1)}
 @keyframes mIn{from{opacity:0;transform:scale(.86) translateY(14px)}to{opacity:1;transform:scale(1) translateY(0)}}
-.m-icon{font-size:2.2rem;margin-bottom:.85rem;animation:mPulse 2.2s ease-in-out infinite}
-@keyframes mPulse{0%,100%{opacity:1}50%{opacity:.38}}
-.m-title{font-family:var(--head);font-size:1.3rem;font-weight:800;color:var(--red);margin-bottom:.42rem}
-.m-sub{font-size:.7rem;color:var(--dim);line-height:1.7;margin-bottom:1.35rem}
-.m-sub strong{color:var(--text)}
-.m-note{font-size:.6rem;color:var(--dim);margin-top:.85rem;letter-spacing:.05em}
-.m-note em{color:var(--red);font-style:normal}
+.mico{font-size:2.2rem;margin-bottom:.82rem;animation:p2 2.2s ease-in-out infinite}
+@keyframes p2{0%,100%{opacity:1}50%{opacity:.35}}
+.mtit{font-family:var(--head);font-size:1.28rem;font-weight:800;color:var(--red);margin-bottom:.4rem}
+.msub{font-size:.69rem;color:var(--dim);line-height:1.7;margin-bottom:1.3rem}
+.msub strong{color:var(--text)}
+.mnote{font-size:.58rem;color:var(--dim);margin-top:.82rem}
+.mnote em{color:var(--red);font-style:normal}
 
-.note{font-size:.58rem;color:var(--dim);margin-top:.42rem}
+.note{font-size:.57rem;color:var(--dim);margin-top:.4rem}
 </style>
 </head>
 <body>
-<!-- ─── API DOWN MODAL ─── -->
+
+<!-- API Down Modal -->
 <div class="modal" id="apiModal">
   <div class="mbox">
-    <div class="m-icon">⚡</div>
-    <div class="m-title">Backend Offline</div>
-    <div class="m-sub">Can't reach the backend.<br>Make sure <strong>purger_backend.py</strong> is running and your ngrok tunnel is active.</div>
+    <div class="mico">⚡</div>
+    <div class="mtit">Backend Offline</div>
+    <div class="msub">Can't reach the backend.<br>Run <strong>purger_backend.py</strong> and make sure ngrok is active.</div>
     <button class="btn b-red b-full" id="retryBtn" onclick="retryAPI()">↺ Retry Connection</button>
-    <div class="m-note">checking <em>purge.gg</em> backend…</div>
+    <div class="mnote">checking <em>purge.gg</em> backend…</div>
   </div>
 </div>
 
 <div class="wrap">
 
-<!-- ─── HEADER ─── -->
 <div class="hdr">
   <div class="logo">purge<em>.gg</em></div>
-  <div class="chip chip-red">v2</div>
+  <div class="ver">v3</div>
   <div class="upill" id="upill" style="display:none">
-    <div class="online-dot"></div>
+    <div class="on-dot"></div>
     <span id="upillName"></span>
-    <button class="btn b-ghost b-sm" onclick="disconnect()" style="padding:.1rem .38rem;margin-left:.15rem">✕</button>
+    <button class="btn b-ghost b-sm" onclick="disconnect()" style="padding:.1rem .36rem;margin-left:.14rem">✕</button>
   </div>
 </div>
 
-<!-- ─── AUTH ─── -->
+<!-- WS warning -->
+<div class="ws-warn" id="wsWarn">
+  ⚠️ <strong>websocket-client</strong> not installed — Auto Reply and Auto React won't work.<br>
+  Run: <code style="background:var(--s2);padding:.1rem .3rem;border-radius:3px">pip install websocket-client</code> then restart the backend.
+</div>
+
+<!-- Auth -->
 <div class="card" id="authCard">
-  <div class="ctitle">Authentication</div>
+  <div class="ct">Authentication</div>
   <div class="row">
     <div class="fg">
       <label class="L">User Token</label>
@@ -222,140 +224,119 @@ input[type=range]{-webkit-appearance:auto;appearance:auto;background:none;border
     <button class="btn b-red" id="connectBtn" onclick="connect()">Connect</button>
   </div>
   <div class="ebox" id="authErr"></div>
-  <p class="note">🔒 Your token is <strong style="color:var(--text)">never shared with any third party</strong> — sent only to your own backend.</p>
+  <p class="note">🔒 Your token is <strong style="color:var(--text)">never shared with any third party</strong> — only sent to your own local backend.</p>
 </div>
 
-<!-- ─── MAIN ─── -->
+<!-- Main UI -->
 <div id="mainUI" style="display:none">
 
-  <!-- Tabs -->
   <div class="tabs">
     <button class="tab on" id="t-purge" onclick="showTab('purge')">🗑 Purge</button>
     <button class="tab"    id="t-auto"  onclick="showTab('auto')">🤖 Auto Reply</button>
     <button class="tab"    id="t-react" onclick="showTab('react')">⚡ Auto React</button>
   </div>
 
-  <!-- ══════════════════════ PURGE ══════════════════════ -->
+  <!-- ═══ PURGE ═══ -->
   <div id="tab-purge">
-
-    <!-- DM Selector -->
     <div class="card">
-      <div class="ctitle">Target DM</div>
+      <div class="ct">Target DM</div>
       <input type="text" id="purgeSearch" placeholder="🔍  Search DMs…" oninput="renderDMs('purge')">
-      <div class="dm-list" id="purgeDMs"></div>
+      <div class="dml" id="purgeDMs"></div>
     </div>
 
-    <!-- Settings -->
     <div class="g2">
-
-      <!-- Speed + batch -->
       <div class="card">
-        <div class="ctitle">Speed</div>
-        <div class="sldr-wrap" id="purgeSldrWrap">
-          <div class="sldr-hdr">
-            <span class="sldr-val" id="purgeSV">0.3</span>
-            <span class="sldr-unit">s delay</span>
-            <span class="sldr-tag" id="purgeST"></span>
-          </div>
-          <div class="sldr-track-wrap" id="purgeSldr">
-            <div class="sldr-track"><div class="sldr-fill" id="purgeSF"></div></div>
-            <div class="sldr-thumb" id="purgeSThumb"></div>
-          </div>
-          <div class="sldr-lbls"><span>0s</span><span>instant ↔ safe</span><span>5s</span></div>
-          <p class="sldr-note" id="purgeSN"></p>
+        <div class="ct">Speed</div>
+        <div class="sv-hdr">
+          <span class="sv-num" id="pSV">0.0</span>
+          <span class="sv-unit">s delay</span>
+          <span class="sv-tag" id="pST"></span>
         </div>
+        <div class="sldr" id="pSldr"><div class="str"><div class="sfill" id="pSF"></div></div><div class="sthumb" id="pSThumb"></div></div>
+        <div class="slbls"><span>0s instant</span><span>5s safe</span></div>
+        <p class="snote" id="pSN"></p>
+
         <div style="margin-top:.9rem">
-          <label class="L">Batch size <span style="font-size:.54rem">(msgs fetched per round)</span></label>
-          <input type="number" id="purgeBatch" value="100" min="1" max="100">
-          <p class="note">100 = max Discord allows per request.</p>
+          <label class="L">Concurrent workers <span style="font-size:.52rem">(deletes running in parallel)</span></label>
+          <input type="number" id="purgeWorkers" value="3" min="1" max="8">
+          <p class="note">3 = good balance. Up to 8 for max speed (more rate limit risk).</p>
         </div>
       </div>
 
-      <!-- Filter -->
       <div class="card">
-        <div class="ctitle">Filter</div>
-        <div style="display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.85rem">
-          <button class="btn b-sm" id="pf-all"    onclick="pFilter('all')"   style="background:rgba(230,57,70,.12);color:var(--red);border:1px solid rgba(230,57,70,.3)">All messages</button>
-          <button class="btn b-ghost b-sm" id="pf-before" onclick="pFilter('before')">Before date</button>
-          <button class="btn b-ghost b-sm" id="pf-after"  onclick="pFilter('after')">After date</button>
-          <button class="btn b-ghost b-sm" id="pf-count"  onclick="pFilter('count')">Last N</button>
+        <div class="ct">Filter</div>
+        <div style="display:flex;flex-wrap:wrap;gap:.28rem;margin-bottom:.82rem" id="pfBtns">
+          <button class="btn b-sm pfbtn on" id="pf-all"    onclick="pFilter('all')">All msgs</button>
+          <button class="btn b-sm pfbtn"    id="pf-before" onclick="pFilter('before')">Before date</button>
+          <button class="btn b-sm pfbtn"    id="pf-after"  onclick="pFilter('after')">After date</button>
+          <button class="btn b-sm pfbtn"    id="pf-count"  onclick="pFilter('count')">Last N</button>
         </div>
-        <div id="pfDate" style="display:none;margin-bottom:.7rem">
+        <div id="pfDate" style="display:none;margin-bottom:.65rem">
           <label class="L">Date & Time</label>
           <input type="datetime-local" id="purgeDate">
         </div>
-        <div id="pfCount" style="display:none;margin-bottom:.7rem">
-          <label class="L">Number of your messages to delete</label>
-          <input type="number" id="purgeCount" value="50" min="1">
+        <div id="pfCount" style="display:none;margin-bottom:.65rem">
+          <label class="L">Delete this many of your messages</label>
+          <input type="number" id="purgeCountIn" value="50" min="1">
         </div>
         <p class="note" id="pFilterNote">Deletes all messages you sent in this DM.</p>
       </div>
     </div>
 
-    <!-- Controls -->
     <div class="card">
-      <div class="srow">
-        <div class="sdot" id="purgeDot"></div>
-        <span class="stxt" id="purgeTxt">Idle — select a DM to begin</span>
-      </div>
-      <div class="stat-row">
-        <div><div class="stat-v" style="color:var(--red)" id="purgeDelN">0</div><div class="stat-l">Deleted</div></div>
-        <div><div class="stat-v" style="color:var(--dim)" id="purgeSkipN">0</div><div class="stat-l">Skipped</div></div>
-        <div><div class="stat-v" style="color:var(--red);font-size:.78rem" id="purgeErrN">0</div><div class="stat-l">Errors</div></div>
-        <div style="margin-left:auto;text-align:right">
-          <div class="stat-v" style="color:var(--amber);font-size:.72rem;font-family:var(--mono)" id="purgeTargN">—</div>
-          <div class="stat-l">Target</div>
-        </div>
+      <div class="srow"><div class="sdot" id="purgeDot"></div><span class="stxt" id="purgeTxt">Idle — select a DM</span></div>
+      <div class="stats">
+        <div><div class="sv2" style="color:var(--red)" id="purgeD">0</div><div class="sl">Deleted</div></div>
+        <div><div class="sv2" style="color:var(--dim)" id="purgeS">0</div><div class="sl">Skipped</div></div>
+        <div><div class="sv2" style="color:var(--red);font-size:1rem" id="purgeE">0</div><div class="sl">Errors</div></div>
+        <div style="margin-left:auto;text-align:right"><div class="sv2" style="color:var(--amber);font-size:.7rem;font-family:var(--mono)" id="purgeTN">—</div><div class="sl">DM</div></div>
       </div>
       <div class="ctrl">
-        <button class="btn b-red b-full" id="purgeStartBtn" onclick="startPurge()" disabled>▶ Start Purge</button>
-        <button class="btn b-stop" id="purgeStopBtn" onclick="stopJob('purge')" style="display:none">■ Stop</button>
+        <button class="btn b-red b-full" id="purgeStart" onclick="startPurge()" disabled>▶ Start Purge</button>
+        <button class="btn b-stop" id="purgeStop" onclick="stopJob('purge')" style="display:none">■ Stop</button>
       </div>
     </div>
 
-    <!-- Log -->
     <div class="card">
-      <div class="con-hdr"><div class="ctitle" style="margin:0">Console</div><button class="btn b-ghost b-sm" onclick="clrLog('purgeLog','purge')">Clear</button></div>
+      <div class="chdr"><div class="ct" style="margin:0">Console</div><button class="btn b-ghost b-sm" onclick="clrLog('purgeLog','purge')">Clear</button></div>
       <div class="con" id="purgeLog"></div>
     </div>
   </div>
 
-  <!-- ══════════════════════ AUTO REPLY ══════════════════════ -->
+  <!-- ═══ AUTO REPLY ═══ -->
   <div id="tab-auto" style="display:none">
     <div class="card">
-      <div class="ctitle">Auto Reply</div>
+      <div class="ct">Auto Reply — Real-time via Gateway WebSocket</div>
 
-      <!-- DM + Person -->
-      <div class="g2" style="margin-bottom:.8rem">
+      <div class="g2" style="margin-bottom:.75rem">
         <div>
           <label class="L">Watch DM</label>
           <input type="text" id="autoSearch" placeholder="🔍  Search…" oninput="renderDMs('auto')">
-          <div class="dm-list" id="autoDMs" style="max-height:175px"></div>
+          <div class="dml" id="autoDMs" style="max-height:180px"></div>
         </div>
         <div>
           <label class="L">Reply to messages from</label>
-          <div class="pp-wrap">
-            <button class="pp-btn" id="personBtn" onclick="togglePP()">
-              <span id="personLbl">Select DM first…</span>
+          <div class="pp">
+            <button class="ppbtn" id="aPersonBtn" onclick="togglePP('auto')">
+              <span id="aPersonLbl">Select DM first…</span>
               <span class="arr">▾</span>
             </button>
-            <div class="pp-drop" id="personDrop">
-              <input class="pp-search" type="text" placeholder="Search…" oninput="filterPP(this.value)">
-              <div class="pp-list" id="personList"></div>
+            <div class="ppdrop" id="aPersonDrop">
+              <input class="ppsrch" type="text" placeholder="Search…" oninput="filterPP('auto',this.value)">
+              <div class="pplist" id="aPersonList"></div>
             </div>
           </div>
-          <p class="note" style="margin-top:.5rem">Watches only messages from this person in the selected DM.</p>
+          <p class="note" style="margin-top:.45rem">Messages will be detected <strong style="color:var(--green)">instantly</strong> via Discord Gateway — no polling delay.</p>
         </div>
       </div>
 
-      <!-- Trigger + Reply -->
-      <div class="g2" style="margin-bottom:.8rem">
+      <div class="g2" style="margin-bottom:.75rem">
         <div>
-          <label class="L">Trigger word / phrase <span style="font-size:.54rem">(empty = reply to all)</span></label>
+          <label class="L">Trigger phrase <span style="font-size:.52rem">(blank = reply to every message)</span></label>
           <input type="text" id="autoTrig" placeholder="e.g.  uwu">
-          <div class="tog-row" style="padding:.45rem 0 0;border:none">
+          <div class="trow" style="border:none;padding:.42rem 0 0">
             <label class="tog"><input type="checkbox" id="autoCS"><span class="knob"></span></label>
-            <div class="tog-body"><div class="tog-name">Case sensitive</div><div class="tog-sub">ON → "UWU" won't match "uwu"</div></div>
+            <div class="tbody"><div class="tname">Case sensitive</div><div class="tsub">ON → "UWU" won't match "uwu"</div></div>
           </div>
         </div>
         <div>
@@ -364,169 +345,128 @@ input[type=range]{-webkit-appearance:auto;appearance:auto;background:none;border
         </div>
       </div>
 
-      <!-- Options -->
-      <div class="g2" style="margin-bottom:.8rem">
+      <div class="g2" style="margin-bottom:.75rem">
         <div>
           <label class="L">Options</label>
-          <div class="tog-row" style="border:none;padding:.3rem 0">
+          <div class="trow" style="border:none;padding:.28rem 0">
             <label class="tog"><input type="checkbox" id="autoHuman"><span class="knob"></span></label>
-            <div class="tog-body"><div class="tog-name">🧠 Human mode</div><div class="tog-sub">Typing indicator + 1–4s random delay before replying</div></div>
+            <div class="tbody"><div class="tname">🧠 Human mode</div><div class="tsub">Typing indicator + 1–4s random delay</div></div>
           </div>
-          <div class="tog-row">
+          <div class="trow">
             <label class="tog"><input type="checkbox" id="autoQuote"><span class="knob"></span></label>
-            <div class="tog-body"><div class="tog-name">💬 Quote reply</div><div class="tog-sub">Reply is linked to the trigger message</div></div>
+            <div class="tbody"><div class="tname">💬 Quote reply</div><div class="tsub">Links reply to the trigger message</div></div>
           </div>
         </div>
         <div>
-          <label class="L">Advanced</label>
           <div style="margin-bottom:.6rem">
-            <label class="L">Max replies <span style="font-size:.54rem">(0 = unlimited)</span></label>
+            <label class="L">Max replies <span style="font-size:.52rem">(0 = unlimited)</span></label>
             <input type="number" id="autoMax" value="0" min="0">
           </div>
           <div>
-            <label class="L">Blacklist words <span style="font-size:.54rem">(comma separated — skip reply if matched)</span></label>
+            <label class="L">Blacklist words <span style="font-size:.52rem">(comma separated)</span></label>
             <input type="text" id="autoBlacklist" placeholder="stop, no, bye">
           </div>
         </div>
       </div>
 
-      <!-- Poll speed -->
-      <div style="margin-bottom:.85rem">
-        <label class="L">Poll interval — how often to check for new messages</label>
-        <div class="g3">
-          <button class="btn b-ghost b-sm" id="poll-500"  onclick="setPoll(500)"  >500ms — Fastest</button>
-          <button class="btn b-sm"         id="poll-800"  onclick="setPoll(800)"  style="background:rgba(46,196,182,.1);color:var(--green);border:1px solid rgba(46,196,182,.3)">800ms — Recommended</button>
-          <button class="btn b-ghost b-sm" id="poll-2000" onclick="setPoll(2000)" >2000ms — Safe</button>
-        </div>
-        <p class="note" id="pollNote" style="margin-top:.45rem">Checks for new messages every 800ms.</p>
-      </div>
-
-      <!-- Controls -->
       <div class="srow">
         <div class="sdot" id="autoDot"></div>
         <span class="stxt" id="autoTxt">Idle</span>
-        <div style="margin-left:auto;display:flex;gap:1rem;font-size:.66rem">
-          <span style="color:var(--green)">↩ <span id="autoReplied">0</span> replied</span>
-        </div>
+        <span style="margin-left:auto;font-size:.64rem;color:var(--green)">↩ <span id="autoReplied">0</span> replied</span>
       </div>
       <div class="ctrl">
-        <button class="btn b-green b-full" id="autoStartBtn" onclick="startAuto()" disabled>▶ Start Auto Reply</button>
-        <button class="btn b-stop" id="autoStopBtn" onclick="stopJob('auto')" style="display:none">■ Stop</button>
+        <button class="btn b-green b-full" id="autoStart" onclick="startAuto()" disabled>▶ Start Auto Reply</button>
+        <button class="btn b-stop" id="autoStop" onclick="stopJob('auto')" style="display:none">■ Stop</button>
       </div>
-
-      <!-- Log -->
-      <div style="margin-top:.8rem">
-        <div class="con-hdr"><div class="ctitle" style="margin:0">Live Log</div><button class="btn b-ghost b-sm" onclick="clrLog('autoLog','auto')">Clear</button></div>
+      <div style="margin-top:.75rem">
+        <div class="chdr"><div class="ct" style="margin:0">Live Log</div><button class="btn b-ghost b-sm" onclick="clrLog('autoLog','auto')">Clear</button></div>
         <div class="con" id="autoLog"></div>
       </div>
     </div>
   </div>
 
-  <!-- ══════════════════════ AUTO REACT ══════════════════════ -->
+  <!-- ═══ AUTO REACT ═══ -->
   <div id="tab-react" style="display:none">
     <div class="card">
-      <div class="ctitle">Auto React</div>
+      <div class="ct">Auto React — Real-time via Gateway WebSocket</div>
 
-      <!-- DM + Person -->
-      <div class="g2" style="margin-bottom:.8rem">
+      <div class="g2" style="margin-bottom:.75rem">
         <div>
           <label class="L">Watch DM</label>
           <input type="text" id="reactSearch" placeholder="🔍  Search…" oninput="renderDMs('react')">
-          <div class="dm-list" id="reactDMs" style="max-height:175px"></div>
+          <div class="dml" id="reactDMs" style="max-height:180px"></div>
         </div>
         <div>
-          <label class="L">React to messages from <span style="font-size:.54rem">(empty = everyone)</span></label>
-          <div class="pp-wrap">
-            <button class="pp-btn" id="reactPersonBtn" onclick="toggleReactPP()">
-              <span id="reactPersonLbl">Everyone in DM</span>
+          <label class="L">React to messages from <span style="font-size:.52rem">(blank = everyone)</span></label>
+          <div class="pp">
+            <button class="ppbtn" id="rPersonBtn" onclick="togglePP('react')">
+              <span id="rPersonLbl">Everyone in DM</span>
               <span class="arr">▾</span>
             </button>
-            <div class="pp-drop" id="reactPersonDrop">
-              <input class="pp-search" type="text" placeholder="Search…" oninput="filterReactPP(this.value)">
-              <div class="pp-list" id="reactPersonList"></div>
+            <div class="ppdrop" id="rPersonDrop">
+              <input class="ppsrch" type="text" placeholder="Search…" oninput="filterPP('react',this.value)">
+              <div class="pplist" id="rPersonList"></div>
             </div>
           </div>
+          <p class="note" style="margin-top:.45rem">Reacts <strong style="color:var(--green)">instantly</strong> when a message arrives via Gateway.</p>
         </div>
       </div>
 
       <!-- Emoji slots -->
-      <div style="margin-bottom:.85rem">
-        <label class="L">Emojis to react with <span style="font-size:.54rem">(click + to add, click emoji to remove)</span></label>
-        <div class="emoji-slots" id="reactSlots">
-          <span class="emoji-slot-add" onclick="openReactEpick()">+ Add emoji</span>
+      <div style="margin-bottom:.75rem">
+        <label class="L">Emojis to react with <span style="font-size:.52rem">(click emoji to remove)</span></label>
+        <div class="eslots" id="reactSlots">
+          <span class="eslot-add" onclick="openReactPick()">+ Add emoji</span>
         </div>
-        <!-- Emoji picker popup for react -->
-        <div class="ep-wrap" style="position:relative">
-          <div class="ep-pop" id="reactEpop" style="top:0">
-            <div class="ep-hdr">Pick emoji to add</div>
-            <div class="ep-cats" id="reactEcats"></div>
-            <div class="ep-grid" id="reactEgrid"></div>
+        <div class="ep" style="position:relative">
+          <div class="eppop" id="reactEpop">
+            <div class="ephdr">Add reaction emoji</div>
+            <div class="epcats" id="reactEcats"></div>
+            <div class="epgrid" id="reactEgrid"></div>
           </div>
         </div>
       </div>
 
-      <!-- Trigger + options -->
-      <div class="g2" style="margin-bottom:.8rem">
+      <div class="g2" style="margin-bottom:.75rem">
         <div>
-          <label class="L">Trigger word <span style="font-size:.54rem">(empty = react to all their messages)</span></label>
+          <label class="L">Trigger word <span style="font-size:.52rem">(blank = react to all)</span></label>
           <input type="text" id="reactTrig" placeholder="e.g.  lol">
-          <div class="tog-row" style="border:none;padding:.45rem 0 0">
+          <div class="trow" style="border:none;padding:.42rem 0 0">
             <label class="tog"><input type="checkbox" id="reactCS"><span class="knob"></span></label>
-            <div class="tog-body"><div class="tog-name">Case sensitive</div></div>
+            <div class="tbody"><div class="tname">Case sensitive</div></div>
+          </div>
+          <div class="trow">
+            <label class="tog"><input type="checkbox" id="reactOwn"><span class="knob"></span></label>
+            <div class="tbody"><div class="tname">React to own messages too</div></div>
           </div>
         </div>
         <div>
-          <label class="L">Options</label>
-          <div class="tog-row" style="border:none;padding:.3rem 0">
-            <label class="tog"><input type="checkbox" id="reactOwn"><span class="knob"></span></label>
-            <div class="tog-body"><div class="tog-name">React to own messages too</div></div>
+          <label class="L">Delay between emojis</label>
+          <div class="sv-hdr" style="margin-bottom:.45rem">
+            <span class="sv-num" style="font-size:1.2rem" id="rSV">0.3</span>
+            <span class="sv-unit">s</span>
+            <span class="sv-tag" id="rST"></span>
           </div>
+          <div class="sldr" id="rSldr"><div class="str"><div class="sfill" id="rSF"></div></div><div class="sthumb" id="rSThumb"></div></div>
+          <div class="slbls"><span>0s</span><span>5s</span></div>
           <div style="margin-top:.65rem">
-            <label class="L">Delay between each emoji react</label>
-            <div class="sldr-wrap">
-              <div class="sldr-hdr" style="margin-bottom:.4rem">
-                <span class="sldr-val" style="font-size:1.15rem" id="reactDS">0.3</span>
-                <span class="sldr-unit">s</span>
-                <span class="sldr-tag" id="reactDT"></span>
-              </div>
-              <div class="sldr-track-wrap" id="reactSldr">
-                <div class="sldr-track"><div class="sldr-fill" id="reactSF"></div></div>
-                <div class="sldr-thumb" id="reactSThumb"></div>
-              </div>
-              <div class="sldr-lbls"><span>0s</span><span>5s</span></div>
-            </div>
-          </div>
-          <div style="margin-top:.65rem">
-            <label class="L">Max reacts <span style="font-size:.54rem">(0 = unlimited)</span></label>
+            <label class="L">Max reacts <span style="font-size:.52rem">(0 = unlimited)</span></label>
             <input type="number" id="reactMax" value="0" min="0">
           </div>
         </div>
       </div>
 
-      <!-- Poll speed -->
-      <div style="margin-bottom:.85rem">
-        <label class="L">Poll interval</label>
-        <div class="g3">
-          <button class="btn b-ghost b-sm" id="rpoll-500"  onclick="setReactPoll(500)">500ms</button>
-          <button class="btn b-sm"         id="rpoll-800"  onclick="setReactPoll(800)" style="background:rgba(46,196,182,.1);color:var(--green);border:1px solid rgba(46,196,182,.3)">800ms ✓</button>
-          <button class="btn b-ghost b-sm" id="rpoll-2000" onclick="setReactPoll(2000)">2000ms</button>
-        </div>
-      </div>
-
-      <!-- Controls -->
       <div class="srow">
         <div class="sdot" id="reactDot"></div>
         <span class="stxt" id="reactTxt">Idle</span>
-        <div style="margin-left:auto;font-size:.66rem;color:var(--purple)">⚡ <span id="reactCount">0</span> reacted</div>
+        <span style="margin-left:auto;font-size:.64rem;color:var(--purple)">⚡ <span id="reactCount">0</span> reacted</span>
       </div>
       <div class="ctrl">
-        <button class="btn b-purple b-full" id="reactStartBtn" onclick="startReact()" disabled>▶ Start Auto React</button>
-        <button class="btn b-stop" id="reactStopBtn" onclick="stopJob('react')" style="display:none">■ Stop</button>
+        <button class="btn b-purple b-full" id="reactStart" onclick="startReact()" disabled>▶ Start Auto React</button>
+        <button class="btn b-stop" id="reactStop" onclick="stopJob('react')" style="display:none">■ Stop</button>
       </div>
-
-      <!-- Log -->
-      <div style="margin-top:.8rem">
-        <div class="con-hdr"><div class="ctitle" style="margin:0">Live Log</div><button class="btn b-ghost b-sm" onclick="clrLog('reactLog','react')">Clear</button></div>
+      <div style="margin-top:.75rem">
+        <div class="chdr"><div class="ct" style="margin:0">Live Log</div><button class="btn b-ghost b-sm" onclick="clrLog('reactLog','react')">Clear</button></div>
         <div class="con" id="reactLog"></div>
       </div>
     </div>
@@ -534,40 +474,37 @@ input[type=range]{-webkit-appearance:auto;appearance:auto;background:none;border
 
 </div><!-- /mainUI -->
 
-<p style="text-align:center;font-size:.54rem;color:var(--dim);margin-top:1.8rem">
+<p style="text-align:center;font-size:.53rem;color:var(--dim);margin-top:1.6rem">
   ⚠️ Self-botting may violate Discord's ToS &nbsp;·&nbsp; Your token is never shared with third parties
 </p>
 </div><!-- /wrap -->
 
 <script>
-// ═══════════════════════════════════════════════════════════════ CONFIG
+// ─── API ─────────────────────────────────────────────────────────────
 const NGROK_SRC = 'https://raw.githubusercontent.com/iamdookie1/website3/main/Ngrok%20link';
 let API = null;
 
 async function apiFetch(path, opts={}) {
-  if (!API) throw new Error('API not ready');
   return fetch(`${API}${path}`, {
     ...opts,
-    headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true', ...(opts.headers||{}) }
+    headers: { 'Content-Type':'application/json', 'ngrok-skip-browser-warning':'true', ...(opts.headers||{}) }
   });
 }
-
 async function initAPI() {
   try {
-    const r = await fetch(NGROK_SRC, { cache: 'no-store' });
+    const r = await fetch(NGROK_SRC, { cache:'no-store' });
     if (!r.ok) throw 0;
-    const url = (await r.text()).trim().replace(/\/$/, '');
+    const url = (await r.text()).trim().replace(/\/$/,'');
     if (!url.startsWith('http')) throw 0;
     API = url + '/api';
-    const ping = await fetch(`${API}/ping`, {
-      headers: { 'ngrok-skip-browser-warning': 'true' },
-      signal: AbortSignal.timeout(7000)
-    });
-    if (!ping.ok) throw 0;
+    const p = await fetch(`${API}/ping`, { headers:{'ngrok-skip-browser-warning':'true'}, signal:AbortSignal.timeout(7000) });
+    if (!p.ok) throw 0;
+    const d = await p.json();
     document.getElementById('apiModal').style.display = 'none';
-  } catch { showApiDown(); }
+    if (!d.ws) document.getElementById('wsWarn').style.display = 'block';
+  } catch { showDown(); }
 }
-function showApiDown() { document.getElementById('apiModal').style.display = 'flex'; }
+function showDown() { document.getElementById('apiModal').style.display = 'flex'; }
 async function retryAPI() {
   const b = document.getElementById('retryBtn');
   b.textContent = 'Checking…'; b.disabled = true;
@@ -575,504 +512,383 @@ async function retryAPI() {
   b.textContent = '↺ Retry Connection'; b.disabled = false;
 }
 
-// ═══════════════════════════════════════════════════════════════ STATE
+// ─── STATE ────────────────────────────────────────────────────────────
 const S = {
-  token: localStorage.getItem('dc_tok') || '',
+  token: localStorage.getItem('dc_tok')||'',
   user: null, dms: [],
-  purge: { dm: null, speed: 0.3, filter: 'all', jobId: null, status: 'idle', seen: new Set() },
-  auto:  { dm: null, person: null, jobId: null, status: 'idle', seen: new Set(), pollMs: 800 },
-  react: { dm: null, person: null, jobId: null, status: 'idle', seen: new Set(), pollMs: 800, speed: 0.3, emojis: [] },
+  purge: { dm:null, speed:0.0, filter:'all', jobId:null, status:'idle', lastIdx:-1 },
+  auto:  { dm:null, person:null, jobId:null, status:'idle', lastIdx:-1 },
+  react: { dm:null, person:null, jobId:null, status:'idle', lastIdx:-1, speed:0.3, emojis:[] },
 };
 const polls = {};
 
-// ═══════════════════════════════════════════════════════════════ INIT
+// ─── INIT ─────────────────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', () => {
   if (S.token) document.getElementById('tokenIn').value = S.token;
-  initSlider('purgeSldr','purgeSF','purgeSThumb','purgeSV','purgeST','purgeSN', v => S.purge.speed = v, 5);
-  initSlider('reactSldr','reactSF','reactSThumb','reactDS','reactDT', null, v => S.react.speed = v, 5);
+  initSlider('pSldr','pSF','pSThumb','pSV','pST','pSN', v => S.purge.speed = v);
+  initSlider('rSldr','rSF','rSThumb','rSV','rST', null, v => S.react.speed = v);
   pFilter('all');
-  buildEmojiData();
-  renderReactSlots();
-  log('purgeLog','// Ready.','sys');
-  log('autoLog', '// Ready.','sys');
-  log('reactLog','// Ready.','sys');
+  buildEmojiPicker();
+  renderSlots();
+  log('purgeLog','// Ready. Select a DM and hit Start.','sys');
+  log('autoLog', '// Uses Discord Gateway WebSocket for instant message detection.','sys');
+  log('reactLog','// Uses Discord Gateway WebSocket for instant reaction.','sys');
   initAPI();
 });
 
-// ═══════════════════════════════════════════════════════════════ AUTH
+// ─── AUTH ─────────────────────────────────────────────────────────────
 function toggleTok() {
-  const i = document.getElementById('tokenIn'), b = document.getElementById('eyeBtn');
-  i.type = i.type === 'password' ? 'text' : 'password';
-  b.textContent = i.type === 'password' ? '👁' : '🙈';
+  const i=document.getElementById('tokenIn'),b=document.getElementById('eyeBtn');
+  i.type=i.type==='password'?'text':'password'; b.textContent=i.type==='password'?'👁':'🙈';
 }
 async function connect() {
-  if (!API) { showApiDown(); return; }
+  if (!API) { showDown(); return; }
   const token = document.getElementById('tokenIn').value.trim();
   if (!token) return;
   S.token = token;
   const btn = document.getElementById('connectBtn');
-  btn.disabled = true; btn.textContent = '…'; showErr('authErr','');
+  btn.disabled=true; btn.textContent='…'; showErr('authErr','');
   try {
-    const r = await apiFetch('/validate', { method: 'POST', body: JSON.stringify({ token }) });
+    const r = await apiFetch('/validate',{method:'POST',body:JSON.stringify({token})});
     const d = await r.json();
     if (d.ok) {
       S.user = d.user;
       localStorage.setItem('dc_tok', token);
-      document.getElementById('upillName').textContent = d.user.global_name || d.user.username;
+      document.getElementById('upillName').textContent = d.user.global_name||d.user.username;
       document.getElementById('upill').style.display = 'flex';
       document.getElementById('mainUI').style.display = 'block';
       document.getElementById('authCard').style.display = 'none';
-      log('purgeLog', `// Authenticated as ${d.user.username}`, 'sys');
+      log('purgeLog',`// Connected as ${d.user.username}`,'sys');
       loadDMs();
-    } else { showErr('authErr','Invalid token — check and try again.'); }
+    } else { showErr('authErr','Invalid token — double-check and try again.'); }
   } catch { showErr('authErr','Cannot reach backend — is purger_backend.py running?'); }
-  btn.disabled = false; btn.textContent = 'Connect';
+  btn.disabled=false; btn.textContent='Connect';
 }
 function disconnect() {
-  S.user = null; S.dms = []; localStorage.removeItem('dc_tok');
-  ['purge','auto','react'].forEach(k => {
-    S[k].dm = null; S[k].jobId = null; S[k].status = 'idle'; clearInterval(polls[k]);
+  S.user=null; S.dms=[];
+  localStorage.removeItem('dc_tok');
+  ['purge','auto','react'].forEach(k=>{
+    S[k].dm=null; S[k].jobId=null; S[k].status='idle'; S[k].lastIdx=-1;
+    clearInterval(polls[k]);
   });
-  S.auto.person = null; S.react.person = null;
-  document.getElementById('upill').style.display = 'none';
-  document.getElementById('mainUI').style.display = 'none';
-  document.getElementById('authCard').style.display = 'block';
-  document.getElementById('tokenIn').value = '';
+  S.auto.person=null; S.react.person=null;
+  document.getElementById('upill').style.display='none';
+  document.getElementById('mainUI').style.display='none';
+  document.getElementById('authCard').style.display='block';
+  document.getElementById('tokenIn').value='';
 }
 
-// ═══════════════════════════════════════════════════════════════ DMs
+// ─── DMs ──────────────────────────────────────────────────────────────
 async function loadDMs() {
   try {
-    const r = await apiFetch('/dms', { method: 'POST', body: JSON.stringify({ token: S.token }) });
+    const r = await apiFetch('/dms',{method:'POST',body:JSON.stringify({token:S.token})});
     const d = await r.json();
-    if (d.ok) {
-      S.dms = d.dms;
-      renderDMs('purge'); renderDMs('auto'); renderDMs('react');
-    }
+    if (d.ok) { S.dms=d.dms; ['purge','auto','react'].forEach(renderDMs); }
   } catch {}
 }
-
 function renderDMs(ctx) {
-  const q = (document.getElementById(`${ctx}Search`) || {}).value?.toLowerCase() || '';
+  const q = (document.getElementById(`${ctx}Search`)||{}).value?.toLowerCase()||'';
   const el = document.getElementById(`${ctx}DMs`);
-  const list = q ? S.dms.filter(d => d.name.toLowerCase().includes(q)) : S.dms;
-  if (!list.length) { el.innerHTML = '<p style="font-size:.72rem;color:var(--dim);padding:.4rem 0">No DMs found.</p>'; return; }
-  el.innerHTML = list.map(dm => {
-    const sel = S[ctx].dm?.id === dm.id;
-    const sub = dm.recipients.length === 1 ? `@${dm.recipients[0].username}` : `${dm.recipients.length} people`;
-    return `<div class="dm-item${sel?' sel':''}" onclick="selDM('${ctx}','${dm.id}')">
-      <div class="dm-av">${dm.name.slice(0,2).toUpperCase()}</div>
-      <div class="dm-info">
-        <div class="dm-dn">${esc(dm.name)}</div>
-        <div class="dm-un">${esc(sub)}</div>
-      </div>
-      <span class="dm-badge">${dm.type===3?'GROUP':'DM'}</span>
-      ${sel ? '<span class="dm-sel">●</span>' : ''}
+  const list = q ? S.dms.filter(d=>d.name.toLowerCase().includes(q)) : S.dms;
+  if (!list.length) { el.innerHTML='<p style="font-size:.7rem;color:var(--dim);padding:.35rem 0">No DMs found.</p>'; return; }
+  el.innerHTML = list.map(dm=>{
+    const sel = S[ctx].dm?.id===dm.id;
+    const sub = dm.recipients.length===1?`@${dm.recipients[0].username}`:`${dm.recipients.length} people`;
+    return `<div class="dmi${sel?' sel':''}" onclick="selDM('${ctx}','${dm.id}')">
+      <div class="dav">${dm.name.slice(0,2).toUpperCase()}</div>
+      <div class="dinfo"><div class="ddn">${esc(dm.name)}</div><div class="dun">${esc(sub)}</div></div>
+      <span class="dbadge">${dm.type===3?'GRP':'DM'}</span>
+      ${sel?'<span class="dsel">●</span>':''}
     </div>`;
   }).join('');
 }
-
 function selDM(ctx, id) {
-  S[ctx].dm = S.dms.find(d => d.id === id) || null;
+  S[ctx].dm = S.dms.find(d=>d.id===id)||null;
   renderDMs(ctx);
-  if (ctx === 'purge') {
-    document.getElementById('purgeTargN').textContent = S.purge.dm?.name || '—';
-    document.getElementById('purgeStartBtn').disabled = !S.purge.dm;
-  }
-  if (ctx === 'auto') { fillPP(); checkAutoReady(); }
-  if (ctx === 'react') { fillReactPP(); checkReactReady(); }
+  if (ctx==='purge') { document.getElementById('purgeTN').textContent=S.purge.dm?.name||'—'; document.getElementById('purgeStart').disabled=!S.purge.dm; }
+  if (ctx==='auto')  { fillPPList('auto'); checkReady('auto'); }
+  if (ctx==='react') { fillPPList('react'); checkReady('react'); }
 }
 
-// ═══════════════════════════════════════════════════════════════ PERSON PICKER (Auto)
-function fillPP(q='') {
-  const dm = S.auto.dm; if (!dm) return;
-  const el = document.getElementById('personList');
-  const recs = q ? dm.recipients.filter(r => (r.global_name+r.username).toLowerCase().includes(q)) : dm.recipients;
-  el.innerHTML = recs.map(r => `
-    <div class="pp-item${S.auto.person?.id===r.id?' sel':''}" onclick="selPerson('${r.id}','${esc(r.global_name)}','${esc(r.username)}')">
-      <div class="pp-av">${r.global_name.slice(0,2).toUpperCase()}</div>
+// ─── PERSON PICKER ────────────────────────────────────────────────────
+function fillPPList(ctx, q='') {
+  const dm = S[ctx].dm; if (!dm) return;
+  const listEl = document.getElementById(ctx==='auto'?'aPersonList':'rPersonList');
+  const base = ctx==='react' ? [{id:'',global_name:'Everyone',username:''}] : [];
+  const recs = [...base, ...dm.recipients].filter(r=>!q||(r.global_name+r.username).toLowerCase().includes(q));
+  listEl.innerHTML = recs.map(r=>`
+    <div class="ppitem${S[ctx].person?.id===r.id?' sel':''}" onclick="selPerson('${ctx}','${r.id}','${esc(r.global_name)}','${esc(r.username)}')">
+      <div class="ppav">${r.global_name.slice(0,2).toUpperCase()}</div>
       <div>
         <div>${esc(r.global_name)}</div>
-        <div style="font-size:.58rem;color:var(--dim)">@${esc(r.username)}</div>
+        ${r.username?`<div style="font-size:.56rem;color:var(--dim)">@${esc(r.username)}</div>`:''}
       </div>
-    </div>`).join('') || '<p style="font-size:.7rem;color:var(--dim);padding:.5rem .8rem">No results</p>';
+    </div>`).join('')||'<p style="font-size:.68rem;color:var(--dim);padding:.45rem .78rem">No results</p>';
 }
-function filterPP(q) { fillPP(q.toLowerCase()); }
-function selPerson(id, dn, un) {
-  S.auto.person = { id, dn, un };
-  document.getElementById('personLbl').textContent = `${dn}  (@${un})`;
-  document.getElementById('personBtn').classList.add('has');
-  document.getElementById('personDrop').classList.remove('open');
-  checkAutoReady();
+function filterPP(ctx, q) { fillPPList(ctx, q.toLowerCase()); }
+function selPerson(ctx, id, dn, un) {
+  S[ctx].person = {id,dn,un};
+  const lbl = ctx==='auto'?'aPersonLbl':'rPersonLbl';
+  const btn = ctx==='auto'?'aPersonBtn':'rPersonBtn';
+  const drop= ctx==='auto'?'aPersonDrop':'rPersonDrop';
+  document.getElementById(lbl).textContent = id ? `${dn}  (@${un})` : 'Everyone in DM';
+  document.getElementById(btn).classList.toggle('has', !!id);
+  document.getElementById(drop).classList.remove('open');
+  checkReady(ctx);
 }
-function togglePP() {
-  if (!S.auto.dm) return;
-  fillPP();
-  document.getElementById('personDrop').classList.toggle('open');
+function togglePP(ctx) {
+  if (!S[ctx].dm) return;
+  fillPPList(ctx);
+  const drop = ctx==='auto'?'aPersonDrop':'rPersonDrop';
+  document.getElementById(drop).classList.toggle('open');
 }
-
-// ═══════════════════════════════════════════════════════════════ PERSON PICKER (React)
-function fillReactPP(q='') {
-  const dm = S.react.dm; if (!dm) return;
-  const el = document.getElementById('reactPersonList');
-  const base = [{ id: '', global_name: 'Everyone', username: '' }];
-  const recs = [...base, ...dm.recipients];
-  const filtered = q ? recs.filter(r => (r.global_name+r.username).toLowerCase().includes(q)) : recs;
-  el.innerHTML = filtered.map(r => `
-    <div class="pp-item${S.react.person?.id===r.id?' sel':''}" onclick="selReactPerson('${r.id}','${esc(r.global_name)}','${esc(r.username)}')">
-      <div class="pp-av">${r.global_name.slice(0,2).toUpperCase()}</div>
-      <div>
-        <div>${esc(r.global_name)}</div>
-        ${r.username ? `<div style="font-size:.58rem;color:var(--dim)">@${esc(r.username)}</div>` : ''}
-      </div>
-    </div>`).join('');
-}
-function filterReactPP(q) { fillReactPP(q.toLowerCase()); }
-function selReactPerson(id, dn, un) {
-  S.react.person = { id, dn, un };
-  document.getElementById('reactPersonLbl').textContent = id ? `${dn}  (@${un})` : 'Everyone in DM';
-  document.getElementById('reactPersonBtn').classList.toggle('has', !!id);
-  document.getElementById('reactPersonDrop').classList.remove('open');
-}
-function toggleReactPP() {
-  if (!S.react.dm) return;
-  fillReactPP();
-  document.getElementById('reactPersonDrop').classList.toggle('open');
-}
-
-// Close all dropdowns on outside click
 document.addEventListener('click', e => {
-  if (!e.target.closest('.pp-wrap')) {
-    document.querySelectorAll('.pp-drop').forEach(d => d.classList.remove('open'));
-  }
-  if (!e.target.closest('.ep-wrap') && !e.target.closest('.emoji-slot-add')) {
-    document.querySelectorAll('.ep-pop').forEach(p => p.classList.remove('open'));
-  }
+  if (!e.target.closest('.pp')) document.querySelectorAll('.ppdrop').forEach(d=>d.classList.remove('open'));
+  if (!e.target.closest('.ep') && !e.target.closest('.eslot-add')) document.querySelectorAll('.eppop').forEach(p=>p.classList.remove('open'));
 });
 
-// ═══════════════════════════════════════════════════════════════ EMOJI DATA
-const EMOJI_CATS = {
-  'Faces': ['😀','😂','🤣','😅','😊','🥹','😇','😍','🥰','🤩','😎','🥳','🤪','😜','😏','😒','🙄','😤','😡','🤬','😭','😢','😪','😴','🤔','🤫','🤭','🫡','😬','🥺','😳','😱','😨','🫠','🤯','😵','💀','🤡','👻','😈'],
-  'Hands': ['👍','👎','👋','🤝','🙏','💪','🫂','🫶','👏','🙌','🤦','🤷','🙋','🫵','👀'],
+// ─── EMOJI PICKER ─────────────────────────────────────────────────────
+const ECATS = {
+  'Faces':  ['😀','😂','🤣','😅','😊','🥹','😇','😍','🥰','🤩','😎','🥳','🤪','😜','😏','😒','🙄','😤','😡','🤬','😭','😢','😪','😴','🤔','🤫','🤭','🫡','😬','🥺','😳','😱','😨','😰','🫠','🤯','😵','💀','💩','🤡','👻','😈'],
+  'Hands':  ['👍','👎','👋','🤝','🙏','💪','🫂','🫶','👏','🙌','🤦','🤷','🙋','🫵','👀','✌️','🤞','🖕','🤙','👌'],
   'Hearts': ['❤️','🧡','💛','💚','💙','💜','🖤','🤍','🤎','💔','❤️‍🔥','💕','💞','💓','💗','💖','💘','💝'],
-  'Fun': ['🔥','💯','✅','❌','🎉','💫','⭐','🌟','💥','🎊','🏆','💎','🎯','🚀','🌈','🎵','🎶','⚡','💤','❓','❗','📌','🔔','💬','🎮','🍀','🦋','🌸','🐉','🎭'],
-  'Food': ['🍕','🍔','🧋','🍜','🍣','🍩','🎂','🍭','🍪','🧁','🌮','🍟','🍦','🥤','🍷','🥂'],
+  'Fun':    ['🔥','💯','✅','❌','🎉','💫','⭐','🌟','💥','🎊','🏆','💎','🎯','🚀','🌈','🎵','🎶','⚡','💤','❓','❗','📌','🔔','💬','🎮','🍀','🦋','🌸','🐉','🎭','🤌','💀','🫰'],
+  'Food':   ['🍕','🍔','🧋','🍜','🍣','🍩','🎂','🍭','🍪','🧁','🌮','🍟','🍦','🥤','🥂','🍷'],
 };
-let allEmojis = {};
+let _reactCat = 'Faces';
 
-function buildEmojiData() {
-  Object.entries(EMOJI_CATS).forEach(([cat, emojis]) => {
-    emojis.forEach(e => { allEmojis[e] = cat; });
-  });
-  // Build react emoji picker
-  const catEl = document.getElementById('reactEcats');
+function buildEmojiPicker() {
+  renderEcats('Faces');
+}
+function renderEcats(cat) {
+  _reactCat = cat;
+  const catsEl = document.getElementById('reactEcats');
   const gridEl = document.getElementById('reactEgrid');
-  let activeCat = 'Faces';
-
-  function renderCat(cat) {
-    activeCat = cat;
-    catEl.innerHTML = Object.keys(EMOJI_CATS).map(c =>
-      `<button class="ep-cat${c===cat?' on':''}" onclick="reactEcat('${c}')">${c}</button>`
-    ).join('');
-    gridEl.innerHTML = EMOJI_CATS[cat].map(e =>
-      `<button class="ep-e" onclick="addReactEmoji('${e}')">${e}</button>`
-    ).join('');
-  }
-
-  window.reactEcat = (cat) => renderCat(cat);
-  renderCat('Faces');
+  catsEl.innerHTML = Object.keys(ECATS).map(c=>
+    `<button class="epcat${c===cat?' on':''}" onclick="switchEcat('${c}')">${c}</button>`
+  ).join('');
+  gridEl.innerHTML = ECATS[cat].map(e=>
+    `<button class="epe" onclick="addEmoji('${e}')">${e}</button>`
+  ).join('');
 }
-
-// ═══════════════════════════════════════════════════════════════ REACT EMOJI SLOTS
-function openReactEpick() {
-  const pop = document.getElementById('reactEpop');
-  pop.classList.toggle('open');
-}
-function addReactEmoji(e) {
-  if (S.react.emojis.includes(e)) return; // no duplicates
-  S.react.emojis.push(e);
-  renderReactSlots();
+function switchEcat(cat) { renderEcats(cat); }
+function openReactPick() { document.getElementById('reactEpop').classList.toggle('open'); }
+function addEmoji(e) {
+  if (!S.react.emojis.includes(e)) { S.react.emojis.push(e); renderSlots(); checkReady('react'); }
   document.getElementById('reactEpop').classList.remove('open');
-  checkReactReady();
 }
-function removeReactEmoji(e) {
-  S.react.emojis = S.react.emojis.filter(x => x !== e);
-  renderReactSlots();
-  checkReactReady();
-}
-function renderReactSlots() {
-  const el = document.getElementById('reactSlots');
-  el.innerHTML = S.react.emojis.map(e =>
-    `<span class="emoji-slot" onclick="removeReactEmoji('${e}')" title="Click to remove">${e}<span class="rm">✕</span></span>`
-  ).join('') + `<span class="emoji-slot-add" onclick="openReactEpick()">+ Add emoji</span>`;
+function removeEmoji(e) { S.react.emojis=S.react.emojis.filter(x=>x!==e); renderSlots(); checkReady('react'); }
+function renderSlots() {
+  document.getElementById('reactSlots').innerHTML =
+    S.react.emojis.map(e=>`<span class="eslot" onclick="removeEmoji('${e}')" title="Click to remove">${e}<span class="rm">✕</span></span>`).join('')
+    + `<span class="eslot-add" onclick="openReactPick()">+ Add emoji</span>`;
 }
 
-// ═══════════════════════════════════════════════════════════════ SLIDER
-function initSlider(sid, fid, tid, vid, tagid, noteid, onUpdate, MAX=5) {
-  const sl = document.getElementById(sid);
-  const fill = document.getElementById(fid);
-  const thumb = document.getElementById(tid);
-  const MIN = 0;
-
-  function setVal(v) {
-    v = Math.max(MIN, Math.min(MAX, Math.round(v * 100) / 100));
-    const p = (v - MIN) / (MAX - MIN);
-    fill.style.width = (p * 100) + '%';
-    thumb.style.left = (p * 100) + '%';
-    document.getElementById(vid).textContent = v.toFixed(v < 1 ? 2 : 1);
-    let tag, note, col;
-    if      (v === 0)  { tag = '💀 Instant'; col = '#f72585'; note = '0 delay — fires as fast as Discord allows.'; }
-    else if (v < 0.15) { tag = '🔴 Turbo';   col = '#e63946'; note = 'Extremely fast — high rate limit risk.'; }
-    else if (v < 0.4)  { tag = '⚡ Fast';    col = '#f4a261'; note = 'Fast — some risk of rate limits.'; }
-    else if (v < 1.2)  { tag = '🟡 Normal';  col = '#f4de65'; note = 'Balanced speed and safety.'; }
-    else if (v < 3)    { tag = '🟢 Safe';    col = '#2ec4b6'; note = 'Low risk.'; }
-    else               { tag = '🐢 Very Safe';col = '#2ec4b6'; note = 'Very safe for long runs.'; }
-    const t = document.getElementById(tagid);
-    t.textContent = tag; t.style.color = col; t.style.background = col + '18';
-    if (noteid) document.getElementById(noteid).textContent = note;
+// ─── SLIDER ───────────────────────────────────────────────────────────
+function initSlider(sid,fid,tid,vid,tagid,noteid,onUpdate) {
+  const sl=document.getElementById(sid),fill=document.getElementById(fid),thumb=document.getElementById(tid);
+  const MIN=0,MAX=5;
+  function set(v) {
+    v = Math.max(MIN,Math.min(MAX, Math.round(v*100)/100));
+    const p=(v-MIN)/(MAX-MIN);
+    fill.style.width=(p*100)+'%'; thumb.style.left=(p*100)+'%';
+    document.getElementById(vid).textContent = v===0?'0.0':v.toFixed(v<1?2:1);
+    let tag,note,col;
+    if(v===0)      {tag='💀 Instant';col='#f72585';note='No delay — max speed, high rate limit risk.';}
+    else if(v<0.2) {tag='🔴 Turbo';col='#e63946';note='Extremely fast — very high rate limit risk.';}
+    else if(v<0.5) {tag='⚡ Fast';col='#f4a261';note='Fast with some rate limit risk.';}
+    else if(v<1.5) {tag='🟡 Normal';col='#f4de65';note='Balanced speed and safety.';}
+    else if(v<3)   {tag='🟢 Safe';col='#2ec4b6';note='Low rate limit risk.';}
+    else           {tag='🐢 Very Safe';col='#2ec4b6';note='Very safe for long unattended runs.';}
+    const t=document.getElementById(tagid);
+    t.textContent=tag; t.style.color=col; t.style.background=col+'18';
+    if(noteid) document.getElementById(noteid).textContent=note;
     onUpdate(v);
   }
-
-  function fromEvent(e) {
-    const rect = sl.getBoundingClientRect();
-    const cx = e.touches ? e.touches[0].clientX : e.clientX;
-    setVal(MIN + Math.max(0, Math.min(1, (cx - rect.left) / rect.width)) * (MAX - MIN));
+  function fromEv(e) {
+    const rect=sl.getBoundingClientRect(),cx=e.touches?e.touches[0].clientX:e.clientX;
+    set(MIN+Math.max(0,Math.min(1,(cx-rect.left)/rect.width))*(MAX-MIN));
   }
-
-  let drag = false;
-  sl.addEventListener('mousedown',  e => { drag = true; sl.classList.add('dragging'); fromEvent(e); e.preventDefault(); });
-  sl.addEventListener('touchstart', e => { drag = true; sl.classList.add('dragging'); fromEvent(e); }, { passive: true });
-  window.addEventListener('mousemove',  e => { if (drag) fromEvent(e); });
-  window.addEventListener('touchmove',  e => { if (drag) fromEvent(e); }, { passive: true });
-  window.addEventListener('mouseup',    () => { drag = false; sl.classList.remove('dragging'); });
-  window.addEventListener('touchend',   () => { drag = false; sl.classList.remove('dragging'); });
-
-  sl.setAttribute('tabindex', '0');
-  sl.addEventListener('keydown', e => {
-    const cur = parseFloat(document.getElementById(vid).textContent) || 0;
-    const step = e.shiftKey ? 0.5 : 0.05;
-    if      (e.key === 'ArrowRight') setVal(cur + step);
-    else if (e.key === 'ArrowLeft')  setVal(cur - step);
+  let drag=false;
+  sl.addEventListener('mousedown',e=>{drag=true;sl.classList.add('drag');fromEv(e);e.preventDefault();});
+  sl.addEventListener('touchstart',e=>{drag=true;sl.classList.add('drag');fromEv(e);},{passive:true});
+  window.addEventListener('mousemove',e=>{if(drag)fromEv(e);});
+  window.addEventListener('touchmove',e=>{if(drag)fromEv(e);},{passive:true});
+  window.addEventListener('mouseup',()=>{drag=false;sl.classList.remove('drag');});
+  window.addEventListener('touchend',()=>{drag=false;sl.classList.remove('drag');});
+  sl.setAttribute('tabindex','0');
+  sl.addEventListener('keydown',e=>{
+    const cur=parseFloat(document.getElementById(vid).textContent)||0;
+    const step=e.shiftKey?.5:.05;
+    if(e.key==='ArrowRight') set(cur+step);
+    else if(e.key==='ArrowLeft') set(cur-step);
     e.preventDefault();
   });
-
-  setVal(0.3);
+  set(0.3);
 }
 
-// ═══════════════════════════════════════════════════════════════ TAB
-function showTab(t) {
-  ['purge','auto','react'].forEach(k => {
-    document.getElementById(`tab-${k}`).style.display = k === t ? 'block' : 'none';
-    document.getElementById(`t-${k}`).className = 'tab' + (k === t ? ' on' : '');
-  });
-}
-
-// ═══════════════════════════════════════════════════════════════ PURGE FILTER
+// ─── PURGE FILTER ─────────────────────────────────────────────────────
 function pFilter(f) {
-  S.purge.filter = f;
-  ['all','before','after','count'].forEach(k => {
-    const b = document.getElementById(`pf-${k}`);
-    b.className = 'btn b-ghost b-sm';
-    b.style.cssText = '';
-  });
-  const b = document.getElementById(`pf-${f}`);
-  if (f === 'all' || f === 'before') { b.style.background='rgba(230,57,70,.12)'; b.style.color='var(--red)'; b.style.border='1px solid rgba(230,57,70,.3)'; }
-  else if (f === 'after') { b.style.background='rgba(46,196,182,.1)'; b.style.color='var(--green)'; b.style.border='1px solid rgba(46,196,182,.3)'; }
-  else { b.style.background='rgba(76,201,240,.1)'; b.style.color='var(--blue)'; b.style.border='1px solid rgba(76,201,240,.3)'; }
-  document.getElementById('pfDate').style.display  = (f==='before'||f==='after') ? 'block' : 'none';
-  document.getElementById('pfCount').style.display = f === 'count' ? 'block' : 'none';
-  const notes = { all:'Deletes all messages you sent in this DM.', before:'Deletes your messages sent before the chosen date.', after:'Deletes your messages sent after the chosen date.', count:'Deletes your last N messages (most recent first).' };
-  document.getElementById('pFilterNote').textContent = notes[f];
+  S.purge.filter=f;
+  document.querySelectorAll('.pfbtn').forEach(b=>{ b.className='btn b-sm pfbtn b-ghost'; b.style.cssText=''; });
+  const styles={all:'background:rgba(230,57,70,.12);color:var(--red);border:1px solid rgba(230,57,70,.28)',before:'background:rgba(230,57,70,.12);color:var(--red);border:1px solid rgba(230,57,70,.28)',after:'background:rgba(46,196,182,.1);color:var(--green);border:1px solid rgba(46,196,182,.28)',count:'background:rgba(76,201,240,.1);color:var(--blue);border:1px solid rgba(76,201,240,.28)'};
+  const b=document.getElementById(`pf-${f}`); b.className='btn b-sm pfbtn'; b.style.cssText=styles[f];
+  document.getElementById('pfDate').style.display=(f==='before'||f==='after')?'block':'none';
+  document.getElementById('pfCount').style.display=f==='count'?'block':'none';
+  const notes={all:'Deletes all messages you sent in this DM.',before:'Deletes your messages sent before this date.',after:'Deletes your messages sent after this date.',count:'Deletes your most recent N messages.'};
+  document.getElementById('pFilterNote').textContent=notes[f];
 }
 
-// ═══════════════════════════════════════════════════════════════ POLL BUTTONS
-let autoPollMs = 800, reactPollMs = 800;
-function setPoll(ms) {
-  autoPollMs = ms;
-  [500,800,2000].forEach(v => {
-    const b = document.getElementById(`poll-${v}`);
-    if (!b) return;
-    b.className = 'btn b-sm'; b.style.cssText = '';
-    if (v === ms) { b.style.background='rgba(46,196,182,.1)'; b.style.color='var(--green)'; b.style.border='1px solid rgba(46,196,182,.3)'; }
-    else b.className = 'btn b-ghost b-sm';
-  });
-  document.getElementById('pollNote').textContent = `Checks for new messages every ${ms}ms.`;
-}
-function setReactPoll(ms) {
-  reactPollMs = ms;
-  [500,800,2000].forEach(v => {
-    const b = document.getElementById(`rpoll-${v}`);
-    if (!b) return;
-    b.className = 'btn b-sm'; b.style.cssText = '';
-    if (v === ms) { b.style.background='rgba(46,196,182,.1)'; b.style.color='var(--green)'; b.style.border='1px solid rgba(46,196,182,.3)'; }
-    else b.className = 'btn b-ghost b-sm';
+// ─── TABS ─────────────────────────────────────────────────────────────
+function showTab(t) {
+  ['purge','auto','react'].forEach(k=>{
+    document.getElementById(`tab-${k}`).style.display=k===t?'block':'none';
+    document.getElementById(`t-${k}`).className='tab'+(k===t?' on':'');
   });
 }
 
-// ═══════════════════════════════════════════════════════════════ START PURGE
+// ─── READY CHECKS ─────────────────────────────────────────────────────
+function checkReady(ctx) {
+  if(ctx==='auto') document.getElementById('autoStart').disabled=!S.auto.dm||!S.auto.person;
+  if(ctx==='react') document.getElementById('reactStart').disabled=!S.react.dm||S.react.emojis.length===0;
+}
+
+// ─── START PURGE ──────────────────────────────────────────────────────
 async function startPurge() {
-  if (!S.purge.dm || !S.user) return;
-  const f  = S.purge.filter;
-  const dv = document.getElementById('purgeDate').value;
-  if ((f === 'before' || f === 'after') && !dv) { log('purgeLog','// Set a date first.','warn'); return; }
-  S.purge.seen.clear();
-  ['purgeDelN','purgeSkipN','purgeErrN'].forEach(id => document.getElementById(id).textContent = '0');
-  log('purgeLog', `// Starting purge on: ${S.purge.dm.name}  [${f}]`, 'sys');
+  if(!S.purge.dm||!S.user) return;
+  const f=S.purge.filter, dv=document.getElementById('purgeDate').value;
+  if((f==='before'||f==='after')&&!dv){log('purgeLog','// Set a date first.','warn');return;}
+  S.purge.lastIdx=-1;
+  ['purgeD','purgeS','purgeE'].forEach(id=>document.getElementById(id).textContent='0');
+  log('purgeLog',`// Starting purge — ${S.purge.dm.name} [${f}]  delay:${S.purge.speed}s  workers:${document.getElementById('purgeWorkers').value}`,'sys');
   try {
-    const r = await apiFetch('/purge/start', { method: 'POST', body: JSON.stringify({
-      token:       S.token,
-      channel_id:  S.purge.dm.id,
-      user_id:     S.user.id,
-      delay:       S.purge.speed,
-      batch_size:  parseInt(document.getElementById('purgeBatch').value) || 100,
-      filter_type: f,
-      filter_date: dv ? new Date(dv).toISOString() : null,
-      count:       parseInt(document.getElementById('purgeCount').value) || 50,
+    const r=await apiFetch('/purge/start',{method:'POST',body:JSON.stringify({
+      token:S.token, channel_id:S.purge.dm.id, user_id:S.user.id,
+      delay:S.purge.speed, workers:parseInt(document.getElementById('purgeWorkers').value)||3,
+      filter_type:f, filter_date:dv?new Date(dv).toISOString():null,
+      count:parseInt(document.getElementById('purgeCountIn').value)||50,
     })});
-    const d = await r.json();
-    if (d.ok) { S.purge.jobId = d.job_id; setSt('purge','starting'); startPoll('purge'); }
-  } catch { log('purgeLog','// ERROR: Could not start purge.','err'); }
+    const d=await r.json();
+    if(d.ok){S.purge.jobId=d.job_id; setSt('purge','starting'); startPoll('purge');}
+  } catch {log('purgeLog','// ERROR: Could not start purge.','err');}
 }
 
-// ═══════════════════════════════════════════════════════════════ START AUTO REPLY
-function checkAutoReady() {
-  document.getElementById('autoStartBtn').disabled = !S.auto.dm || !S.auto.person;
-}
+// ─── START AUTO REPLY ─────────────────────────────────────────────────
 async function startAuto() {
-  if (!S.auto.dm || !S.auto.person) return;
-  S.auto.seen.clear();
-  document.getElementById('autoReplied').textContent = '0';
-  const trig = document.getElementById('autoTrig').value.trim();
-  log('autoLog', `// Watching: ${S.auto.dm.name}`, 'sys');
-  log('autoLog', `// Target: ${S.auto.person.dn} (${S.auto.person.id})`, 'sys');
-  log('autoLog', trig ? `// Trigger: "${trig}"` : '// Trigger: ANY message from target', 'sys');
+  if(!S.auto.dm||!S.auto.person) return;
+  S.auto.lastIdx=-1;
+  document.getElementById('autoReplied').textContent='0';
+  const trig=document.getElementById('autoTrig').value.trim();
+  log('autoLog',`// Starting — channel:${S.auto.dm.id} target:${S.auto.person.id}`,'sys');
+  log('autoLog',trig?`// Trigger: "${trig}"  CS:${document.getElementById('autoCS').checked}`:'// No trigger — will reply to ALL messages from target','sys');
   try {
-    const r = await apiFetch('/auto/start', { method: 'POST', body: JSON.stringify({
-      token:          S.token,
-      channel_id:     S.auto.dm.id,
-      target_user_id: S.auto.person.id,
-      trigger:        trig,
-      case_sensitive: document.getElementById('autoCS').checked,
-      reply_msg:      document.getElementById('autoReply').value,
-      human_mode:     document.getElementById('autoHuman').checked,
-      max_replies:    parseInt(document.getElementById('autoMax').value) || 0,
-      blacklist:      document.getElementById('autoBlacklist').value,
-      quote_reply:    document.getElementById('autoQuote').checked,
-      poll_ms:        autoPollMs,
+    const r=await apiFetch('/auto/start',{method:'POST',body:JSON.stringify({
+      token:S.token, channel_id:S.auto.dm.id, target_user_id:S.auto.person.id,
+      trigger:trig, case_sensitive:document.getElementById('autoCS').checked,
+      reply_msg:document.getElementById('autoReply').value,
+      human_mode:document.getElementById('autoHuman').checked,
+      max_replies:parseInt(document.getElementById('autoMax').value)||0,
+      blacklist:document.getElementById('autoBlacklist').value,
+      quote_reply:document.getElementById('autoQuote').checked,
     })});
-    const d = await r.json();
-    if (d.ok) { S.auto.jobId = d.job_id; setSt('auto','starting'); startPoll('auto'); }
-  } catch { log('autoLog','// ERROR: Could not start auto reply.','err'); }
+    const d=await r.json();
+    if(d.ok){S.auto.jobId=d.job_id; setSt('auto','starting'); startPoll('auto');}
+  } catch {log('autoLog','// ERROR: Could not start.','err');}
 }
 
-// ═══════════════════════════════════════════════════════════════ START AUTO REACT
-function checkReactReady() {
-  document.getElementById('reactStartBtn').disabled = !S.react.dm || S.react.emojis.length === 0;
-}
+// ─── START AUTO REACT ─────────────────────────────────────────────────
 async function startReact() {
-  if (!S.react.dm || S.react.emojis.length === 0) return;
-  S.react.seen.clear();
-  document.getElementById('reactCount').textContent = '0';
-  log('reactLog', `// Watching: ${S.react.dm.name}`, 'sys');
-  log('reactLog', `// Emojis: ${S.react.emojis.join(' ')}`, 'sys');
+  if(!S.react.dm||S.react.emojis.length===0) return;
+  S.react.lastIdx=-1;
+  document.getElementById('reactCount').textContent='0';
+  log('reactLog',`// Starting — channel:${S.react.dm.id} emojis:${S.react.emojis.join('')}`,'sys');
   try {
-    const r = await apiFetch('/react/start', { method: 'POST', body: JSON.stringify({
-      token:          S.token,
-      channel_id:     S.react.dm.id,
-      self_id:        S.user.id,
-      target_user_id: S.react.person?.id || '',
-      emojis:         S.react.emojis,
-      trigger:        document.getElementById('reactTrig').value.trim(),
-      case_sensitive: document.getElementById('reactCS').checked,
-      max_reacts:     parseInt(document.getElementById('reactMax').value) || 0,
-      react_own:      document.getElementById('reactOwn').checked,
-      delay:          S.react.speed,
-      poll_ms:        reactPollMs,
+    const r=await apiFetch('/react/start',{method:'POST',body:JSON.stringify({
+      token:S.token, channel_id:S.react.dm.id, self_id:S.user.id,
+      target_user_id:S.react.person?.id||'',
+      emojis:S.react.emojis,
+      trigger:document.getElementById('reactTrig').value.trim(),
+      case_sensitive:document.getElementById('reactCS').checked,
+      max_reacts:parseInt(document.getElementById('reactMax').value)||0,
+      react_own:document.getElementById('reactOwn').checked,
+      delay:S.react.speed,
     })});
-    const d = await r.json();
-    if (d.ok) { S.react.jobId = d.job_id; setSt('react','starting'); startPoll('react'); }
-  } catch { log('reactLog','// ERROR: Could not start auto react.','err'); }
+    const d=await r.json();
+    if(d.ok){S.react.jobId=d.job_id; setSt('react','starting'); startPoll('react');}
+  } catch {log('reactLog','// ERROR: Could not start.','err');}
 }
 
-// ═══════════════════════════════════════════════════════════════ STOP + POLL
+// ─── STOP ─────────────────────────────────────────────────────────────
 async function stopJob(ctx) {
-  const jid = S[ctx].jobId; if (!jid) return;
-  log(`${ctx}Log`, '// Stopping…', 'warn');
-  try { await apiFetch(`/${ctx}/stop/${jid}`, { method: 'POST' }); } catch {}
+  const jid=S[ctx].jobId; if(!jid) return;
+  log(`${ctx}Log`,'// Stopping…','warn');
+  try { await apiFetch(`/${ctx}/stop/${jid}`,{method:'POST'}); } catch {}
 }
 
+// ─── POLL ─────────────────────────────────────────────────────────────
 function startPoll(ctx) {
   clearInterval(polls[ctx]);
-  const jid = S[ctx].jobId;
-  polls[ctx] = setInterval(async () => {
+  const jid=S[ctx].jobId;
+  polls[ctx]=setInterval(async()=>{
     try {
-      const r = await apiFetch(`/${ctx}/status/${jid}`);
-      const d = await r.json(); if (!d.ok) return;
-      setSt(ctx, d.status);
+      const r=await apiFetch(`/${ctx}/status/${jid}`);
+      const d=await r.json(); if(!d.ok) return;
+      setSt(ctx,d.status);
 
-      // Update counters
-      if (ctx === 'purge') {
-        document.getElementById('purgeDelN').textContent  = d.deleted;
-        document.getElementById('purgeSkipN').textContent = d.skipped;
-        document.getElementById('purgeErrN').textContent  = d.errors || 0;
-      } else if (ctx === 'auto') {
-        document.getElementById('autoReplied').textContent = d.replied;
+      if(ctx==='purge'){
+        document.getElementById('purgeD').textContent=d.deleted;
+        document.getElementById('purgeS').textContent=d.skipped;
+        document.getElementById('purgeE').textContent=d.errors||0;
+      } else if(ctx==='auto'){
+        document.getElementById('autoReplied').textContent=d.replied;
       } else {
-        document.getElementById('reactCount').textContent = d.reacted;
+        document.getElementById('reactCount').textContent=d.reacted;
       }
 
-      // Append new log lines
-      (d.log || []).forEach(entry => {
-        const key = entry.msg + entry.type;
-        if (S[ctx].seen.has(key)) return;
-        S[ctx].seen.add(key);
-        const t = entry.type === 'ok'   ? 'ok'  :
-                  entry.type === 'err'  ? 'err' :
-                  entry.type === 'warn' ? 'warn':
-                  entry.type === 'sys'  ? 'sys' :
-                  entry.type === 'info' ? 'info':
-                  entry.type === 'rx'   ? 'rx'  :
-                  entry.type === 'dim'  ? 'dim' : 'info';
-        log(`${ctx}Log`, entry.msg, t);
+      // Append only new log entries by index
+      const entries=d.log||[];
+      entries.forEach(e=>{
+        if(e.i<=S[ctx].lastIdx) return;
+        S[ctx].lastIdx=e.i;
+        const t=e.t||'log';
+        log(`${ctx}Log`,e.msg,t);
       });
 
-      if (d.status === 'done' || d.status === 'stopped') clearInterval(polls[ctx]);
+      if(d.status==='done'||d.status==='stopped') clearInterval(polls[ctx]);
     } catch {}
-  }, 700);
+  }, 500);
 }
 
-function setSt(ctx, s) {
-  S[ctx].status = s;
-  const dot   = document.getElementById(`${ctx}Dot`);
-  const txt   = document.getElementById(`${ctx}Txt`);
-  const start = document.getElementById(`${ctx}StartBtn`);
-  const stop  = document.getElementById(`${ctx}StopBtn`);
-  dot.className = 'sdot' + (s==='running'||s==='starting' ? ' run' : s==='done' ? ' done' : s==='stopped' ? ' stop' : '');
-  txt.textContent = { idle:'Idle', starting:'Starting…', running:'Running…', done:'Done ✓', stopped:'Stopped.' }[s] || s;
-  const run = s === 'running' || s === 'starting';
-  const canStart = ctx === 'purge' ? !!S.purge.dm : ctx === 'auto' ? !!S.auto.dm && !!S.auto.person : !!S.react.dm && S.react.emojis.length > 0;
-  start.disabled = run || !canStart;
-  stop.style.display = run ? 'block' : 'none';
+function setSt(ctx,s) {
+  S[ctx].status=s;
+  const dot=document.getElementById(`${ctx}Dot`),txt=document.getElementById(`${ctx}Txt`);
+  const start=document.getElementById(`${ctx}Start`),stop=document.getElementById(`${ctx}Stop`);
+  dot.className='sdot'+(s==='running'?' run':s==='connecting'?' conn':s==='done'?' done':s==='stopped'?' stop':'');
+  txt.textContent={idle:'Idle',connecting:'Connecting to Gateway…',starting:'Starting…',running:'Running ●',done:'Done ✓',stopped:'Stopped.'}[s]||s;
+  const run=s==='running'||s==='starting'||s==='connecting';
+  const canStart=ctx==='purge'?!!S.purge.dm:ctx==='auto'?!!S.auto.dm&&!!S.auto.person:!!S.react.dm&&S.react.emojis.length>0;
+  start.disabled=run||!canStart;
+  stop.style.display=run?'block':'none';
 }
 
-// ═══════════════════════════════════════════════════════════════ CONSOLE
-function log(id, msg, type='log') {
-  const c = document.getElementById(id); if (!c) return;
-  const span = document.createElement('span');
-  span.className = `ce ${type}`;
-  span.textContent = msg;
-  const br = document.createElement('br');
-  c.appendChild(span); c.appendChild(br);
-  c.scrollTop = c.scrollHeight;
+// ─── CONSOLE ──────────────────────────────────────────────────────────
+function log(id,msg,type='log'){
+  const c=document.getElementById(id); if(!c) return;
+  const span=document.createElement('span');
+  span.className=`ce ${type}`; span.textContent=msg;
+  c.appendChild(span);
+  // Limit DOM size
+  while(c.children.length>400) c.removeChild(c.firstChild);
+  c.scrollTop=c.scrollHeight;
 }
-function clrLog(id, ctx) {
-  document.getElementById(id).innerHTML = '';
-  if (S[ctx]) S[ctx].seen?.clear();
+function clrLog(id,ctx){
+  document.getElementById(id).innerHTML='';
+  if(S[ctx]) S[ctx].lastIdx=-1;
 }
 
-// ═══════════════════════════════════════════════════════════════ UTILS
-function showErr(id, msg) { const e = document.getElementById(id); e.textContent = msg; e.style.display = msg ? 'block' : 'none'; }
-function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+// ─── UTILS ────────────────────────────────────────────────────────────
+function showErr(id,msg){const e=document.getElementById(id);e.textContent=msg;e.style.display=msg?'block':'none';}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 </script>
 </body>
 </html>
