@@ -1061,56 +1061,86 @@ function toggleTheme(dark) {
 async function loadWords() {
   try {
     const res = await fetch(DICT_URL);
-    const text = await res.text();
-    allWords = text.split('\n').map(w => w.trim()).filter(Boolean);
-    // the source file truncates this word at 40 chars — patch it
+    // read as arraybuffer so we can handle any encoding
+    const buf = await res.arrayBuffer();
+    const bytes = new Uint8Array(buf);
+
+    // detect and strip BOM
+    let raw;
+    if (bytes[0] === 0xFF && bytes[1] === 0xFE) {
+      // UTF-16 LE
+      raw = new TextDecoder('utf-16le').decode(buf.slice(2));
+    } else if (bytes[0] === 0xFE && bytes[1] === 0xFF) {
+      // UTF-16 BE
+      raw = new TextDecoder('utf-16be').decode(buf.slice(2));
+    } else if (bytes[0] === 0xEF && bytes[1] === 0xBB && bytes[2] === 0xBF) {
+      // UTF-8 BOM
+      raw = new TextDecoder('utf-8').decode(buf.slice(3));
+    } else {
+      // default UTF-8 (handles latin-1 range too)
+      raw = new TextDecoder('utf-8').decode(buf);
+    }
+
+    // split on any line ending (\r\n, \r, \n), strip whitespace & null chars, drop empties
+    allWords = raw
+      .split(/\r\n|\r|\n/)
+      .map(w => w.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '').trim())
+      .filter(Boolean);
+
+    // patch the truncated word the source file cuts at 40 chars
     const truncIdx = allWords.indexOf('pneumonoultramicroscopicsilicovolcanocon');
     if (truncIdx !== -1) allWords[truncIdx] = 'pneumonoultramicroscopicsilicovolcanoconiosis';
+
     document.getElementById('word-count-stat').textContent = allWords.length.toLocaleString();
     filtered = [...allWords];
     render();
   } catch(e) {
     document.getElementById('word-list').innerHTML =
       '<div class="empty-state"><div class="empty-icon">✕</div><p>Failed to load word list. Check your connection.</p></div>';
+    console.error('loadWords error:', e);
   }
+}
+
+// normalise a string for comparison: lowercase + NFD unicode normalisation
+function norm(s) {
+  return s.normalize('NFD').toLowerCase();
 }
 
 function getSorted(arr) {
   const a = [...arr];
-  if (sortMode === 'az')            a.sort((x,y) => x.localeCompare(y));
-  else if (sortMode === 'za')       a.sort((x,y) => y.localeCompare(x));
-  else if (sortMode === 'shortest') a.sort((x,y) => x.length - y.length);
-  else if (sortMode === 'longest')  a.sort((x,y) => y.length - x.length);
+  if (sortMode === 'az')            a.sort((x,y) => x.localeCompare(y, undefined, {sensitivity:'base'}));
+  else if (sortMode === 'za')       a.sort((x,y) => y.localeCompare(x, undefined, {sensitivity:'base'}));
+  else if (sortMode === 'shortest') a.sort((x,y) => [...x].length - [...y].length);
+  else if (sortMode === 'longest')  a.sort((x,y) => [...y].length - [...x].length);
   else if (sortMode === 'random')   a.sort(() => Math.random() - 0.5);
   return a;
 }
 
-/* ── FILTER (fixed) ──
-   The search box does a simple "contains" across all words.
-   The filter-type + filter-val inputs apply a SECOND independent filter on top.
-   Both are AND-ed together so having text in search AND a pattern in filter-val both apply.
+/* ── FILTER ──
+   Search box = live substring across all words (AND-ed with the pattern filter).
+   Pattern filter = only fires when filter-val has actual content.
+   Uses Unicode-aware norm() so accented chars, mixed case all work correctly.
+   Length modes use [...w].length (codepoint count) so multi-byte chars count as 1.
 */
 function applyFilters() {
-  const q     = document.getElementById('search-input').value.trim().toLowerCase();
-  const type  = document.getElementById('filter-type').value;
-  const fval  = document.getElementById('filter-val').value.trim().toLowerCase();
-  const n     = parseInt(fval);
+  const q    = norm(document.getElementById('search-input').value.trim());
+  const type = document.getElementById('filter-type').value;
+  const fval = norm(document.getElementById('filter-val').value.trim());
+  const n    = parseInt(fval);
 
   let base = allWords;
 
-  // 1. search box: substring match
-  if (q) base = base.filter(w => w.toLowerCase().includes(q));
+  if (q) base = base.filter(w => norm(w).includes(q));
 
-  // 2. advanced filter: only apply when filter-val has content
   if (fval !== '') {
     switch (type) {
-      case 'starts':   base = base.filter(w => w.toLowerCase().startsWith(fval)); break;
-      case 'ends':     base = base.filter(w => w.toLowerCase().endsWith(fval)); break;
-      case 'contains': base = base.filter(w => w.toLowerCase().includes(fval)); break;
-      case 'exact':    base = base.filter(w => w.toLowerCase() === fval); break;
-      case 'length':   if (!isNaN(n)) base = base.filter(w => w.length === n); break;
-      case 'min':      if (!isNaN(n)) base = base.filter(w => w.length >= n); break;
-      case 'max':      if (!isNaN(n)) base = base.filter(w => w.length <= n); break;
+      case 'starts':   base = base.filter(w => norm(w).startsWith(fval)); break;
+      case 'ends':     base = base.filter(w => norm(w).endsWith(fval)); break;
+      case 'contains': base = base.filter(w => norm(w).includes(fval)); break;
+      case 'exact':    base = base.filter(w => norm(w) === fval); break;
+      case 'length':   if (!isNaN(n)) base = base.filter(w => [...w].length === n); break;
+      case 'min':      if (!isNaN(n)) base = base.filter(w => [...w].length >= n); break;
+      case 'max':      if (!isNaN(n)) base = base.filter(w => [...w].length <= n); break;
     }
   }
 
@@ -1123,8 +1153,11 @@ function onSearch() {
   render();
 }
 
+let currentSorted = [];
+
 function render() {
   const sorted = getSorted(filtered);
+  currentSorted = sorted;
   const total = sorted.length;
   const totalPages = Math.max(1, Math.ceil(total / perPage));
   if (page > totalPages) page = totalPages;
@@ -1157,10 +1190,12 @@ function render() {
     document.getElementById('word-list').innerHTML =
       '<div class="empty-state"><div class="empty-icon">∅</div><p>No words match your filter.</p></div>';
   } else {
-    // use data-word attr + event delegation — no inline onclick needed
-    const cards = slice.map(w =>
-      `<div class="word-card" data-word="${w}" style="font-family:${fontMap[wordFont]};font-size:${fontSize}px;padding:${cardPadding}px ${cardPadding + 2}px;border-radius:${cardRadius}px">${w}${showLen ? `<div class="word-len">${w.length} letters</div>` : ''}</div>`
-    ).join('');
+    // store index into sorted array so special chars in words never break the attribute
+    const cards = slice.map((w, i) => {
+      const safeW = w.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      const charCount = [...w].length;
+      return `<div class="word-card" data-idx="${start + i}" style="font-family:${fontMap[wordFont]};font-size:${fontSize}px;padding:${cardPadding}px ${cardPadding + 2}px;border-radius:${cardRadius}px">${safeW}${showLen ? `<div class="word-len">${charCount} letters</div>` : ''}</div>`;
+    }).join('');
     document.getElementById('word-list').innerHTML =
       `<div class="words-grid" style="grid-template-columns:${colMap[colMode]}">${cards}</div>`;
   }
@@ -1168,10 +1203,14 @@ function render() {
   renderPagination(totalPages, total);
 }
 
-// event delegation for word card clicks
+// event delegation for word card clicks — use data-idx to look up word safely
 document.getElementById('word-list').addEventListener('click', e => {
-  const card = e.target.closest('[data-word]');
-  if (card) openModal(card.dataset.word);
+  const card = e.target.closest('[data-idx]');
+  if (card) {
+    const idx = parseInt(card.dataset.idx);
+    const word = currentSorted[idx];
+    if (word) openModal(word);
+  }
 });
 
 function renderPagination(totalPages, total) {
@@ -1292,12 +1331,13 @@ function setSort(s) {
 function openModal(word) {
   activeWord = word;
   const pos = allWords.indexOf(word);
+  const chars = [...word];
 
   document.getElementById('modal-word-text').textContent = word;
-  document.getElementById('modal-letters').textContent   = word.length;
+  document.getElementById('modal-letters').textContent   = chars.length;
   document.getElementById('modal-position').textContent  = pos >= 0 ? '#' + (pos + 1).toLocaleString() : '—';
-  document.getElementById('modal-starts').textContent    = word.slice(0, 3) || word;
-  document.getElementById('modal-ends').textContent      = word.slice(-3) || word;
+  document.getElementById('modal-starts').textContent    = chars.slice(0, 3).join('') || word;
+  document.getElementById('modal-ends').textContent      = chars.slice(-3).join('') || word;
 
   // reset copy button
   const cb = document.getElementById('copy-btn');
@@ -1363,7 +1403,7 @@ function copyUppercase() {
 
 function filterByStart() {
   if (!activeWord) return;
-  const prefix = activeWord.slice(0, 3).toLowerCase();
+  const prefix = [...activeWord].slice(0, 3).join('');
   closeModal();
   document.getElementById('filter-type').value = 'starts';
   document.getElementById('filter-val').value  = prefix;
@@ -1373,7 +1413,7 @@ function filterByStart() {
 
 function filterByEnd() {
   if (!activeWord) return;
-  const suffix = activeWord.slice(-3).toLowerCase();
+  const suffix = [...activeWord].slice(-3).join('');
   closeModal();
   document.getElementById('filter-type').value = 'ends';
   document.getElementById('filter-val').value  = suffix;
@@ -1383,7 +1423,7 @@ function filterByEnd() {
 
 function filterByLength() {
   if (!activeWord) return;
-  const len = activeWord.length;
+  const len = [...activeWord].length;
   closeModal();
   document.getElementById('filter-type').value = 'length';
   document.getElementById('filter-val').value  = len;
