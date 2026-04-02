@@ -1063,6 +1063,9 @@ async function loadWords() {
     const res = await fetch(DICT_URL);
     const text = await res.text();
     allWords = text.split('\n').map(w => w.trim()).filter(Boolean);
+    // the source file truncates this word at 40 chars — patch it
+    const truncIdx = allWords.indexOf('pneumonoultramicroscopicsilicovolcanocon');
+    if (truncIdx !== -1) allWords[truncIdx] = 'pneumonoultramicroscopicsilicovolcanoconiosis';
     document.getElementById('word-count-stat').textContent = allWords.length.toLocaleString();
     filtered = [...allWords];
     render();
