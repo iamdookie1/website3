@@ -611,6 +611,173 @@
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--border-mid); border-radius: 999px; }
   ::-webkit-scrollbar-thumb:hover { background: var(--text-secondary); }
+
+  /* ── WORD MODAL ── */
+  #modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.35);
+    z-index: 999;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+  }
+
+  #modal-overlay.open { display: flex; animation: fadeIn 0.15s ease; }
+
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes slideUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+  #modal-box {
+    background: var(--bg-primary);
+    border: 0.5px solid var(--border-mid);
+    border-radius: var(--radius-lg);
+    width: 100%;
+    max-width: 400px;
+    padding: 0;
+    overflow: hidden;
+    animation: slideUp 0.18s ease;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.18);
+  }
+
+  .modal-header {
+    padding: 20px 20px 16px;
+    border-bottom: 0.5px solid var(--border-light);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .modal-word {
+    font-family: var(--font-mono);
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--text-primary);
+    word-break: break-all;
+    line-height: 1.3;
+  }
+
+  .modal-close {
+    background: none;
+    border: 0.5px solid var(--border-mid);
+    border-radius: var(--radius-md);
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
+    color: var(--text-secondary);
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.15s;
+  }
+
+  .modal-close:hover { background: var(--bg-secondary); color: var(--text-primary); }
+
+  .modal-meta {
+    padding: 14px 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    border-bottom: 0.5px solid var(--border-light);
+  }
+
+  .meta-chip {
+    background: var(--bg-secondary);
+    border-radius: var(--radius-md);
+    padding: 8px 12px;
+  }
+
+  .meta-chip .label {
+    font-size: 10px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 3px;
+  }
+
+  .meta-chip .value {
+    font-family: var(--font-mono);
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  .modal-actions {
+    padding: 14px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .modal-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: var(--radius-md);
+    border: 0.5px solid var(--border-mid);
+    background: transparent;
+    color: var(--text-primary);
+    cursor: pointer;
+    font-family: var(--font-body);
+    font-size: 13px;
+    transition: background 0.15s;
+    text-align: left;
+    width: 100%;
+  }
+
+  .modal-btn:hover { background: var(--bg-secondary); }
+
+  .modal-btn.primary {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+  }
+
+  .modal-btn.primary:hover { opacity: 0.9; }
+
+  .modal-btn.success {
+    background: var(--accent-light);
+    color: var(--accent-dark);
+    border-color: var(--accent);
+  }
+
+  .btn-icon { font-size: 15px; width: 18px; text-align: center; }
+
+  .modal-filter-row {
+    display: flex;
+    gap: 6px;
+  }
+
+  .modal-filter-row .modal-btn { flex: 1; justify-content: center; }
+
+  #copy-toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    background: var(--text-primary);
+    color: var(--bg-primary);
+    padding: 8px 18px;
+    border-radius: 999px;
+    font-size: 13px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s, transform 0.2s;
+    z-index: 9999;
+    white-space: nowrap;
+  }
+
+  #copy-toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
 </style>
 </head>
 <body>
@@ -791,6 +958,56 @@
   </div>
 </div>
 
+<!-- WORD MODAL -->
+<div id="modal-overlay" onclick="onOverlayClick(event)">
+  <div id="modal-box">
+    <div class="modal-header">
+      <div class="modal-word" id="modal-word-text"></div>
+      <button class="modal-close" onclick="closeModal()" title="Close">✕</button>
+    </div>
+    <div class="modal-meta">
+      <div class="meta-chip">
+        <div class="label">Letters</div>
+        <div class="value" id="modal-letters">—</div>
+      </div>
+      <div class="meta-chip">
+        <div class="label">Position</div>
+        <div class="value" id="modal-position">—</div>
+      </div>
+      <div class="meta-chip">
+        <div class="label">Starts with</div>
+        <div class="value" id="modal-starts">—</div>
+      </div>
+      <div class="meta-chip">
+        <div class="label">Ends with</div>
+        <div class="value" id="modal-ends">—</div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-btn primary" id="copy-btn" onclick="copyWord()">
+        <span class="btn-icon">⎘</span> Copy word
+      </button>
+      <button class="modal-btn" onclick="copyUppercase()">
+        <span class="btn-icon">↑</span> Copy UPPERCASE
+      </button>
+      <div class="modal-filter-row">
+        <button class="modal-btn" onclick="filterByStart()" title="Show words starting with same 3 letters">
+          <span class="btn-icon">←</span> Filter by start
+        </button>
+        <button class="modal-btn" onclick="filterByEnd()" title="Show words ending with same 3 letters">
+          <span class="btn-icon">→</span> Filter by end
+        </button>
+      </div>
+      <button class="modal-btn" onclick="filterByLength()" >
+        <span class="btn-icon">#</span> Show same length words
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="copy-toast">Copied!</div>
+
 <script>
 const DICT_URL = 'https://raw.githubusercontent.com/iamdookie1/Dictionary/refs/heads/main/Dict';
 
@@ -806,6 +1023,7 @@ let cardRadius = 8;
 let sortMode = 'default';
 let colMode = '2';
 let sidebarOpen = true;
+let activeWord = '';
 
 const COLORS = [
   { name:'teal',   accent:'#1D9E75', light:'#E1F5EE', dark:'#0F6E56' },
@@ -856,35 +1074,48 @@ async function loadWords() {
 
 function getSorted(arr) {
   const a = [...arr];
-  if (sortMode === 'az')       a.sort((x,y) => x.localeCompare(y));
-  else if (sortMode === 'za')  a.sort((x,y) => y.localeCompare(x));
+  if (sortMode === 'az')            a.sort((x,y) => x.localeCompare(y));
+  else if (sortMode === 'za')       a.sort((x,y) => y.localeCompare(x));
   else if (sortMode === 'shortest') a.sort((x,y) => x.length - y.length);
   else if (sortMode === 'longest')  a.sort((x,y) => y.length - x.length);
-  else if (sortMode === 'random') a.sort(() => Math.random() - 0.5);
+  else if (sortMode === 'random')   a.sort(() => Math.random() - 0.5);
   return a;
 }
 
-function onSearch() {
-  const q = document.getElementById('search-input').value.trim().toLowerCase();
-  const type = document.getElementById('filter-type').value;
-  const fval = document.getElementById('filter-val').value.trim().toLowerCase();
+/* ── FILTER (fixed) ──
+   The search box does a simple "contains" across all words.
+   The filter-type + filter-val inputs apply a SECOND independent filter on top.
+   Both are AND-ed together so having text in search AND a pattern in filter-val both apply.
+*/
+function applyFilters() {
+  const q     = document.getElementById('search-input').value.trim().toLowerCase();
+  const type  = document.getElementById('filter-type').value;
+  const fval  = document.getElementById('filter-val').value.trim().toLowerCase();
+  const n     = parseInt(fval);
 
-  let base = [...allWords];
+  let base = allWords;
 
+  // 1. search box: substring match
   if (q) base = base.filter(w => w.toLowerCase().includes(q));
 
-  if (fval) {
-    const n = parseInt(fval);
-    if (type === 'starts')   base = base.filter(w => w.toLowerCase().startsWith(fval));
-    else if (type === 'ends')    base = base.filter(w => w.toLowerCase().endsWith(fval));
-    else if (type === 'contains') base = base.filter(w => w.toLowerCase().includes(fval));
-    else if (type === 'exact')   base = base.filter(w => w.toLowerCase() === fval);
-    else if (type === 'length' && !isNaN(n)) base = base.filter(w => w.length === n);
-    else if (type === 'min' && !isNaN(n))    base = base.filter(w => w.length >= n);
-    else if (type === 'max' && !isNaN(n))    base = base.filter(w => w.length <= n);
+  // 2. advanced filter: only apply when filter-val has content
+  if (fval !== '') {
+    switch (type) {
+      case 'starts':   base = base.filter(w => w.toLowerCase().startsWith(fval)); break;
+      case 'ends':     base = base.filter(w => w.toLowerCase().endsWith(fval)); break;
+      case 'contains': base = base.filter(w => w.toLowerCase().includes(fval)); break;
+      case 'exact':    base = base.filter(w => w.toLowerCase() === fval); break;
+      case 'length':   if (!isNaN(n)) base = base.filter(w => w.length === n); break;
+      case 'min':      if (!isNaN(n)) base = base.filter(w => w.length >= n); break;
+      case 'max':      if (!isNaN(n)) base = base.filter(w => w.length <= n); break;
+    }
   }
 
-  filtered = base;
+  return base;
+}
+
+function onSearch() {
+  filtered = applyFilters();
   page = 1;
   render();
 }
@@ -900,7 +1131,7 @@ function render() {
 
   const badge = document.getElementById('match-badge');
   if (filtered.length < allWords.length && allWords.length > 0) {
-    badge.textContent = filtered.length.toLocaleString() + ' matches';
+    badge.textContent = filtered.length.toLocaleString() + ' match' + (filtered.length !== 1 ? 'es' : '');
     badge.classList.add('visible');
   } else {
     badge.classList.remove('visible');
@@ -923,8 +1154,9 @@ function render() {
     document.getElementById('word-list').innerHTML =
       '<div class="empty-state"><div class="empty-icon">∅</div><p>No words match your filter.</p></div>';
   } else {
+    // use data-word attr + event delegation — no inline onclick needed
     const cards = slice.map(w =>
-      `<div class="word-card" style="font-family:${fontMap[wordFont]};font-size:${fontSize}px;padding:${cardPadding}px ${cardPadding + 2}px;border-radius:${cardRadius}px">${w}${showLen ? `<div class="word-len">${w.length} letters</div>` : ''}</div>`
+      `<div class="word-card" data-word="${w}" style="font-family:${fontMap[wordFont]};font-size:${fontSize}px;padding:${cardPadding}px ${cardPadding + 2}px;border-radius:${cardRadius}px">${w}${showLen ? `<div class="word-len">${w.length} letters</div>` : ''}</div>`
     ).join('');
     document.getElementById('word-list').innerHTML =
       `<div class="words-grid" style="grid-template-columns:${colMap[colMode]}">${cards}</div>`;
@@ -933,19 +1165,25 @@ function render() {
   renderPagination(totalPages, total);
 }
 
+// event delegation for word card clicks
+document.getElementById('word-list').addEventListener('click', e => {
+  const card = e.target.closest('[data-word]');
+  if (card) openModal(card.dataset.word);
+});
+
 function renderPagination(totalPages, total) {
   const el = document.getElementById('pagination');
   if (totalPages <= 1) { el.innerHTML = ''; return; }
 
   const startNum = (page - 1) * perPage + 1;
-  const endNum = Math.min(page * perPage, total);
+  const endNum   = Math.min(page * perPage, total);
 
   let pages = [];
   if (totalPages <= 9) {
     for (let i = 1; i <= totalPages; i++) pages.push(i);
   } else {
     pages = [1];
-    let lo = Math.max(2, page - 2), hi = Math.min(totalPages - 1, page + 2);
+    const lo = Math.max(2, page - 2), hi = Math.min(totalPages - 1, page + 2);
     if (lo > 2) pages.push('…');
     for (let i = lo; i <= hi; i++) pages.push(i);
     if (hi < totalPages - 1) pages.push('…');
@@ -953,12 +1191,10 @@ function renderPagination(totalPages, total) {
   }
 
   let html = `<button class="pg-btn" onclick="goPage(${page - 1})" ${page === 1 ? 'disabled' : ''}>‹ Prev</button>`;
-
   pages.forEach(p => {
     if (p === '…') html += `<span class="pg-ellipsis">…</span>`;
     else html += `<button class="pg-btn${p === page ? ' active' : ''}" onclick="goPage(${p})">${p}</button>`;
   });
-
   html += `<button class="pg-btn" onclick="goPage(${page + 1})" ${page === totalPages ? 'disabled' : ''}>Next ›</button>`;
   html += `<span class="pg-info">${startNum.toLocaleString()}–${endNum.toLocaleString()} / ${total.toLocaleString()}</span>`;
 
@@ -990,32 +1226,34 @@ function onPerPageChange(v) {
   render();
 }
 
+function setActiveToggles(groupId, value, labelMap) {
+  document.querySelectorAll('#' + groupId + ' .tog').forEach(b => {
+    b.classList.toggle('active', labelMap ? b.textContent.trim() === labelMap[value] : b.dataset.val === value);
+  });
+}
+
 function setColMode(m) {
   colMode = m;
-  document.querySelectorAll('#col-opts .tog').forEach(b => {
-    const val = b.textContent.trim().toLowerCase().replace(' ','').replace('→','');
-    b.classList.toggle('active', b.textContent.trim().toLowerCase() === m || (m === 'auto' && b.textContent.trim() === 'Auto') || b.textContent.trim() === m);
-  });
-  // simpler approach
-  document.querySelectorAll('#col-opts .tog').forEach(b => b.classList.remove('active'));
   const labels = { auto:'Auto', '2':'2', '3':'3', '4':'4', list:'List' };
-  document.querySelectorAll('#col-opts .tog').forEach(b => {
-    if (b.textContent.trim() === labels[m]) b.classList.add('active');
-  });
+  document.querySelectorAll('#col-opts .tog').forEach(b =>
+    b.classList.toggle('active', b.textContent.trim() === labels[m])
+  );
   render();
 }
 
 function setShowLen(v) {
   showLen = v;
-  document.getElementById('len-on').classList.toggle('active', v);
-  document.getElementById('len-off').classList.toggle('active', !v);
+  document.getElementById('len-on').classList.toggle('active', v === true);
+  document.getElementById('len-off').classList.toggle('active', v === false);
   render();
 }
 
 function setWordFont(f) {
   wordFont = f;
   const labels = { mono:'Mono', sans:'Sans', serif:'Serif' };
-  document.querySelectorAll('#font-opts .tog').forEach(b => b.classList.toggle('active', b.textContent.trim() === labels[f]));
+  document.querySelectorAll('#font-opts .tog').forEach(b =>
+    b.classList.toggle('active', b.textContent.trim() === labels[f])
+  );
   render();
 }
 
@@ -1040,9 +1278,114 @@ function onRadiusChange(v) {
 function setSort(s) {
   sortMode = s;
   const labels = { default:'Default', az:'A → Z', za:'Z → A', shortest:'Shortest first', longest:'Longest first', random:'Random' };
-  document.querySelectorAll('#sort-opts .tog').forEach(b => b.classList.toggle('active', b.textContent.trim() === labels[s]));
+  document.querySelectorAll('#sort-opts .tog').forEach(b =>
+    b.classList.toggle('active', b.textContent.trim() === labels[s])
+  );
   page = 1;
   render();
+}
+
+/* ── MODAL ── */
+function openModal(word) {
+  activeWord = word;
+  const pos = allWords.indexOf(word);
+
+  document.getElementById('modal-word-text').textContent = word;
+  document.getElementById('modal-letters').textContent   = word.length;
+  document.getElementById('modal-position').textContent  = pos >= 0 ? '#' + (pos + 1).toLocaleString() : '—';
+  document.getElementById('modal-starts').textContent    = word.slice(0, 3) || word;
+  document.getElementById('modal-ends').textContent      = word.slice(-3) || word;
+
+  // reset copy button
+  const cb = document.getElementById('copy-btn');
+  cb.innerHTML = '<span class="btn-icon">⎘</span> Copy word';
+  cb.className = 'modal-btn primary';
+
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  activeWord = '';
+}
+
+function onOverlayClick(e) {
+  if (e.target === document.getElementById('modal-overlay')) closeModal();
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModal();
+});
+
+function showToast(msg) {
+  const t = document.getElementById('copy-toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+function copyWord() {
+  if (!activeWord) return;
+  navigator.clipboard.writeText(activeWord).then(() => {
+    const cb = document.getElementById('copy-btn');
+    cb.innerHTML = '<span class="btn-icon">✓</span> Copied!';
+    cb.className = 'modal-btn success';
+    setTimeout(() => {
+      cb.innerHTML = '<span class="btn-icon">⎘</span> Copy word';
+      cb.className = 'modal-btn primary';
+    }, 2000);
+    showToast('Copied "' + activeWord + '"');
+  }).catch(() => {
+    // fallback
+    const ta = document.createElement('textarea');
+    ta.value = activeWord;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    showToast('Copied!');
+  });
+}
+
+function copyUppercase() {
+  if (!activeWord) return;
+  const up = activeWord.toUpperCase();
+  navigator.clipboard.writeText(up).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = up; document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta);
+  });
+  showToast('Copied "' + up + '"');
+}
+
+function filterByStart() {
+  if (!activeWord) return;
+  const prefix = activeWord.slice(0, 3).toLowerCase();
+  closeModal();
+  document.getElementById('filter-type').value = 'starts';
+  document.getElementById('filter-val').value  = prefix;
+  document.getElementById('search-input').value = '';
+  onSearch();
+}
+
+function filterByEnd() {
+  if (!activeWord) return;
+  const suffix = activeWord.slice(-3).toLowerCase();
+  closeModal();
+  document.getElementById('filter-type').value = 'ends';
+  document.getElementById('filter-val').value  = suffix;
+  document.getElementById('search-input').value = '';
+  onSearch();
+}
+
+function filterByLength() {
+  if (!activeWord) return;
+  const len = activeWord.length;
+  closeModal();
+  document.getElementById('filter-type').value = 'length';
+  document.getElementById('filter-val').value  = len;
+  document.getElementById('search-input').value = '';
+  onSearch();
 }
 
 // init
