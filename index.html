@@ -20,7 +20,6 @@
       --accent:      #c8f135;
       --accent-dim:  rgba(200,241,53,.12);
       --accent-glow: rgba(200,241,53,.06);
-      --danger:      #ff5c5c;
       --radius:      10px;
       --radius-sm:   6px;
     }
@@ -36,10 +35,8 @@
       --accent:      #3a5c00;
       --accent-dim:  rgba(58,92,0,.1);
       --accent-glow: rgba(58,92,0,.04);
-      --danger:      #c0392b;
     }
 
-    /* ───── RESET ───── */
     *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
     html { scroll-behavior:smooth; }
     body {
@@ -49,6 +46,7 @@
       font-size: 14px;
       min-height: 100vh;
       transition: background .25s, color .25s;
+      overflow-x: hidden;
     }
 
     /* ───── HEADER ───── */
@@ -59,7 +57,6 @@
       padding: 0 28px;
       background: var(--bg);
       border-bottom: 1px solid var(--border);
-      backdrop-filter: blur(8px);
     }
     .logo {
       font-family: 'Bebas Neue', cursive;
@@ -67,20 +64,8 @@
       letter-spacing: 4px;
       user-select: none;
     }
-    .logo-trap { color: var(--accent); }
+    .logo-trap   { color: var(--accent); }
     .logo-finder { color: var(--text); }
-    .header-right { display:flex; align-items:center; gap:10px; }
-    .badge-count {
-      background: var(--accent-dim);
-      border: 1px solid var(--accent);
-      color: var(--accent);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      padding: 2px 8px;
-      border-radius: 20px;
-      display: none;
-    }
-    .badge-count.visible { display:block; }
     #themeBtn {
       width:38px; height:38px;
       background: var(--surface);
@@ -118,15 +103,15 @@
 
     /* ───── STATS BAR ───── */
     .stats-bar {
-      display:flex; gap:0; flex-wrap:wrap;
-      margin-bottom:28px;
+      display:flex; flex-wrap:wrap;
+      margin-bottom:22px;
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
       overflow:hidden;
     }
     .stat-item {
-      flex:1; min-width:100px;
+      flex:1; min-width:90px;
       padding: 14px 20px;
       border-right: 1px solid var(--border);
       display:flex; flex-direction:column; gap:3px;
@@ -134,16 +119,22 @@
     .stat-item:last-child { border-right:none; }
     .stat-value {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 20px;
-      font-weight:700;
+      font-size: 20px; font-weight:700;
       color: var(--accent);
-      letter-spacing:-0.5px;
     }
-    .stat-label {
-      font-size:10px;
-      text-transform:uppercase;
-      letter-spacing:1.5px;
-      color:var(--muted);
+    .stat-label { font-size:10px; text-transform:uppercase; letter-spacing:1.5px; color:var(--muted); }
+
+    /* ───── PROGRESS ───── */
+    #progressWrap {
+      width:100%; height:3px;
+      background:var(--border); border-radius:2px;
+      overflow:hidden; margin-bottom:20px; display:none;
+    }
+    #progressWrap.on { display:block; }
+    #progressBar {
+      height:100%; width:0%;
+      background:var(--accent); border-radius:2px;
+      transition:width .08s linear;
     }
 
     /* ───── FILTERS ───── */
@@ -157,31 +148,18 @@
       display:flex; align-items:center; justify-content:space-between;
       padding:14px 18px 12px;
       border-bottom:1px solid var(--border);
-      cursor:pointer;
-      user-select:none;
+      cursor:pointer; user-select:none;
     }
-    .filters-head-left {
-      display:flex; align-items:center; gap:10px;
+    .filters-head-left { display:flex; align-items:center; gap:10px; }
+    .filters-title { font-size:11px; text-transform:uppercase; letter-spacing:2px; color:var(--muted); font-weight:500; }
+    .filters-dot {
+      width:6px; height:6px;
+      background:var(--accent); border-radius:50%; display:none;
     }
-    .filters-title {
-      font-size:11px; text-transform:uppercase;
-      letter-spacing:2px; color:var(--muted); font-weight:500;
-    }
-    .filters-active-dot {
-      width:6px;height:6px;
-      background:var(--accent);
-      border-radius:50%;
-      display:none;
-    }
-    .filters-active-dot.visible { display:block; }
-    .filters-toggle-icon {
-      color:var(--muted); font-size:12px;
-      transition:transform .2s;
-    }
-    .filters-wrap.collapsed .filters-toggle-icon { transform:rotate(-90deg); }
-    .filters-body {
-      padding:16px 18px 18px;
-    }
+    .filters-dot.on { display:block; }
+    .filters-chevron { color:var(--muted); font-size:12px; transition:transform .2s; }
+    .filters-wrap.collapsed .filters-chevron { transform:rotate(-90deg); }
+    .filters-body { padding:16px 18px 18px; }
     .filters-wrap.collapsed .filters-body { display:none; }
     .filters-grid {
       display:grid;
@@ -189,14 +167,10 @@
       gap:14px;
     }
     .filter-group { display:flex; flex-direction:column; gap:6px; }
-    .filter-label {
-      font-size:10px; text-transform:uppercase;
-      letter-spacing:1.5px; color:var(--muted);
-    }
-    .filter-range {
-      display:flex; align-items:center; gap:6px;
-    }
+    .filter-label { font-size:10px; text-transform:uppercase; letter-spacing:1.5px; color:var(--muted); }
+    .filter-range { display:flex; align-items:center; gap:6px; }
     .filter-range-sep { color:var(--muted2); font-size:13px; }
+
     input[type="number"], input[type="text"] {
       background: var(--bg);
       border: 1px solid var(--border2);
@@ -205,160 +179,208 @@
       font-size: 13px;
       padding: 7px 10px;
       border-radius: var(--radius-sm);
-      outline: none;
-      width:100%;
+      outline: none; width:100%;
       transition: border-color .15s;
       -moz-appearance:textfield;
     }
     input[type="number"]::-webkit-inner-spin-button { -webkit-appearance:none; }
-    input[type="number"]:focus, input[type="text"]:focus { border-color:var(--accent); }
+    input:focus { border-color:var(--accent); }
     input::placeholder { color:var(--muted); }
     .filter-range input[type="number"] { width:68px; flex-shrink:0; }
 
-    .filters-actions {
-      display:flex; justify-content:flex-end; margin-top:14px;
-    }
+    .filters-actions { display:flex; justify-content:flex-end; margin-top:14px; }
     .btn-ghost {
       background:none; border:1px solid var(--border2);
       color:var(--muted); cursor:pointer;
-      font-size:11px; letter-spacing:1px;
-      text-transform:uppercase;
+      font-size:11px; letter-spacing:1px; text-transform:uppercase;
       padding:5px 12px; border-radius:var(--radius-sm);
-      font-family:'DM Sans',sans-serif;
-      transition:all .15s;
+      font-family:'DM Sans',sans-serif; transition:all .15s;
     }
     .btn-ghost:hover { color:var(--text); border-color:var(--text); }
 
-    /* ───── SORT / TOOLBAR ───── */
-    .toolbar {
-      display:flex; align-items:center; gap:8px;
-      margin-bottom:12px; flex-wrap:wrap;
-    }
+    /* ───── TOOLBAR ───── */
+    .toolbar { display:flex; align-items:center; gap:8px; margin-bottom:12px; flex-wrap:wrap; }
     .toolbar-label { font-size:10px; text-transform:uppercase; letter-spacing:1.5px; color:var(--muted); }
     .sort-btn {
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      color: var(--muted);
-      cursor:pointer; font-size:12px;
+      background: var(--surface2); border: 1px solid var(--border);
+      color: var(--muted); cursor:pointer; font-size:12px;
       padding:5px 12px; border-radius:20px;
-      font-family:'DM Sans',sans-serif;
-      transition: all .15s;
-      white-space:nowrap;
+      font-family:'DM Sans',sans-serif; transition: all .15s; white-space:nowrap;
     }
     .sort-btn:hover { color:var(--text); }
-    .sort-btn.active {
-      background:var(--accent-dim);
-      border-color:var(--accent);
-      color:var(--accent);
-    }
+    .sort-btn.active { background:var(--accent-dim); border-color:var(--accent); color:var(--accent); }
 
-    /* ───── RESULTS INFO ───── */
-    .results-info {
-      font-size:12px; color:var(--muted);
-      margin-bottom:10px;
-    }
+    .results-info { font-size:12px; color:var(--muted); margin-bottom:10px; }
     .results-info b { color:var(--text); font-family:'JetBrains Mono',monospace; font-weight:600; }
 
-    /* ───── TRAP LIST ───── */
+    /* ───── TRAP CARDS ───── */
     .trap-list { display:flex; flex-direction:column; gap:5px; }
 
     .trap-card {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      overflow:hidden;
       cursor:pointer;
-      transition: border-color .15s, background .15s;
+      transition: border-color .15s, background .15s, transform .1s;
+      user-select:none;
     }
-    .trap-card:hover { border-color:var(--border2); background:var(--surface2); }
-    .trap-card.open { border-color:var(--accent); }
-    .trap-card.open:hover { border-color:var(--accent); }
+    .trap-card:hover { border-color:var(--border2); background:var(--surface2); transform:translateX(3px); }
+    .trap-card:active { transform:translateX(1px) scale(.997); }
 
-    .trap-row {
-      display:flex; align-items:center;
-      padding:13px 16px;
-      gap:14px;
-    }
+    .trap-row { display:flex; align-items:center; padding:13px 16px; gap:14px; }
     .trap-ending {
       font-family:'JetBrains Mono',monospace;
       font-size:18px; font-weight:700;
-      color:var(--accent);
-      letter-spacing:-0.5px;
-      min-width:110px;
+      color:var(--accent); min-width:110px;
     }
     .trap-ending .dash { color:var(--muted); font-weight:400; }
-    .trap-tags {
-      display:flex; gap:7px; flex:1; flex-wrap:wrap; align-items:center;
-    }
+    .trap-tags { display:flex; gap:7px; flex:1; flex-wrap:wrap; align-items:center; }
     .tag {
-      background:var(--surface2);
-      border:1px solid var(--border);
-      border-radius:20px;
-      padding:2px 9px;
+      background:var(--surface2); border:1px solid var(--border);
+      border-radius:20px; padding:2px 9px;
       font-size:11px; color:var(--muted);
-      font-family:'JetBrains Mono',monospace;
-      white-space:nowrap;
+      font-family:'JetBrains Mono',monospace; white-space:nowrap;
     }
     .tag b { color:var(--text); }
-    .trap-arrow {
-      color:var(--muted);
-      font-size:12px;
-      flex-shrink:0;
-      transition:transform .2s;
-      margin-left:auto;
+    .trap-cta {
+      flex-shrink:0; font-size:11px; color:var(--muted);
+      display:flex; align-items:center; gap:5px; margin-left:auto;
     }
-    .trap-card.open .trap-arrow { transform:rotate(180deg); }
-
-    .trap-body {
-      display:none;
-      padding:0 16px 15px;
-      border-top:1px solid var(--border);
-    }
-    .trap-card.open .trap-body { display:block; }
-
-    .words-row {
-      display:flex; flex-wrap:wrap;
-      gap:5px; padding-top:13px;
-    }
-    .word-chip {
-      background:var(--bg);
-      border:1px solid var(--border);
-      border-radius:var(--radius-sm);
-      padding:4px 10px;
-      font-family:'JetBrains Mono',monospace;
-      font-size:13px;
-      color:var(--muted);
-      transition:border-color .12s;
-      cursor:default;
-    }
-    .word-chip:hover { border-color:var(--accent); }
-    .word-chip .stem { color:var(--text); }
-    .word-chip .end  { color:var(--accent); font-weight:700; }
 
     /* ───── LOADING / EMPTY ───── */
-    .loading {
-      text-align:center; padding:70px 20px; color:var(--muted);
-    }
+    .loading { text-align:center; padding:70px 20px; color:var(--muted); }
     .spinner {
-      width:30px;height:30px;
-      border:2px solid var(--border2);
-      border-top-color:var(--accent);
-      border-radius:50%;
-      animation:spin .6s linear infinite;
+      width:30px; height:30px;
+      border:2px solid var(--border2); border-top-color:var(--accent);
+      border-radius:50%; animation:spin .6s linear infinite;
       margin:0 auto 14px;
     }
     @keyframes spin { to{ transform:rotate(360deg); } }
-    .loading p { font-size:13px; letter-spacing:.5px; }
-
-    .empty {
-      text-align:center; padding:70px 20px;
-    }
-    .empty-title {
-      font-family:'Bebas Neue',cursive;
-      font-size:40px; letter-spacing:3px;
-      color:var(--border2); margin-bottom:8px;
-    }
+    .loading p { font-size:13px; }
+    .empty { text-align:center; padding:70px 20px; }
+    .empty-title { font-family:'Bebas Neue',cursive; font-size:40px; letter-spacing:3px; color:var(--border2); margin-bottom:8px; }
     .empty p { color:var(--muted); font-size:13px; }
+
+    /* ════════════════════════════════════════
+       MODAL
+    ════════════════════════════════════════ */
+    .backdrop {
+      position:fixed; inset:0; z-index:900;
+      background:rgba(0,0,0,.75);
+      backdrop-filter:blur(5px);
+      display:flex; align-items:center; justify-content:center;
+      padding:20px;
+      opacity:0; pointer-events:none;
+      transition:opacity .18s;
+    }
+    .backdrop.open { opacity:1; pointer-events:all; }
+
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      border-radius: 16px;
+      width:100%; max-width:540px;
+      max-height:88vh;
+      display:flex; flex-direction:column;
+      transform:translateY(20px) scale(.96);
+      transition:transform .22s cubic-bezier(.22,1,.36,1);
+      overflow:hidden;
+    }
+    .backdrop.open .modal { transform:translateY(0) scale(1); }
+
+    /* Modal header */
+    .modal-hd {
+      display:flex; align-items:flex-start; justify-content:space-between;
+      padding:22px 22px 0; flex-shrink:0;
+    }
+    .modal-label { font-size:10px; text-transform:uppercase; letter-spacing:2px; color:var(--muted); margin-bottom:6px; }
+    .modal-ending {
+      font-family:'Bebas Neue',cursive;
+      font-size:54px; line-height:1; letter-spacing:2px;
+      color:var(--accent);
+    }
+    .modal-ending .dash { color:var(--muted); }
+    .modal-close-btn {
+      background:none; border:1px solid var(--border2);
+      color:var(--muted); cursor:pointer;
+      width:32px; height:32px;
+      border-radius:var(--radius-sm);
+      font-size:15px; display:flex; align-items:center; justify-content:center;
+      flex-shrink:0; margin-top:4px; transition:all .15s;
+    }
+    .modal-close-btn:hover { color:var(--text); border-color:var(--text); }
+
+    /* Stats strip */
+    .modal-stats {
+      display:flex; flex-wrap:wrap;
+      margin:18px 22px 0;
+      border:1px solid var(--border);
+      border-radius:var(--radius-sm);
+      overflow:hidden; flex-shrink:0;
+    }
+    .mstat {
+      flex:1; min-width:70px; padding:10px 14px;
+      border-right:1px solid var(--border);
+      display:flex; flex-direction:column; gap:2px;
+    }
+    .mstat:last-child { border-right:none; }
+    .mstat-val { font-family:'JetBrains Mono',monospace; font-size:16px; font-weight:700; color:var(--accent); }
+    .mstat-lbl { font-size:10px; text-transform:uppercase; letter-spacing:1px; color:var(--muted); }
+
+    /* Preview */
+    .modal-preview { padding:18px 22px 0; flex-shrink:0; }
+    .modal-section-label { font-size:10px; text-transform:uppercase; letter-spacing:1.5px; color:var(--muted); margin-bottom:10px; }
+    .chips-row { display:flex; flex-wrap:wrap; gap:6px; }
+
+    .chip {
+      background:var(--bg); border:1px solid var(--border);
+      border-radius:var(--radius-sm);
+      padding:5px 11px;
+      font-family:'JetBrains Mono',monospace; font-size:13px;
+    }
+    .chip .stem { color:var(--text); }
+    .chip .end  { color:var(--accent); font-weight:700; }
+
+    .chip-more {
+      background:var(--surface2); border:1px solid var(--border);
+      border-radius:var(--radius-sm); padding:5px 11px;
+      font-size:12px; color:var(--muted); font-family:'DM Sans',sans-serif;
+      display:flex; align-items:center;
+    }
+
+    /* View solves button */
+    .modal-actions { padding:16px 22px 0; flex-shrink:0; }
+    .btn-primary {
+      width:100%;
+      background:var(--accent-dim); border:1px solid var(--accent);
+      color:var(--accent);
+      font-family:'DM Sans',sans-serif; font-size:13px; font-weight:500;
+      letter-spacing:.5px; padding:11px 0;
+      border-radius:var(--radius-sm); cursor:pointer;
+      transition:all .15s;
+    }
+    .btn-primary:hover { background:var(--accent); color:var(--bg); }
+
+    /* Solves grid (scrollable) */
+    .modal-solves {
+      display:none; flex-direction:column;
+      overflow:hidden; flex:1; min-height:0;
+    }
+    .modal-solves.open { display:flex; }
+    .modal-solves-hd {
+      padding:18px 22px 10px; flex-shrink:0;
+      display:flex; align-items:center; justify-content:space-between;
+    }
+    .solves-count { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--accent); }
+    .solves-grid {
+      overflow-y:auto; padding:0 22px 22px;
+      display:flex; flex-wrap:wrap; gap:6px;
+    }
+    .solves-grid::-webkit-scrollbar { width:4px; }
+    .solves-grid::-webkit-scrollbar-track { background:transparent; }
+    .solves-grid::-webkit-scrollbar-thumb { background:var(--border2); border-radius:2px; }
+
+    .modal-spacer { height:22px; flex-shrink:0; }
 
     /* ───── RESPONSIVE ───── */
     @media (max-width:620px) {
@@ -371,7 +393,14 @@
       .stat-item { padding:12px 14px; }
       .stat-value { font-size:17px; }
       .sort-btn { font-size:11px; padding:4px 10px; }
-      .badge-count { display:none !important; }
+      .trap-cta span { display:none; }
+      .modal-ending { font-size:40px; }
+      .modal-hd { padding:18px 16px 0; }
+      .modal-stats { margin:14px 16px 0; }
+      .modal-preview { padding:14px 16px 0; }
+      .modal-actions { padding:12px 16px 0; }
+      .modal-solves-hd { padding:14px 16px 8px; }
+      .solves-grid { padding:0 16px 18px; }
     }
   </style>
 </head>
@@ -382,85 +411,65 @@
   <div class="logo">
     <span class="logo-trap">TRAP</span><span class="logo-finder">FINDER</span>
   </div>
-  <div class="header-right">
-    <span class="badge-count" id="badgeCount">0 traps</span>
-    <button id="themeBtn" title="Toggle theme" aria-label="Toggle theme">🌙</button>
-  </div>
+  <button id="themeBtn" aria-label="Toggle theme">🌙</button>
 </header>
 
 <!-- ═══ MAIN ═══ -->
 <main>
 
-  <!-- Hero -->
   <div class="hero">
     <h1 class="hero-headline">FIND<br>THE <em>TRAPS</em></h1>
     <p class="hero-sub">
-      Discover word <strong>endings that are tricky to solve</strong>.
-      Each trap is an ending shared by multiple words — click any to reveal the solves.
+      Word endings that are <strong>tricky to solve</strong>.
+      Click any trap to preview solves and reveal the full list.
     </p>
   </div>
 
-  <!-- Stats -->
   <div class="stats-bar">
-    <div class="stat-item">
-      <div class="stat-value" id="sWords">—</div>
-      <div class="stat-label">Words loaded</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-value" id="sTraps">—</div>
-      <div class="stat-label">Total traps</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-value" id="sShowing">—</div>
-      <div class="stat-label">Showing</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-value" id="sOpen">0</div>
-      <div class="stat-label">Opened</div>
-    </div>
+    <div class="stat-item"><div class="stat-value" id="sWords">—</div><div class="stat-label">Words loaded</div></div>
+    <div class="stat-item"><div class="stat-value" id="sTraps">—</div><div class="stat-label">Total traps</div></div>
+    <div class="stat-item"><div class="stat-value" id="sShowing">—</div><div class="stat-label">Showing</div></div>
   </div>
+
+  <div id="progressWrap"><div id="progressBar"></div></div>
 
   <!-- Filters -->
   <div class="filters-wrap" id="filtersWrap">
     <div class="filters-head" id="filtersHead">
       <div class="filters-head-left">
         <span class="filters-title">Filters &amp; Search</span>
-        <div class="filters-active-dot" id="filtersDot"></div>
+        <div class="filters-dot" id="filtersDot"></div>
       </div>
-      <span class="filters-toggle-icon">▾</span>
+      <span class="filters-chevron">▾</span>
     </div>
-    <div class="filters-body" id="filtersBody">
+    <div class="filters-body">
       <div class="filters-grid">
-        <!-- Search -->
         <div class="filter-group" style="grid-column:span 2;">
           <label class="filter-label">Search trap ending</label>
           <input type="text" id="fSearch" placeholder="e.g. ough, ez, tion, ize…" autocomplete="off" spellcheck="false" />
         </div>
-        <!-- Trap length -->
         <div class="filter-group">
           <label class="filter-label">Trap length</label>
           <div class="filter-range">
-            <input type="number" id="fTrapMin" placeholder="min" min="1" max="20" />
+            <input type="number" id="fTrapMin" placeholder="min" min="2" max="8" />
             <span class="filter-range-sep">–</span>
-            <input type="number" id="fTrapMax" placeholder="max" min="1" max="20" />
+            <input type="number" id="fTrapMax" placeholder="max" min="2" max="8" />
           </div>
         </div>
-        <!-- Solves count -->
         <div class="filter-group">
-          <label class="filter-label">Solves count</label>
+          <label class="filter-label">Solves count (max 100)</label>
           <div class="filter-range">
-            <input type="number" id="fSolvMin" placeholder="min" min="1" value="3" />
+            <input type="number" id="fSolvMin" placeholder="min" min="2" max="100" value="3" />
             <span class="filter-range-sep">–</span>
-            <input type="number" id="fSolvMax" placeholder="max" min="1" />
+            <input type="number" id="fSolvMax" placeholder="max" min="2" max="100" value="100" />
           </div>
         </div>
-        <!-- Word length -->
         <div class="filter-group">
           <label class="filter-label">Word length</label>
           <div class="filter-range">
-            <input type="number" id="fWordMin" placeholder="min" min="1" />
+            <input type="number" id="fWordMin" placeholder="min" min="3" />
             <span class="filter-range-sep">–</span>
-            <input type="number" id="fWordMax" placeholder="max" min="1" />
+            <input type="number" id="fWordMax" placeholder="max" />
           </div>
         </div>
       </div>
@@ -470,7 +479,7 @@
     </div>
   </div>
 
-  <!-- Toolbar -->
+  <!-- Sort -->
   <div class="toolbar">
     <span class="toolbar-label">Sort:</span>
     <button class="sort-btn active" data-sort="solves-desc">Most solves</button>
@@ -481,137 +490,173 @@
   </div>
 
   <p class="results-info" id="resultsInfo"></p>
-
-  <!-- Trap list -->
   <div class="trap-list" id="trapList">
-    <div class="loading">
-      <div class="spinner"></div>
-      <p>Loading dictionary…</p>
-    </div>
+    <div class="loading"><div class="spinner"></div><p>Loading dictionary…</p></div>
   </div>
 
 </main>
 
+<!-- ═══ MODAL ═══ -->
+<div class="backdrop" id="backdrop" role="dialog" aria-modal="true" aria-labelledby="mEndingText">
+
+  <div class="modal" id="modal">
+
+    <div class="modal-hd">
+      <div>
+        <div class="modal-label">Trap ending</div>
+        <div class="modal-ending"><span class="dash">—</span><span id="mEndingText"></span></div>
+      </div>
+      <button class="modal-close-btn" id="modalClose" aria-label="Close">✕</button>
+    </div>
+
+    <div class="modal-stats">
+      <div class="mstat"><div class="mstat-val" id="mSolves">—</div><div class="mstat-lbl">Solves</div></div>
+      <div class="mstat"><div class="mstat-val" id="mTrapLen">—</div><div class="mstat-lbl">Trap len</div></div>
+      <div class="mstat"><div class="mstat-val" id="mWordRange">—</div><div class="mstat-lbl">Word lengths</div></div>
+    </div>
+
+    <div class="modal-preview">
+      <div class="modal-section-label">Preview solves</div>
+      <div class="chips-row" id="mPreview"></div>
+    </div>
+
+    <div class="modal-actions" id="mActionsWrap">
+      <button class="btn-primary" id="btnViewSolves">View all solves ↓</button>
+    </div>
+
+    <div class="modal-solves" id="mSolves">
+      <div class="modal-solves-hd">
+        <span class="modal-section-label">All solves</span>
+        <span class="solves-count" id="mSolvesCount"></span>
+      </div>
+      <div class="solves-grid" id="mSolvesGrid"></div>
+    </div>
+
+    <div class="modal-spacer"></div>
+  </div>
+
+</div>
+
 <script>
-/* ─────────────────────────────────────────
-   CONFIG
-───────────────────────────────────────── */
-const DICT_URL = 'https://raw.githubusercontent.com/iamdookie1/Dictionary/refs/heads/main/Dict';
-const MAX_RENDER  = 500;    // max cards to render at once
-const MIN_END_LEN = 2;
-const MAX_END_LEN = 8;
+/* ─── CONFIG ─── */
+const DICT_URL   = 'https://raw.githubusercontent.com/iamdookie1/Dictionary/refs/heads/main/Dict';
+const MAX_RENDER = 300;
+const MIN_END    = 2;
+const MAX_END    = 8;
+const PREVIEW_N  = 5;
+const CHUNK      = 600;   // words per tick – tunes lag
+const MAX_SOLVES = 100;   // hard cap enforced everywhere
 
-/* ─────────────────────────────────────────
-   STATE
-───────────────────────────────────────── */
-let allWords  = [];
-let allTraps  = [];     // [{ending, words:[]}]
-let sortKey   = 'solves-desc';
-let openSet   = new Set();  // endings currently open
+/* ─── STATE ─── */
+let allWords = [];
+let allTraps = [];
+let sortKey  = 'solves-desc';
+let isDark   = true;
+let currentTrap = null;
 
-/* ─────────────────────────────────────────
-   THEME
-───────────────────────────────────────── */
+/* ─── THEME ─── */
 const themeBtn = document.getElementById('themeBtn');
-let isDark = true;
 themeBtn.addEventListener('click', () => {
   isDark = !isDark;
   document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
   themeBtn.textContent = isDark ? '🌙' : '☀️';
 });
 
-/* ─────────────────────────────────────────
-   FILTERS COLLAPSIBLE
-───────────────────────────────────────── */
-document.getElementById('filtersHead').addEventListener('click', () => {
-  document.getElementById('filtersWrap').classList.toggle('collapsed');
+/* ─── FILTERS COLLAPSIBLE ─── */
+document.getElementById('filtersHead').addEventListener('click', () =>
+  document.getElementById('filtersWrap').classList.toggle('collapsed')
+);
+
+/* ─── CLAMP SOLVES INPUTS ─── */
+['fSolvMin','fSolvMax'].forEach(id => {
+  document.getElementById(id).addEventListener('change', () => {
+    const el = document.getElementById(id);
+    let v = parseInt(el.value);
+    if (isNaN(v)) return;
+    if (v < 2)   el.value = 2;
+    if (v > 100) el.value = 100;
+  });
 });
 
-/* ─────────────────────────────────────────
-   LOAD WORDS
-───────────────────────────────────────── */
+/* ─── LOAD WORDS ─── */
 async function loadWords() {
   try {
     const res  = await fetch(DICT_URL);
     const text = await res.text();
-    allWords = text
-      .split('\n')
-      .map(w => w.trim().toLowerCase().replace(/[^a-z]/g, ''))
+    allWords = text.split('\n')
+      .map(w => w.trim().toLowerCase().replace(/[^a-z]/g,''))
       .filter(w => w.length >= 3);
     document.getElementById('sWords').textContent = allWords.length.toLocaleString();
-    computeTraps();
-  } catch (err) {
+    computeAsync();
+  } catch {
     document.getElementById('trapList').innerHTML =
-      `<div class="empty"><div class="empty-title">Load Failed</div><p>Could not fetch the dictionary. Check your connection.</p></div>`;
+      `<div class="empty"><div class="empty-title">Load Failed</div><p>Could not fetch the dictionary.</p></div>`;
   }
 }
 
-/* ─────────────────────────────────────────
-   COMPUTE TRAPS
-   Extract all endings of length 2–8 from
-   each word (ending must be ≤ 70% of word).
-   Group words by ending, keep only endings
-   shared by ≥ 2 words.
-───────────────────────────────────────── */
-function computeTraps() {
-  const map = new Map();   // ending -> Set<word>
+/* ─── CHUNKED TRAP COMPUTATION ─── */
+function computeAsync() {
+  const pw  = document.getElementById('progressWrap');
+  const pb  = document.getElementById('progressBar');
+  pw.classList.add('on');
 
-  for (const word of allWords) {
-    const maxEndLen = Math.min(MAX_END_LEN, Math.floor(word.length * 0.7));
-    for (let len = MIN_END_LEN; len <= maxEndLen; len++) {
-      if (len >= word.length) continue;
-      const ending = word.slice(-len);
-      if (!map.has(ending)) map.set(ending, new Set());
-      map.get(ending).add(word);
+  const map   = new Map();
+  let   idx   = 0;
+  const total = allWords.length;
+
+  function tick() {
+    const end = Math.min(idx + CHUNK, total);
+    for (; idx < end; idx++) {
+      const word = allWords[idx];
+      const cap  = Math.min(MAX_END, Math.floor(word.length * 0.7));
+      for (let len = MIN_END; len <= cap; len++) {
+        if (len >= word.length) continue;
+        const ending = word.slice(-len);
+        if (!map.has(ending)) map.set(ending, new Set());
+        map.get(ending).add(word);
+      }
+    }
+    pb.style.width = ((idx / total) * 100) + '%';
+
+    if (idx < total) {
+      requestAnimationFrame(tick);
+    } else {
+      allTraps = [];
+      for (const [ending, wordSet] of map) {
+        if (wordSet.size < 2)             continue;
+        if (/^(.)\1+$/.test(ending))      continue;  // skip "aaa"
+        if (wordSet.size > MAX_SOLVES)    continue;  // cap at 100 — eliminates "s","e",etc
+        allTraps.push({ ending, words: Array.from(wordSet).sort() });
+      }
+      pw.classList.remove('on');
+      document.getElementById('sTraps').textContent = allTraps.length.toLocaleString();
+      render();
     }
   }
-
-  allTraps = [];
-  for (const [ending, wordSet] of map) {
-    if (wordSet.size < 2) continue;
-    // Skip trivial repeated-char endings like "aaa"
-    if (/^(.)\1+$/.test(ending)) continue;
-    allTraps.push({ ending, words: Array.from(wordSet).sort() });
-  }
-
-  document.getElementById('sTraps').textContent = allTraps.length.toLocaleString();
-  const badge = document.getElementById('badgeCount');
-  badge.textContent = allTraps.length.toLocaleString() + ' traps';
-  badge.classList.add('visible');
-
-  render();
+  requestAnimationFrame(tick);
 }
 
-/* ─────────────────────────────────────────
-   FILTERS
-───────────────────────────────────────── */
+/* ─── FILTERS ─── */
 function getFilters() {
   const n = id => { const v = parseInt(document.getElementById(id).value); return isNaN(v) ? null : v; };
+  const solvMax = n('fSolvMax');
   return {
-    search:   document.getElementById('fSearch').value.trim().toLowerCase(),
-    trapMin:  n('fTrapMin'),
-    trapMax:  n('fTrapMax'),
-    solvMin:  n('fSolvMin'),
-    solvMax:  n('fSolvMax'),
-    wordMin:  n('fWordMin'),
-    wordMax:  n('fWordMax'),
+    search:  document.getElementById('fSearch').value.trim().toLowerCase(),
+    trapMin: n('fTrapMin'),
+    trapMax: n('fTrapMax'),
+    solvMin: n('fSolvMin'),
+    solvMax: solvMax === null ? MAX_SOLVES : Math.min(solvMax, MAX_SOLVES),
+    wordMin: n('fWordMin'),
+    wordMax: n('fWordMax'),
   };
-}
-
-function filtersAreActive(f) {
-  return f.search || f.trapMin || f.trapMax ||
-         (f.solvMin && f.solvMin > 1) || f.solvMax ||
-         f.wordMin  || f.wordMax;
 }
 
 function filterTraps(traps, f) {
   return traps.reduce((acc, t) => {
-    // Search
     if (f.search && !t.ending.includes(f.search)) return acc;
-    // Trap length
     if (f.trapMin && t.ending.length < f.trapMin) return acc;
     if (f.trapMax && t.ending.length > f.trapMax) return acc;
-    // Filter words by word length
+
     let words = t.words;
     if (f.wordMin || f.wordMax) {
       words = words.filter(w =>
@@ -619,11 +664,10 @@ function filterTraps(traps, f) {
         (!f.wordMax || w.length <= f.wordMax)
       );
     }
-    // Solves count (on filtered words)
-    const count = words.length;
-    if (count < 2) return acc;
-    if (f.solvMin && count < f.solvMin) return acc;
-    if (f.solvMax && count > f.solvMax) return acc;
+    const n = words.length;
+    if (n < 2)          return acc;
+    if (f.solvMin && n < f.solvMin) return acc;
+    if (n > f.solvMax)  return acc;
     acc.push({ ...t, words });
     return acc;
   }, []);
@@ -640,121 +684,159 @@ function sortTraps(traps) {
   });
 }
 
-/* ─────────────────────────────────────────
-   RENDER
-───────────────────────────────────────── */
+/* ─── RENDER ─── */
 function render() {
-  const f         = getFilters();
-  const dot       = document.getElementById('filtersDot');
-  dot.classList.toggle('visible', !!filtersAreActive(f));
+  const f       = getFilters();
+  const active  = !!(f.search || f.trapMin || f.trapMax ||
+                     (f.solvMin && f.solvMin > 2) || f.solvMax < MAX_SOLVES ||
+                     f.wordMin || f.wordMax);
+  document.getElementById('filtersDot').classList.toggle('on', active);
 
-  const filtered  = filterTraps(allTraps, f);
-  const sorted    = sortTraps(filtered);
-  const total     = sorted.length;
-  const slice     = sorted.slice(0, MAX_RENDER);
+  const filtered = filterTraps(allTraps, f);
+  const sorted   = sortTraps(filtered);
+  const total    = sorted.length;
+  const slice    = sorted.slice(0, MAX_RENDER);
 
   document.getElementById('sShowing').textContent = total.toLocaleString();
-  document.getElementById('sOpen').textContent    = openSet.size;
   document.getElementById('resultsInfo').innerHTML =
-    `Showing <b>${slice.length}</b> of <b>${total}</b> traps${total > MAX_RENDER ? ` — top ${MAX_RENDER} displayed` : ''}`;
+    `Showing <b>${slice.length.toLocaleString()}</b> of <b>${total.toLocaleString()}</b> traps` +
+    (total > MAX_RENDER ? ' — refine filters to see more' : '');
 
   const listEl = document.getElementById('trapList');
-
-  if (slice.length === 0) {
-    listEl.innerHTML = `<div class="empty"><div class="empty-title">NO TRAPS</div><p>Try loosening your filters.</p></div>`;
+  if (!slice.length) {
+    listEl.innerHTML = `<div class="empty"><div class="empty-title">NO TRAPS</div><p>Try adjusting your filters.</p></div>`;
     return;
   }
 
-  // Build fragment
   const frag = document.createDocumentFragment();
-
   for (const trap of slice) {
-    const isOpen = openSet.has(trap.ending);
-
-    const card = document.createElement('div');
-    card.className = 'trap-card' + (isOpen ? ' open' : '');
-    card.dataset.ending = trap.ending;
-
     const wLens = trap.words.map(w => w.length);
     const wMin  = Math.min(...wLens);
     const wMax  = Math.max(...wLens);
 
+    const card = document.createElement('div');
+    card.className = 'trap-card';
     card.innerHTML = `
       <div class="trap-row">
-        <div class="trap-ending"><span class="dash">—</span>${trap.ending}</div>
+        <div class="trap-ending"><span class="dash">—</span>${esc(trap.ending)}</div>
         <div class="trap-tags">
           <span class="tag"><b>${trap.words.length}</b> solves</span>
           <span class="tag">len <b>${trap.ending.length}</b></span>
           <span class="tag">words <b>${wMin}</b>–<b>${wMax}</b></span>
         </div>
-        <span class="trap-arrow">▾</span>
-      </div>
-      <div class="trap-body">
-        <div class="words-row">
-          ${trap.words.map(w => {
-            const stem = w.slice(0, -trap.ending.length);
-            return `<div class="word-chip"><span class="stem">${stem}</span><span class="end">${trap.ending}</span></div>`;
-          }).join('')}
-        </div>
+        <div class="trap-cta"><span>view</span> ↗</div>
       </div>`;
-
-    card.addEventListener('click', () => toggleCard(card, trap.ending));
+    card.addEventListener('click', () => openModal(trap));
     frag.appendChild(card);
   }
-
   listEl.innerHTML = '';
   listEl.appendChild(frag);
 }
 
-function toggleCard(card, ending) {
-  const isOpen = card.classList.contains('open');
-  if (isOpen) {
-    card.classList.remove('open');
-    openSet.delete(ending);
-  } else {
-    card.classList.add('open');
-    openSet.add(ending);
+/* ─── MODAL ─── */
+function openModal(trap) {
+  currentTrap = trap;
+  const { ending, words } = trap;
+  const wLens = words.map(w => w.length);
+
+  document.getElementById('mEndingText').textContent  = ending;
+  document.getElementById('mSolves').textContent      = words.length;
+  document.getElementById('mTrapLen').textContent     = ending.length;
+  document.getElementById('mWordRange').textContent   = Math.min(...wLens) + '–' + Math.max(...wLens);
+
+  // Preview: random sample of PREVIEW_N words
+  const sample = sample5(words, PREVIEW_N);
+  const previewEl = document.getElementById('mPreview');
+  let html = sample.map(w => chipHTML(w, ending)).join('');
+  if (words.length > PREVIEW_N) {
+    html += `<div class="chip-more">+${words.length - PREVIEW_N} more…</div>`;
   }
-  document.getElementById('sOpen').textContent = openSet.size;
+  previewEl.innerHTML = html;
+
+  // Reset state
+  document.getElementById('mSolves2') && (document.getElementById('mSolves2').textContent = '');
+  document.getElementById('mSolvesGrid').innerHTML = '';
+  document.getElementById('mSolvesCount').textContent = '';
+  document.getElementById('mSolves').closest('.modal-solves') &&
+    document.getElementById('mSolves').closest('.modal-solves').classList.remove('open');
+
+  const solvesSection = document.getElementById('mSolves');
+  solvesSection.classList.remove('open');
+  document.getElementById('mActionsWrap').style.display = '';
+
+  document.getElementById('backdrop').classList.add('open');
+  document.body.style.overflow = 'hidden';
 }
 
-/* ─────────────────────────────────────────
-   EVENTS
-───────────────────────────────────────── */
-// Sort buttons
-document.querySelectorAll('.sort-btn').forEach(btn => {
+function closeModal() {
+  document.getElementById('backdrop').classList.remove('open');
+  document.body.style.overflow = '';
+  currentTrap = null;
+}
+
+document.getElementById('modalClose').addEventListener('click', closeModal);
+document.getElementById('backdrop').addEventListener('click', e => {
+  if (e.target === document.getElementById('backdrop')) closeModal();
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+document.getElementById('btnViewSolves').addEventListener('click', () => {
+  if (!currentTrap) return;
+  const { ending, words } = currentTrap;
+  const grid = document.getElementById('mSolvesGrid');
+  grid.innerHTML = words.map(w => chipHTML(w, ending)).join('');
+  document.getElementById('mSolvesCount').textContent = words.length + ' words';
+  document.getElementById('mSolves').classList.add('open');
+  document.getElementById('mActionsWrap').style.display = 'none';
+  grid.scrollTop = 0;
+});
+
+/* ─── HELPERS ─── */
+function chipHTML(word, ending) {
+  const stem = word.slice(0, -ending.length);
+  return `<div class="chip"><span class="stem">${esc(stem)}</span><span class="end">${esc(ending)}</span></div>`;
+}
+
+function esc(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function sample5(arr, n) {
+  const copy = arr.slice();
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = (Math.random() * (i + 1)) | 0;
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy.slice(0, n);
+}
+
+/* ─── EVENTS ─── */
+document.querySelectorAll('.sort-btn').forEach(btn =>
   btn.addEventListener('click', () => {
     document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     sortKey = btn.dataset.sort;
     render();
-  });
-});
+  })
+);
 
-// Filter inputs (debounced)
-let renderTimer;
-function scheduleRender() {
-  clearTimeout(renderTimer);
-  renderTimer = setTimeout(render, 160);
-}
+let timer;
+function schedule() { clearTimeout(timer); timer = setTimeout(render, 180); }
 ['fSearch','fTrapMin','fTrapMax','fSolvMin','fSolvMax','fWordMin','fWordMax']
-  .forEach(id => document.getElementById(id).addEventListener('input', scheduleRender));
+  .forEach(id => document.getElementById(id).addEventListener('input', schedule));
 
-// Reset
 document.getElementById('resetBtn').addEventListener('click', () => {
   document.getElementById('fSearch').value  = '';
   document.getElementById('fTrapMin').value = '';
   document.getElementById('fTrapMax').value = '';
   document.getElementById('fSolvMin').value = '3';
-  document.getElementById('fSolvMax').value = '';
+  document.getElementById('fSolvMax').value = '100';
   document.getElementById('fWordMin').value = '';
   document.getElementById('fWordMax').value = '';
   render();
 });
 
-/* ─────────────────────────────────────────
-   INIT
-───────────────────────────────────────── */
+/* ─── INIT ─── */
 loadWords();
 </script>
 </body>
