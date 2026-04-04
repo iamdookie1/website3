@@ -2,312 +2,246 @@
 <html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>TrapFinder</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
   <style>
-    :root {
-      --bg:       #080808;
-      --surf:     #0f0f11;
-      --surf2:    #161619;
-      --bord:     #222226;
-      --bord2:    #2e2e34;
-      --text:     #dedad3;
-      --muted:    #54545f;
-      --muted2:   #363640;
-      --acc:      #c9f040;
-      --acc-d:    rgba(201,240,64,.13);
-      --acc-g:    rgba(201,240,64,.05);
-      --r:        10px;
-      --rs:       6px;
+    :root{
+      --bg:#080809;--surf:#101013;--surf2:#17171b;
+      --bord:#212126;--bord2:#2d2d35;
+      --text:#dddad2;--muted:#525260;--muted2:#32323c;
+      --acc:#caef45;--acc-d:rgba(202,239,69,.13);--acc-g:rgba(202,239,69,.05);
+      --sol:#4db8ff;--sol-d:rgba(77,184,255,.12);
+      --r:10px;--rs:6px;
     }
-    [data-theme="light"] {
-      --bg:       #f0ede4;
-      --surf:     #e5e2d8;
-      --surf2:    #d9d6cc;
-      --bord:     #c8c5ba;
-      --bord2:    #b5b2a7;
-      --text:     #161616;
-      --muted:    #86867e;
-      --muted2:   #bbb8b0;
-      --acc:      #2e5200;
-      --acc-d:    rgba(46,82,0,.1);
-      --acc-g:    rgba(46,82,0,.04);
+    [data-theme="light"]{
+      --bg:#efece3;--surf:#e4e1d7;--surf2:#d8d5cb;
+      --bord:#c5c2b7;--bord2:#b2afa4;
+      --text:#141414;--muted:#848480;--muted2:#b8b5ac;
+      --acc:#2e5200;--acc-d:rgba(46,82,0,.1);--acc-g:rgba(46,82,0,.04);
+      --sol:#005fa3;--sol-d:rgba(0,95,163,.1);
     }
-
     *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-    body{
-      background:var(--bg);color:var(--text);
-      font-family:'DM Sans',sans-serif;font-size:14px;
-      min-height:100vh;overflow-x:hidden;
-      transition:background .25s,color .25s;
-    }
+    body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;
+      font-size:14px;min-height:100vh;overflow-x:hidden;transition:background .25s,color .25s}
 
-    /* ── HEADER ── */
-    header{
-      position:sticky;top:0;z-index:300;
-      height:56px;display:flex;align-items:center;justify-content:space-between;
-      padding:0 28px;background:var(--bg);border-bottom:1px solid var(--bord);
-    }
-    .logo{font-family:'Bebas Neue',cursive;font-size:25px;letter-spacing:4px;user-select:none}
+    /* HEADER */
+    header{position:sticky;top:0;z-index:300;height:54px;
+      display:flex;align-items:center;justify-content:space-between;
+      padding:0 26px;background:var(--bg);border-bottom:1px solid var(--bord)}
+    .logo{font-family:'Bebas Neue',cursive;font-size:24px;letter-spacing:4px;user-select:none}
     .logo b{color:var(--acc)}
-    #themeBtn{
-      width:36px;height:36px;background:var(--surf);border:1px solid var(--bord2);
+    #themeBtn{width:36px;height:36px;background:var(--surf);border:1px solid var(--bord2);
       color:var(--text);cursor:pointer;border-radius:var(--rs);
       display:flex;align-items:center;justify-content:center;font-size:16px;
-      transition:border-color .15s,background .15s;
-    }
+      transition:border-color .15s,background .15s}
     #themeBtn:hover{border-color:var(--acc);background:var(--acc-g)}
 
-    /* ── LAYOUT ── */
-    main{max-width:1060px;margin:0 auto;padding:32px 28px 80px}
+    main{max-width:1060px;margin:0 auto;padding:30px 26px 80px}
 
-    /* ── HERO ── */
-    .hero{margin-bottom:32px}
-    .hero h1{
-      font-family:'Bebas Neue',cursive;
-      font-size:clamp(52px,10vw,104px);line-height:.88;letter-spacing:3px;
-      margin-bottom:12px;
-    }
+    /* HERO */
+    .hero{margin-bottom:28px}
+    .hero h1{font-family:'Bebas Neue',cursive;font-size:clamp(50px,10vw,100px);
+      line-height:.88;letter-spacing:3px;margin-bottom:11px}
     .hero h1 em{font-style:normal;color:var(--acc)}
-    .hero p{color:var(--muted);font-size:13px;line-height:1.7;max-width:460px;font-weight:300}
-    .hero p strong{color:var(--text);font-weight:500}
+    .hero-desc{color:var(--muted);font-size:13px;line-height:1.75;max-width:520px;font-weight:300}
+    .hero-desc strong{color:var(--text);font-weight:500}
+    /* legend pills in hero */
+    .legend{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    .leg{display:inline-flex;align-items:center;gap:5px;
+      border:1px solid var(--bord2);border-radius:20px;padding:3px 10px;font-size:12px}
+    .leg-dot{width:8px;height:8px;border-radius:50%}
+    .leg-trap .leg-dot{background:var(--acc)}
+    .leg-solv .leg-dot{background:var(--sol)}
 
-    /* ── STATS ── */
-    .stats{
-      display:flex;flex-wrap:wrap;
-      margin-bottom:22px;
-      background:var(--surf);border:1px solid var(--bord);border-radius:var(--r);overflow:hidden;
-    }
-    .stat{
-      flex:1;min-width:88px;padding:13px 18px;border-right:1px solid var(--bord);
-      display:flex;flex-direction:column;gap:3px;
-    }
+    /* STATS */
+    .stats{display:flex;flex-wrap:wrap;margin-bottom:20px;
+      background:var(--surf);border:1px solid var(--bord);border-radius:var(--r);overflow:hidden}
+    .stat{flex:1;min-width:86px;padding:12px 17px;border-right:1px solid var(--bord);
+      display:flex;flex-direction:column;gap:3px}
     .stat:last-child{border-right:none}
-    .stat-v{font-family:'JetBrains Mono',monospace;font-size:19px;font-weight:700;color:var(--acc)}
+    .stat-v{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:var(--acc)}
     .stat-l{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted)}
 
-    /* ── PROGRESS ── */
-    #prog{width:100%;height:3px;background:var(--bord);border-radius:2px;overflow:hidden;display:none;margin-bottom:18px}
+    /* PROGRESS */
+    #prog{width:100%;height:3px;background:var(--bord);border-radius:2px;overflow:hidden;display:none;margin-bottom:16px}
     #prog.on{display:block}
-    #progBar{height:100%;width:0%;background:var(--acc);border-radius:2px;transition:width .07s}
+    #progBar{height:100%;width:0%;background:var(--acc);transition:width .07s}
 
-    /* ── FILTERS ── */
-    .fbox{background:var(--surf);border:1px solid var(--bord);border-radius:var(--r);margin-bottom:18px}
-    .fhead{
-      display:flex;align-items:center;justify-content:space-between;
-      padding:13px 17px 11px;border-bottom:1px solid var(--bord);
-      cursor:pointer;user-select:none;
-    }
-    .fhead-l{display:flex;align-items:center;gap:9px}
+    /* FILTERS */
+    .fbox{background:var(--surf);border:1px solid var(--bord);border-radius:var(--r);margin-bottom:16px}
+    .fhead{display:flex;align-items:center;justify-content:space-between;
+      padding:12px 16px 10px;border-bottom:1px solid var(--bord);cursor:pointer;user-select:none}
+    .fhead-l{display:flex;align-items:center;gap:8px}
     .ftitle{font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--muted);font-weight:500}
     .fdot{width:6px;height:6px;background:var(--acc);border-radius:50%;display:none}
     .fdot.on{display:block}
     .fchev{color:var(--muted);font-size:12px;transition:transform .2s}
     .fbox.closed .fchev{transform:rotate(-90deg)}
-    .fbody{padding:15px 17px 17px}
+    .fbody{padding:14px 16px 16px}
     .fbox.closed .fbody{display:none}
-    .fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(182px,1fr));gap:13px}
+    .fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(178px,1fr));gap:12px}
     .fg{display:flex;flex-direction:column;gap:5px}
     .fl{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted)}
-    .fr{display:flex;align-items:center;gap:6px}
-    .sep{color:var(--muted2);font-size:13px}
+    .fl-trap{color:var(--acc)}
+    .fl-solv{color:var(--sol)}
+    .fr{display:flex;align-items:center;gap:5px}
+    .sep{color:var(--muted2);font-size:12px}
     input[type=number],input[type=text]{
       background:var(--bg);border:1px solid var(--bord2);color:var(--text);
       font-family:'JetBrains Mono',monospace;font-size:13px;
-      padding:7px 9px;border-radius:var(--rs);outline:none;width:100%;
-      transition:border-color .13s;-moz-appearance:textfield;
-    }
+      padding:6px 9px;border-radius:var(--rs);outline:none;width:100%;
+      transition:border-color .13s;-moz-appearance:textfield}
     input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
     input:focus{border-color:var(--acc)}
     input::placeholder{color:var(--muted)}
-    .fr input[type=number]{width:65px;flex-shrink:0}
-    .fact{display:flex;justify-content:flex-end;margin-top:13px}
-    .btn-g{
-      background:none;border:1px solid var(--bord2);color:var(--muted);cursor:pointer;
+    .fr input[type=number]{width:62px;flex-shrink:0}
+    .fact{display:flex;justify-content:flex-end;margin-top:12px}
+    .btn-g{background:none;border:1px solid var(--bord2);color:var(--muted);cursor:pointer;
       font-size:11px;letter-spacing:1px;text-transform:uppercase;
-      padding:5px 12px;border-radius:var(--rs);font-family:'DM Sans',sans-serif;
-      transition:all .13s;
-    }
+      padding:5px 11px;border-radius:var(--rs);font-family:'DM Sans',sans-serif;transition:all .13s}
     .btn-g:hover{color:var(--text);border-color:var(--text)}
 
-    /* ── TOOLBAR ── */
-    .toolbar{display:flex;align-items:center;gap:7px;margin-bottom:11px;flex-wrap:wrap}
+    /* TOOLBAR */
+    .toolbar{display:flex;align-items:center;gap:7px;margin-bottom:10px;flex-wrap:wrap}
     .tlbl{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted)}
-    .sbtn{
-      background:var(--surf2);border:1px solid var(--bord);color:var(--muted);
-      cursor:pointer;font-size:11px;padding:4px 11px;border-radius:20px;
-      font-family:'DM Sans',sans-serif;transition:all .13s;white-space:nowrap;
-    }
+    .sbtn{background:var(--surf2);border:1px solid var(--bord);color:var(--muted);
+      cursor:pointer;font-size:11px;padding:4px 10px;border-radius:20px;
+      font-family:'DM Sans',sans-serif;transition:all .13s;white-space:nowrap}
     .sbtn:hover{color:var(--text)}
     .sbtn.on{background:var(--acc-d);border-color:var(--acc);color:var(--acc)}
 
-    .rinfo{font-size:12px;color:var(--muted);margin-bottom:9px}
+    .rinfo{font-size:12px;color:var(--muted);margin-bottom:8px}
     .rinfo b{color:var(--text);font-family:'JetBrains Mono',monospace;font-weight:600}
 
-    /* ── TRAP CARDS ── */
-    .tlist{display:flex;flex-direction:column;gap:5px}
-    .tcard{
-      background:var(--surf);border:1px solid var(--bord);border-radius:var(--r);
+    /* PATTERN CARDS */
+    .tlist{display:flex;flex-direction:column;gap:4px}
+    .tcard{background:var(--surf);border:1px solid var(--bord);border-radius:var(--r);
       cursor:pointer;user-select:none;
-      transition:border-color .13s,background .13s,transform .1s;
-    }
+      transition:border-color .13s,background .13s,transform .1s}
     .tcard:hover{border-color:var(--bord2);background:var(--surf2);transform:translateX(3px)}
     .tcard:active{transform:translateX(1px) scale(.998)}
-    .trow{display:flex;align-items:center;padding:13px 15px;gap:12px}
-    .tend{
-      font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:700;
-      color:var(--acc);min-width:105px;
-    }
-    .tend .d{color:var(--muted);font-weight:400}
+    .trow{display:flex;align-items:center;padding:12px 15px;gap:11px;flex-wrap:wrap}
+    .tpat{font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:700;
+      color:var(--acc);min-width:90px}
+    .tpat .d{color:var(--muted);font-weight:400}
     .ttags{display:flex;gap:6px;flex:1;flex-wrap:wrap;align-items:center}
-    .tag{
-      background:var(--surf2);border:1px solid var(--bord);
+    /* trap tag = accent, solve tag = blue */
+    .tag{background:var(--surf2);border:1px solid var(--bord);
       border-radius:20px;padding:2px 9px;
-      font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;white-space:nowrap;
-    }
+      font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;white-space:nowrap}
     .tag b{color:var(--text)}
+    .tag.trap-tag{border-color:rgba(202,239,69,.25);color:var(--acc)}
+    .tag.trap-tag b{color:var(--acc)}
+    .tag.solv-tag{border-color:rgba(77,184,255,.25);color:var(--sol)}
+    .tag.solv-tag b{color:var(--sol)}
     .tcta{flex-shrink:0;font-size:11px;color:var(--muted);margin-left:auto;letter-spacing:.3px}
 
-    /* ── LOADING / EMPTY ── */
-    .loading{text-align:center;padding:64px 20px;color:var(--muted)}
-    .spin{
-      width:28px;height:28px;border:2px solid var(--bord2);border-top-color:var(--acc);
-      border-radius:50%;animation:rot .6s linear infinite;margin:0 auto 12px;
-    }
+    /* LOADING/EMPTY */
+    .loading{text-align:center;padding:60px 20px;color:var(--muted)}
+    .spin{width:28px;height:28px;border:2px solid var(--bord2);border-top-color:var(--acc);
+      border-radius:50%;animation:rot .6s linear infinite;margin:0 auto 12px}
     @keyframes rot{to{transform:rotate(360deg)}}
     .loading p{font-size:13px}
-    .empty{text-align:center;padding:64px 20px}
-    .empty h3{font-family:'Bebas Neue',cursive;font-size:38px;letter-spacing:3px;color:var(--bord2);margin-bottom:8px}
+    .empty{text-align:center;padding:60px 20px}
+    .empty h3{font-family:'Bebas Neue',cursive;font-size:36px;letter-spacing:3px;color:var(--bord2);margin-bottom:7px}
     .empty p{color:var(--muted);font-size:13px}
 
-    /* ═══════════════════════════════════════════
-       MODAL
-    ═══════════════════════════════════════════ */
-    .veil{
-      position:fixed;inset:0;z-index:900;
-      background:rgba(0,0,0,.78);backdrop-filter:blur(5px);
-      display:flex;align-items:center;justify-content:center;padding:18px;
-      opacity:0;pointer-events:none;transition:opacity .17s;
-    }
+    /* ═══ MODAL ═══ */
+    .veil{position:fixed;inset:0;z-index:900;
+      background:rgba(0,0,0,.80);backdrop-filter:blur(5px);
+      display:flex;align-items:center;justify-content:center;padding:16px;
+      opacity:0;pointer-events:none;transition:opacity .17s}
     .veil.open{opacity:1;pointer-events:all}
-    .mbox{
-      background:var(--surf);border:1px solid var(--bord2);border-radius:15px;
-      width:100%;max-width:520px;max-height:90vh;
+    .mbox{background:var(--surf);border:1px solid var(--bord2);border-radius:14px;
+      width:100%;max-width:520px;max-height:92vh;
       display:flex;flex-direction:column;overflow:hidden;
-      transform:translateY(18px) scale(.96);
-      transition:transform .22s cubic-bezier(.22,1,.36,1);
-    }
+      transform:translateY(16px) scale(.96);
+      transition:transform .22s cubic-bezier(.22,1,.36,1)}
     .veil.open .mbox{transform:translateY(0) scale(1)}
 
-    /* modal top */
-    .mhd{
-      display:flex;align-items:flex-start;justify-content:space-between;
-      padding:20px 20px 0;flex-shrink:0;
-    }
-    .mlbl{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:5px}
-    .mendtrap{
-      font-family:'Bebas Neue',cursive;font-size:50px;line-height:1;letter-spacing:2px;color:var(--acc);
-    }
-    .mendtrap .d{color:var(--muted)}
-    .mclose{
-      background:none;border:1px solid var(--bord2);color:var(--muted);cursor:pointer;
+    /* modal header */
+    .mhd{display:flex;align-items:flex-start;justify-content:space-between;
+      padding:18px 20px 0;flex-shrink:0}
+    .mlbl{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:4px}
+    .mpat{font-family:'Bebas Neue',cursive;font-size:48px;line-height:1;letter-spacing:2px;color:var(--acc)}
+    .mpat .d{color:var(--muted)}
+    .mclose{background:none;border:1px solid var(--bord2);color:var(--muted);cursor:pointer;
       width:30px;height:30px;border-radius:var(--rs);font-size:14px;
-      display:flex;align-items:center;justify-content:center;flex-shrink:0;
-      transition:all .13s;
-    }
+      display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .13s}
     .mclose:hover{color:var(--text);border-color:var(--text)}
 
     /* stats strip */
-    .mstats{
-      display:flex;flex-wrap:wrap;margin:16px 20px 0;
-      border:1px solid var(--bord);border-radius:var(--rs);overflow:hidden;flex-shrink:0;
-    }
-    .ms{flex:1;min-width:68px;padding:9px 13px;border-right:1px solid var(--bord);display:flex;flex-direction:column;gap:2px}
+    .mstats{display:flex;flex-wrap:wrap;margin:14px 20px 0;
+      border:1px solid var(--bord);border-radius:var(--rs);overflow:hidden;flex-shrink:0}
+    .ms{flex:1;min-width:66px;padding:8px 12px;border-right:1px solid var(--bord);
+      display:flex;flex-direction:column;gap:2px}
     .ms:last-child{border-right:none}
-    .ms-v{font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;color:var(--acc)}
+    .ms-v{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700}
+    .ms-v.acc{color:var(--acc)}
+    .ms-v.sol{color:var(--sol)}
     .ms-l{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}
 
-    /* section label */
-    .slbl{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:9px}
+    /* scrollable body */
+    .mbody{overflow-y:auto;flex:1;min-height:0;padding:0 20px 20px}
+    .mbody::-webkit-scrollbar{width:4px}
+    .mbody::-webkit-scrollbar-track{background:transparent}
+    .mbody::-webkit-scrollbar-thumb{background:var(--bord2);border-radius:2px}
 
-    /* preview block */
-    .mprev{padding:16px 20px 0;flex-shrink:0}
-    .chips{display:flex;flex-wrap:wrap;gap:6px}
+    /* trap/solve sections inside modal */
+    .msec{margin-top:16px}
+    .msec-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+    .msec-title{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;font-weight:500}
+    .msec-title.trap{color:var(--acc)}
+    .msec-title.solv{color:var(--sol)}
+    .msec-count{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)}
+    .chips{display:flex;flex-wrap:wrap;gap:5px}
 
-    /*
-      Solve chip:
-        [STEM]  highlighted = the SOLVE (what you need to figure out; starts the word)
-        +[trap] muted       = the TRAP (what ends the word; already known)
-    */
-    .chip{
-      display:inline-flex;align-items:baseline;gap:1px;
+    /* word chips */
+    .chip{display:inline-flex;align-items:center;
       background:var(--bg);border:1px solid var(--bord);border-radius:var(--rs);
-      padding:5px 10px;cursor:default;transition:border-color .12s;
-    }
-    .chip:hover{border-color:var(--acc)}
-    /* the SOLVE = the stem, what starts the word */
-    .chip .sv{
-      font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;
-      color:var(--acc);
-    }
-    /* the TRAP = the ending, shown muted since it's the "given" part */
-    .chip .tr{
-      font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:400;
-      color:var(--muted);
-    }
-    /* chip for when the word IS only the trap (empty stem) */
-    .chip .sv-empty{
-      font-family:'JetBrains Mono',monospace;font-size:11px;font-style:italic;
-      color:var(--muted2);margin-right:3px;
-    }
-    .chip-more{
-      background:var(--surf2);border:1px solid var(--bord);border-radius:var(--rs);
-      padding:5px 10px;font-size:12px;color:var(--muted);
-      font-family:'DM Sans',sans-serif;display:inline-flex;align-items:center;
-    }
+      padding:4px 9px;cursor:default;transition:border-color .12s;
+      font-family:'JetBrains Mono',monospace;font-size:13px}
+    .chip:hover{border-color:var(--bord2)}
+    /* trap chip: word ends in pattern — pattern part highlighted in acc */
+    .chip .pre{color:var(--muted)}
+    .chip .end-part{color:var(--acc);font-weight:700}
+    /* solve chip: word starts with pattern — pattern part highlighted in sol */
+    .chip .start-part{color:var(--sol);font-weight:700}
+    .chip .suf{color:var(--muted)}
+    /* neutral chip (word = pattern exactly) */
+    .chip .exact{color:var(--text);font-weight:700}
 
-    /* "view all" button */
-    .mact{padding:14px 20px 0;flex-shrink:0}
-    .btn-view{
-      width:100%;background:var(--acc-d);border:1px solid var(--acc);color:var(--acc);
-      font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;
-      padding:10px 0;border-radius:var(--rs);cursor:pointer;
-      transition:all .14s;letter-spacing:.3px;
-    }
-    .btn-view:hover{background:var(--acc);color:var(--bg)}
+    .chip-more{background:var(--surf2);border:1px solid var(--bord);border-radius:var(--rs);
+      padding:4px 9px;font-size:12px;color:var(--muted);font-family:'DM Sans',sans-serif;
+      display:inline-flex;align-items:center}
 
-    /* full solves section */
-    .msolvs{display:none;flex-direction:column;overflow:hidden;flex:1;min-height:0}
-    .msolvs.open{display:flex}
-    .mshd{
-      padding:16px 20px 8px;flex-shrink:0;
-      display:flex;align-items:center;justify-content:space-between;
-    }
-    .mscnt{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--acc)}
-    .mscroll{overflow-y:auto;padding:0 20px 20px;display:flex;flex-wrap:wrap;gap:6px}
-    .mscroll::-webkit-scrollbar{width:4px}
-    .mscroll::-webkit-scrollbar-track{background:transparent}
-    .mscroll::-webkit-scrollbar-thumb{background:var(--bord2);border-radius:2px}
+    /* view-all button per section */
+    .btn-expand{width:100%;background:none;border:1px dashed var(--bord2);color:var(--muted);
+      cursor:pointer;font-size:12px;padding:7px 0;border-radius:var(--rs);
+      font-family:'DM Sans',sans-serif;transition:all .13s;margin-top:8px;letter-spacing:.3px}
+    .btn-expand:hover{border-color:var(--text);color:var(--text)}
+    .btn-expand.trap-btn:hover{border-color:var(--acc);color:var(--acc)}
+    .btn-expand.solv-btn:hover{border-color:var(--sol);color:var(--sol)}
 
-    .mspc{height:20px;flex-shrink:0}
+    /* empty section note */
+    .msec-empty{font-size:12px;color:var(--muted2);font-style:italic}
 
-    /* ── RESPONSIVE ── */
+    /* RESPONSIVE */
     @media(max-width:600px){
-      header{padding:0 15px}
-      main{padding:22px 15px 60px}
-      .hero h1{font-size:50px}
-      .tend{font-size:15px;min-width:78px}
-      .trow{padding:11px 12px;gap:9px}
+      header{padding:0 14px}
+      main{padding:20px 14px 60px}
+      .hero h1{font-size:48px}
+      .tpat{font-size:14px;min-width:72px}
+      .trow{padding:10px 12px;gap:8px}
       .fgrid{grid-template-columns:1fr 1fr}
-      .stat{padding:11px 14px}
+      .stat{padding:10px 13px}
       .stat-v{font-size:16px}
-      .sbtn{font-size:10px;padding:4px 9px}
-      .mendtrap{font-size:38px}
-      .mhd,.mstats,.mprev,.mact,.mshd{padding-left:15px;padding-right:15px}
-      .mstats{margin-left:15px;margin-right:15px}
-      .mscroll{padding-left:15px;padding-right:15px}
+      .sbtn{font-size:10px;padding:3px 8px}
+      .mpat{font-size:38px}
+      .mhd,.mbody{padding-left:14px;padding-right:14px}
+      .mstats{margin-left:14px;margin-right:14px}
     }
   </style>
 </head>
@@ -321,21 +255,25 @@
 <main>
   <div class="hero">
     <h1>FIND<br>THE <em>TRAPS</em></h1>
-    <p>
-      A <strong>trap</strong> is a word ending that's hard to solve — like <strong>—ez</strong>.
-      Each <strong>solve</strong> is what comes <em>before</em> the trap to make a full word.
+    <p class="hero-desc">
+      A <strong>trap</strong> is a word that <strong>ends in</strong> a pattern — like <em>inez</em> ends in <strong>ez</strong>.<br>
+      A <strong>solve</strong> is a word that <strong>starts with</strong> that pattern — like <em>ezan</em> starts with <strong>ez</strong>.
     </p>
+    <div class="legend">
+      <div class="leg leg-trap"><div class="leg-dot"></div> Trap words (end in pattern)</div>
+      <div class="leg leg-solv"><div class="leg-dot"></div> Solve words (start with pattern)</div>
+    </div>
   </div>
 
   <div class="stats">
     <div class="stat"><div class="stat-v" id="sWords">—</div><div class="stat-l">Words</div></div>
-    <div class="stat"><div class="stat-v" id="sTraps">—</div><div class="stat-l">Traps</div></div>
+    <div class="stat"><div class="stat-v" id="sPatterns">—</div><div class="stat-l">Patterns</div></div>
     <div class="stat"><div class="stat-v" id="sShow">—</div><div class="stat-l">Showing</div></div>
   </div>
 
   <div id="prog"><div id="progBar"></div></div>
 
-  <!-- filters -->
+  <!-- FILTERS -->
   <div class="fbox" id="fbox">
     <div class="fhead" id="fhead">
       <div class="fhead-l">
@@ -347,39 +285,39 @@
     <div class="fbody">
       <div class="fgrid">
         <div class="fg" style="grid-column:span 2">
-          <label class="fl">Search trap ending</label>
+          <label class="fl">Search pattern</label>
           <input type="text" id="fSearch" placeholder="e.g. ez, ough, tion…" autocomplete="off" spellcheck="false"/>
         </div>
         <div class="fg">
-          <label class="fl">Trap length</label>
+          <label class="fl">Pattern length</label>
           <div class="fr">
-            <input type="number" id="fTrapMin" placeholder="min" min="2" max="8"/>
+            <input type="number" id="fPatMin" placeholder="min" min="2" max="8"/>
             <span class="sep">–</span>
-            <input type="number" id="fTrapMax" placeholder="max" min="2" max="8"/>
+            <input type="number" id="fPatMax" placeholder="max" min="2" max="8"/>
           </div>
         </div>
         <div class="fg">
-          <label class="fl">Solves count (max 100)</label>
+          <label class="fl fl-trap">Trap count (ends in)</label>
           <div class="fr">
-            <input type="number" id="fSolvMin" placeholder="min" min="2" max="100" value="2"/>
+            <input type="number" id="fTrapMin" placeholder="min" min="1" max="100" value="1"/>
             <span class="sep">–</span>
-            <input type="number" id="fSolvMax" placeholder="max" min="2" max="100" value="100"/>
+            <input type="number" id="fTrapMax" placeholder="max" min="1" max="100" value="100"/>
           </div>
         </div>
         <div class="fg">
-          <label class="fl">Word length</label>
+          <label class="fl fl-solv">Solve count (starts with)</label>
           <div class="fr">
-            <input type="number" id="fWordMin" placeholder="min" min="1"/>
+            <input type="number" id="fSolvMin" placeholder="min" min="0" value="0"/>
             <span class="sep">–</span>
-            <input type="number" id="fWordMax" placeholder="max"/>
+            <input type="number" id="fSolvMax" placeholder="max" min="0"/>
           </div>
         </div>
         <div class="fg">
-          <label class="fl">Stem length (solve part)</label>
+          <label class="fl">Word length (traps)</label>
           <div class="fr">
-            <input type="number" id="fStemMin" placeholder="min" min="1"/>
+            <input type="number" id="fWMin" placeholder="min" min="1"/>
             <span class="sep">–</span>
-            <input type="number" id="fStemMax" placeholder="max"/>
+            <input type="number" id="fWMax" placeholder="max"/>
           </div>
         </div>
       </div>
@@ -389,13 +327,15 @@
     </div>
   </div>
 
-  <!-- sort -->
+  <!-- SORT -->
   <div class="toolbar">
     <span class="tlbl">Sort:</span>
-    <button class="sbtn on" data-sort="solves-desc">Most solves</button>
+    <button class="sbtn on" data-sort="traps-desc">Most traps</button>
+    <button class="sbtn" data-sort="traps-asc">Fewest traps</button>
+    <button class="sbtn" data-sort="solves-desc">Most solves</button>
     <button class="sbtn" data-sort="solves-asc">Fewest solves</button>
-    <button class="sbtn" data-sort="len-desc">Longest trap</button>
-    <button class="sbtn" data-sort="len-asc">Shortest trap</button>
+    <button class="sbtn" data-sort="len-desc">Longest pattern</button>
+    <button class="sbtn" data-sort="len-asc">Shortest pattern</button>
     <button class="sbtn" data-sort="alpha">A–Z</button>
   </div>
 
@@ -408,58 +348,59 @@
 <!-- MODAL -->
 <div class="veil" id="veil" role="dialog" aria-modal="true">
   <div class="mbox">
-
     <div class="mhd">
       <div>
-        <div class="mlbl">Trap ending</div>
-        <div class="mendtrap"><span class="d">—</span><span id="mTrap"></span></div>
+        <div class="mlbl">Pattern</div>
+        <div class="mpat"><span class="d">—</span><span id="mPat"></span></div>
       </div>
       <button class="mclose" id="mClose">✕</button>
     </div>
 
     <div class="mstats">
-      <div class="ms"><div class="ms-v" id="mCount">—</div><div class="ms-l">Solves</div></div>
-      <div class="ms"><div class="ms-v" id="mTLen">—</div><div class="ms-l">Trap len</div></div>
-      <div class="ms"><div class="ms-v" id="mWLen">—</div><div class="ms-l">Word lens</div></div>
-      <div class="ms"><div class="ms-v" id="mSLen">—</div><div class="ms-l">Solve lens</div></div>
+      <div class="ms"><div class="ms-v acc" id="mTCount">—</div><div class="ms-l">Traps</div></div>
+      <div class="ms"><div class="ms-v sol" id="mSCount">—</div><div class="ms-l">Solves</div></div>
+      <div class="ms"><div class="ms-v" id="mPLen" style="color:var(--text)">—</div><div class="ms-l">Pat. len</div></div>
     </div>
 
-    <!-- preview: 6 random solves -->
-    <div class="mprev">
-      <div class="slbl">Preview solves <span style="opacity:.45;font-weight:300;text-transform:none;letter-spacing:0">(green = solve, grey = trap)</span></div>
-      <div class="chips" id="mPrev"></div>
-    </div>
+    <div class="mbody" id="mbody">
 
-    <!-- view all button -->
-    <div class="mact" id="mAct">
-      <button class="btn-view" id="mViewBtn">View all solves ↓</button>
-    </div>
-
-    <!-- full solves list -->
-    <div class="msolvs" id="mSolvs">
-      <div class="mshd">
-        <span class="slbl" style="margin:0">All solves</span>
-        <span class="mscnt" id="mSCnt"></span>
+      <!-- TRAPS section -->
+      <div class="msec" id="trapSec">
+        <div class="msec-hd">
+          <span class="msec-title trap">▲ Traps — end in pattern</span>
+          <span class="msec-count" id="trapSecCount"></span>
+        </div>
+        <div class="chips" id="trapChips"></div>
+        <button class="btn-expand trap-btn" id="trapExpandBtn" style="display:none">View all traps ↓</button>
       </div>
-      <div class="mscroll" id="mGrid"></div>
-    </div>
 
-    <div class="mspc"></div>
+      <!-- SOLVES section -->
+      <div class="msec" id="solvSec">
+        <div class="msec-hd">
+          <span class="msec-title solv">▲ Solves — start with pattern</span>
+          <span class="msec-count" id="solvSecCount"></span>
+        </div>
+        <div class="chips" id="solvChips"></div>
+        <button class="btn-expand solv-btn" id="solvExpandBtn" style="display:none">View all solves ↓</button>
+      </div>
+
+    </div>
   </div>
 </div>
 
 <script>
 /* ── CONFIG ── */
-const DICT   = 'https://raw.githubusercontent.com/iamdookie1/Dictionary/refs/heads/main/Dict';
-const CHUNK  = 700;
-const MINEND = 2;
-const MAXEND = 8;
-const MAXSOLV= 100;
-const MAXREND= 300;
-const PREV_N = 6;
+const DICT    = 'https://raw.githubusercontent.com/iamdookie1/Dictionary/refs/heads/main/Dict';
+const CHUNK   = 700;
+const MINPAT  = 2;
+const MAXPAT  = 8;
+const MAXTRAPS= 100;   // cap on trap words per pattern (filters out "s","e","ed" etc)
+const MAXREND = 300;
+const PREV    = 6;     // preview count
 
 /* ── STATE ── */
-let words=[], traps=[], sortKey='solves-desc', isDark=true, cur=null;
+let allWords=[], patterns=[], sortKey='traps-desc', isDark=true, cur=null;
+// cur = { pattern, traps:[], solves:[] }
 
 /* ── THEME ── */
 document.getElementById('themeBtn').addEventListener('click',()=>{
@@ -468,35 +409,21 @@ document.getElementById('themeBtn').addEventListener('click',()=>{
   document.getElementById('themeBtn').textContent=isDark?'🌙':'☀️';
 });
 
-/* ── FILTER PANEL TOGGLE ── */
 document.getElementById('fhead').addEventListener('click',()=>
   document.getElementById('fbox').classList.toggle('closed'));
-
-/* ── CLAMP SOLVES INPUTS ── */
-function clamp(id,lo,hi){
-  const el=document.getElementById(id);
-  const enforce=()=>{
-    let v=parseInt(el.value);
-    if(isNaN(v))return;
-    if(v<lo)el.value=lo;
-    if(v>hi)el.value=hi;
-  };
-  el.addEventListener('change',enforce);
-  el.addEventListener('blur',enforce);
-}
-clamp('fSolvMin',2,100);
-clamp('fSolvMax',2,100);
 
 /* ── LOAD ── */
 async function load(){
   try{
-    const t=await(await fetch(DICT)).text();
-    words=t.split('\n').map(w=>w.trim().toLowerCase().replace(/[^a-z]/g,'')).filter(w=>w.length>=2);
-    document.getElementById('sWords').textContent=words.length.toLocaleString();
+    const txt=await(await fetch(DICT)).text();
+    allWords=txt.split('\n')
+      .map(w=>w.trim().toLowerCase().replace(/[^a-z]/g,''))
+      .filter(w=>w.length>=2);
+    document.getElementById('sWords').textContent=allWords.length.toLocaleString();
     computeAsync();
   }catch{
     document.getElementById('tlist').innerHTML=
-      '<div class="empty"><h3>Load Failed</h3><p>Could not fetch the dictionary.</p></div>';
+      '<div class="empty"><h3>Load Failed</h3><p>Could not reach the dictionary.</p></div>';
   }
 }
 
@@ -505,97 +432,99 @@ function computeAsync(){
   const pw=document.getElementById('prog');
   const pb=document.getElementById('progBar');
   pw.classList.add('on');
-  const map=new Map();
-  let i=0,total=words.length;
 
+  // trapMap[pattern] = Set of words that END in pattern
+  // solvMap[pattern] = Set of words that START with pattern
+  const trapMap=new Map();
+  const solvMap=new Map();
+
+  let i=0, total=allWords.length;
   function tick(){
     const end=Math.min(i+CHUNK,total);
     for(;i<end;i++){
-      const w=words[i];
-      const cap=Math.min(MAXEND,Math.floor(w.length*0.75));
-      for(let len=MINEND;len<=cap;len++){
-        if(len>=w.length)continue;  // stem must be ≥1 char
-        const ending=w.slice(-len);
-        if(!map.has(ending))map.set(ending,new Set());
-        map.get(ending).add(w);
+      const w=allWords[i];
+      const L=w.length;
+      for(let len=MINPAT;len<=Math.min(MAXPAT,L-1);len++){
+        // suffix → trap pattern
+        const suf=w.slice(-len);
+        if(!trapMap.has(suf))trapMap.set(suf,new Set());
+        trapMap.get(suf).add(w);
+        // prefix → solve pattern
+        const pre=w.slice(0,len);
+        if(!solvMap.has(pre))solvMap.set(pre,new Set());
+        solvMap.get(pre).add(w);
       }
     }
     pb.style.width=((i/total)*100)+'%';
     if(i<total){requestAnimationFrame(tick);return;}
 
-    // Build trap list — cap at MAXSOLV solves
-    traps=[];
-    for(const[ending,ws]of map){
-      if(ws.size<2||ws.size>MAXSOLV)continue;
-      if(/^(.)\1+$/.test(ending))continue;        // skip "aaa"
-      traps.push({ending,words:Array.from(ws).sort()});
+    // Merge: every suffix pattern becomes a card entry
+    // Cap traps at MAXTRAPS (skip super-common endings)
+    patterns=[];
+    for(const[pat,tset]of trapMap){
+      if(tset.size<1||tset.size>MAXTRAPS)continue;
+      if(/^(.)\1+$/.test(pat))continue;  // skip "aaa" etc
+      const traps=Array.from(tset).sort();
+      const solves=solvMap.has(pat)?Array.from(solvMap.get(pat)).sort():[];
+      patterns.push({pattern:pat,traps,solves});
     }
+
     pw.classList.remove('on');
-    document.getElementById('sTraps').textContent=traps.length.toLocaleString();
+    document.getElementById('sPatterns').textContent=patterns.length.toLocaleString();
     render();
   }
   requestAnimationFrame(tick);
 }
 
-/* ── FILTERS ── */
+/* ── FILTER HELPERS ── */
 function num(id){const v=parseInt(document.getElementById(id).value);return isNaN(v)?null:v;}
-
 function getF(){
   return{
-    search: document.getElementById('fSearch').value.trim().toLowerCase(),
-    trapMin: num('fTrapMin'), trapMax: num('fTrapMax'),
-    solvMin: num('fSolvMin'), solvMax: num('fSolvMax'),
-    wordMin: num('fWordMin'), wordMax: num('fWordMax'),
-    stemMin: num('fStemMin'), stemMax: num('fStemMax'),
+    search:  document.getElementById('fSearch').value.trim().toLowerCase(),
+    patMin:  num('fPatMin'), patMax: num('fPatMax'),
+    trapMin: num('fTrapMin'),trapMax:num('fTrapMax'),
+    solvMin: num('fSolvMin'),solvMax:num('fSolvMax'),
+    wMin:    num('fWMin'),   wMax:   num('fWMax'),
   };
 }
 
-function applyFilters(ts,f){
-  return ts.reduce((acc,t)=>{
-    // trap search
-    if(f.search&&!t.ending.includes(f.search))return acc;
-    // trap length
-    if(f.trapMin!=null&&t.ending.length<f.trapMin)return acc;
-    if(f.trapMax!=null&&t.ending.length>f.trapMax)return acc;
+function applyF(pts,f){
+  return pts.reduce((acc,p)=>{
+    if(f.search&&!p.pattern.includes(f.search))return acc;
+    if(f.patMin!=null&&p.pattern.length<f.patMin)return acc;
+    if(f.patMax!=null&&p.pattern.length>f.patMax)return acc;
 
-    // filter the words for this trap
-    let ws=t.words;
+    // word-length filter on traps
+    let traps=p.traps;
+    if(f.wMin!=null||f.wMax!=null)
+      traps=traps.filter(w=>(f.wMin==null||w.length>=f.wMin)&&(f.wMax==null||w.length<=f.wMax));
 
-    // word length filter
-    if(f.wordMin!=null||f.wordMax!=null)
-      ws=ws.filter(w=>
-        (f.wordMin==null||w.length>=f.wordMin)&&
-        (f.wordMax==null||w.length<=f.wordMax)
-      );
+    const tc=traps.length;
+    const sc=p.solves.length;
 
-    // stem (solve) length filter — stem = word minus ending
-    if(f.stemMin!=null||f.stemMax!=null){
-      ws=ws.filter(w=>{
-        const sl=w.length-t.ending.length;
-        return(f.stemMin==null||sl>=f.stemMin)&&(f.stemMax==null||sl<=f.stemMax);
-      });
-    }
+    // trap count filter
+    const tmin=f.trapMin??1;
+    const tmax=Math.min(f.trapMax??MAXTRAPS,MAXTRAPS);
+    if(tc<tmin||tc>tmax)return acc;
 
-    const n=ws.length;
-    if(n<2)return acc;
+    // solve count filter
+    if(f.solvMin!=null&&sc<f.solvMin)return acc;
+    if(f.solvMax!=null&&sc>f.solvMax)return acc;
 
-    // solves count (after word/stem filtering)
-    const smin=f.solvMin??2;
-    const smax=Math.min(f.solvMax??MAXSOLV,MAXSOLV);
-    if(n<smin||n>smax)return acc;
-
-    acc.push({...t,words:ws});
+    acc.push({...p,traps});
     return acc;
   },[]);
 }
 
-function doSort(ts){
-  return[...ts].sort((a,b)=>{
-    if(sortKey==='solves-desc')return b.words.length-a.words.length;
-    if(sortKey==='solves-asc') return a.words.length-b.words.length;
-    if(sortKey==='len-desc')   return b.ending.length-a.ending.length;
-    if(sortKey==='len-asc')    return a.ending.length-b.ending.length;
-    if(sortKey==='alpha')      return a.ending.localeCompare(b.ending);
+function doSort(pts){
+  return[...pts].sort((a,b)=>{
+    if(sortKey==='traps-desc')  return b.traps.length-a.traps.length;
+    if(sortKey==='traps-asc')   return a.traps.length-b.traps.length;
+    if(sortKey==='solves-desc') return b.solves.length-a.solves.length;
+    if(sortKey==='solves-asc')  return a.solves.length-b.solves.length;
+    if(sortKey==='len-desc')    return b.pattern.length-a.pattern.length;
+    if(sortKey==='len-asc')     return a.pattern.length-b.pattern.length;
+    if(sortKey==='alpha')       return a.pattern.localeCompare(b.pattern);
     return 0;
   });
 }
@@ -603,47 +532,42 @@ function doSort(ts){
 /* ── RENDER ── */
 function render(){
   const f=getF();
-  const anyActive=!!(f.search||f.trapMin!=null||f.trapMax!=null||
-    (f.solvMin!=null&&f.solvMin>2)||(f.solvMax!=null&&f.solvMax<MAXSOLV)||
-    f.wordMin!=null||f.wordMax!=null||f.stemMin!=null||f.stemMax!=null);
-  document.getElementById('fdot').classList.toggle('on',anyActive);
+  const anyOn=!!(f.search||f.patMin||f.patMax||
+    (f.trapMin!=null&&f.trapMin>1)||(f.trapMax!=null&&f.trapMax<MAXTRAPS)||
+    f.solvMin||f.solvMax||f.wMin||f.wMax);
+  document.getElementById('fdot').classList.toggle('on',anyOn);
 
-  const filtered=applyFilters(traps,f);
+  const filtered=applyF(patterns,f);
   const sorted=doSort(filtered);
   const total=sorted.length;
   const slice=sorted.slice(0,MAXREND);
 
   document.getElementById('sShow').textContent=total.toLocaleString();
   document.getElementById('rinfo').innerHTML=
-    `Showing <b>${slice.length.toLocaleString()}</b> of <b>${total.toLocaleString()}</b> traps`+
-    (total>MAXREND?' — refine filters to narrow down':'');
+    `Showing <b>${slice.length.toLocaleString()}</b> of <b>${total.toLocaleString()}</b> patterns`+
+    (total>MAXREND?' — refine filters to narrow results':'');
 
   const listEl=document.getElementById('tlist');
   if(!slice.length){
-    listEl.innerHTML='<div class="empty"><h3>NO TRAPS</h3><p>Try adjusting your filters.</p></div>';
+    listEl.innerHTML='<div class="empty"><h3>NO PATTERNS</h3><p>Try loosening your filters.</p></div>';
     return;
   }
 
   const frag=document.createDocumentFragment();
-  for(const trap of slice){
-    const solveLens=trap.words.map(w=>w.length-trap.ending.length);
-    const sMin=Math.min(...solveLens), sMax=Math.max(...solveLens);
-    const wMin=Math.min(...trap.words.map(w=>w.length));
-    const wMax=Math.max(...trap.words.map(w=>w.length));
-
+  for(const p of slice){
     const c=document.createElement('div');
     c.className='tcard';
     c.innerHTML=`
       <div class="trow">
-        <div class="tend"><span class="d">—</span>${esc(trap.ending)}</div>
+        <div class="tpat"><span class="d">—</span>${esc(p.pattern)}</div>
         <div class="ttags">
-          <span class="tag"><b>${trap.words.length}</b> solves</span>
-          <span class="tag">trap len <b>${trap.ending.length}</b></span>
-          <span class="tag">solve <b>${sMin}</b>–<b>${sMax}</b> chars</span>
+          <span class="tag trap-tag"><b>${p.traps.length}</b> traps</span>
+          <span class="tag solv-tag"><b>${p.solves.length}</b> solves</span>
+          <span class="tag">len <b>${p.pattern.length}</b></span>
         </div>
         <div class="tcta">view ↗</div>
       </div>`;
-    c.addEventListener('click',()=>openModal(trap));
+    c.addEventListener('click',()=>openModal(p));
     frag.appendChild(c);
   }
   listEl.innerHTML='';
@@ -651,34 +575,51 @@ function render(){
 }
 
 /* ── MODAL ── */
-function openModal(trap){
-  cur=trap;
-  const{ending,words:ws}=trap;
-  const stems=ws.map(w=>w.slice(0,-ending.length));
-  const stemLens=stems.map(s=>s.length);
-  const wordLens=ws.map(w=>w.length);
+function openModal(p){
+  cur=p;
+  document.getElementById('mPat').textContent=p.pattern;
+  document.getElementById('mTCount').textContent=p.traps.length;
+  document.getElementById('mSCount').textContent=p.solves.length;
+  document.getElementById('mPLen').textContent=p.pattern.length;
 
-  document.getElementById('mTrap').textContent=ending;
-  document.getElementById('mCount').textContent=ws.length;
-  document.getElementById('mTLen').textContent=ending.length;
-  document.getElementById('mWLen').textContent=Math.min(...wordLens)+'–'+Math.max(...wordLens);
-  document.getElementById('mSLen').textContent=Math.min(...stemLens)+'–'+Math.max(...stemLens);
-
-  // preview: random sample
-  const sample=randSample(ws,PREV_N);
-  const prevEl=document.getElementById('mPrev');
-  let html=sample.map(w=>chipHTML(w,ending)).join('');
-  if(ws.length>PREV_N)html+=`<div class="chip-more">+${ws.length-PREV_N} more…</div>`;
-  prevEl.innerHTML=html;
-
-  // reset full list
-  document.getElementById('mGrid').innerHTML='';
-  document.getElementById('mSCnt').textContent='';
-  document.getElementById('mSolvs').classList.remove('open');
-  document.getElementById('mAct').style.display='';
+  // render trap section preview
+  renderSection('trap', p.traps, p.pattern, PREV);
+  // render solve section preview
+  renderSection('solv', p.solves, p.pattern, PREV);
 
   document.getElementById('veil').classList.add('open');
   document.body.style.overflow='hidden';
+  document.getElementById('mbody').scrollTop=0;
+}
+
+function renderSection(type, words, pattern, limit){
+  const isExpanded = limit===Infinity;
+  const chipsEl  = document.getElementById(type+'Chips');
+  const countEl  = document.getElementById(type+'SecCount');
+  const btnEl    = document.getElementById(type+'ExpandBtn');
+
+  countEl.textContent=words.length+' words';
+
+  if(!words.length){
+    chipsEl.innerHTML='<span class="msec-empty">None found</span>';
+    btnEl.style.display='none';
+    return;
+  }
+
+  const shown=isExpanded?words:words.slice(0,limit);
+  chipsEl.innerHTML=shown.map(w=>
+    type==='trap' ? trapChipHTML(w,pattern) : solvChipHTML(w,pattern)
+  ).join('');
+
+  if(!isExpanded&&words.length>limit){
+    btnEl.style.display='';
+    btnEl.textContent=`View all ${words.length} ${type==='trap'?'traps':'solves'} ↓`;
+    btnEl.onclick=()=>{
+      renderSection(type, words, pattern, Infinity);
+    };
+  }else{
+    btnEl.style.display='none';
+  }
 }
 
 function closeModal(){
@@ -686,41 +627,27 @@ function closeModal(){
   document.body.style.overflow='';
   cur=null;
 }
-
 document.getElementById('mClose').addEventListener('click',closeModal);
-document.getElementById('veil').addEventListener('click',e=>{if(e.target===document.getElementById('veil'))closeModal();});
+document.getElementById('veil').addEventListener('click',e=>{
+  if(e.target===document.getElementById('veil'))closeModal();
+});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
 
-document.getElementById('mViewBtn').addEventListener('click',()=>{
-  if(!cur)return;
-  const{ending,words:ws}=cur;
-  const grid=document.getElementById('mGrid');
-  grid.innerHTML=ws.map(w=>chipHTML(w,ending)).join('');
-  document.getElementById('mSCnt').textContent=ws.length+' words';
-  document.getElementById('mSolvs').classList.add('open');
-  document.getElementById('mAct').style.display='none';
-  grid.scrollTop=0;
-});
-
-/* ── CHIP HTML ──
-   solve (stem) = green / accent — what you need to figure out, starts the word
-   trap (ending) = muted          — what ends the word, the "given" trap
-*/
-function chipHTML(word,ending){
-  const stem=word.slice(0,-ending.length);
-  const sv=stem
-    ? `<span class="sv">${esc(stem)}</span>`
-    : `<span class="sv-empty">(∅)</span>`;
-  return `<div class="chip">${sv}<span class="tr">${esc(ending)}</span></div>`;
+/* ── CHIP HTML ── */
+// Trap chip: word ENDS in pattern — show prefix (muted) + pattern (acc)
+function trapChipHTML(word, pattern){
+  const pre=word.slice(0,-pattern.length);
+  if(!pre)return`<div class="chip"><span class="exact">${esc(word)}</span></div>`;
+  return`<div class="chip"><span class="pre">${esc(pre)}</span><span class="end-part">${esc(pattern)}</span></div>`;
+}
+// Solve chip: word STARTS with pattern — show pattern (sol) + suffix (muted)
+function solvChipHTML(word, pattern){
+  const suf=word.slice(pattern.length);
+  if(!suf)return`<div class="chip"><span class="exact">${esc(word)}</span></div>`;
+  return`<div class="chip"><span class="start-part">${esc(pattern)}</span><span class="suf">${esc(suf)}</span></div>`;
 }
 
 function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
-
-function randSample(arr,n){
-  const c=arr.slice();
-  for(let i=c.length-1;i>0;i--){const j=(Math.random()*(i+1))|0;[c[i],c[j]]=[c[j],c[i]];}
-  return c.slice(0,n);
-}
 
 /* ── EVENTS ── */
 document.querySelectorAll('.sbtn').forEach(b=>b.addEventListener('click',()=>{
@@ -732,7 +659,7 @@ document.querySelectorAll('.sbtn').forEach(b=>b.addEventListener('click',()=>{
 
 let timer;
 function sched(){clearTimeout(timer);timer=setTimeout(render,170);}
-['fSearch','fTrapMin','fTrapMax','fSolvMin','fSolvMax','fWordMin','fWordMax','fStemMin','fStemMax']
+['fSearch','fPatMin','fPatMax','fTrapMin','fTrapMax','fSolvMin','fSolvMax','fWMin','fWMax']
   .forEach(id=>{
     const el=document.getElementById(id);
     el.addEventListener('input',sched);
@@ -740,15 +667,11 @@ function sched(){clearTimeout(timer);timer=setTimeout(render,170);}
   });
 
 document.getElementById('resetBtn').addEventListener('click',()=>{
-  document.getElementById('fSearch').value='';
-  document.getElementById('fTrapMin').value='';
-  document.getElementById('fTrapMax').value='';
-  document.getElementById('fSolvMin').value='2';
-  document.getElementById('fSolvMax').value='100';
-  document.getElementById('fWordMin').value='';
-  document.getElementById('fWordMax').value='';
-  document.getElementById('fStemMin').value='';
-  document.getElementById('fStemMax').value='';
+  ['fSearch'].forEach(id=>document.getElementById(id).value='');
+  ['fPatMin','fPatMax','fWMin','fWMax','fSolvMax'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('fTrapMin').value='1';
+  document.getElementById('fTrapMax').value='100';
+  document.getElementById('fSolvMin').value='0';
   render();
 });
 
