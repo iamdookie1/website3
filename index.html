@@ -1,39 +1,764 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Lexicon</title>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,500;1,300;1,500&family=JetBrains+Mono:wght@300;400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
-<style>
-:root {
-  --sidebar-w: 220px;
-  --font-head: 'Fraunces', Georgia, serif;
-  --font-mono: 'JetBrains Mono', monospace;
-  --font-body: 'Inter', sans-serif;
-  --radius-sm: 5px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --accent: #1D9E75;
-  --accent-rgb: 29,158,117;
-  --bg-primary: #111110;
-  --bg-secondary: #191918;
-  --bg-tertiary: #141413;
-  --text-primary: #EEECEA;
-  --text-secondary: #888580;
-  --border-light: rgba(255,255,255,0.07);
-  --border-mid: rgba(255,255,255,0.13);
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TrapFinder</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@400;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <style>
+    /* ───── TOKENS ───── */
+    :root {
+      --bg:          #090909;
+      --surface:     #111113;
+      --surface2:    #18181c;
+      --border:      #252529;
+      --border2:     #32323a;
+      --text:        #e2dfd8;
+      --muted:       #5a5a65;
+      --muted2:      #3a3a42;
+      --accent:      #c8f135;
+      --accent-dim:  rgba(200,241,53,.12);
+      --accent-glow: rgba(200,241,53,.06);
+      --danger:      #ff5c5c;
+      --radius:      10px;
+      --radius-sm:   6px;
+    }
+    [data-theme="light"] {
+      --bg:          #f2f0e8;
+      --surface:     #e8e5dc;
+      --surface2:    #dedad0;
+      --border:      #ccc9be;
+      --border2:     #b8b5aa;
+      --text:        #1a1a1a;
+      --muted:       #888880;
+      --muted2:      #c0bdb5;
+      --accent:      #3a5c00;
+      --accent-dim:  rgba(58,92,0,.1);
+      --accent-glow: rgba(58,92,0,.04);
+      --danger:      #c0392b;
+    }
+
+    /* ───── RESET ───── */
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      min-height: 100vh;
+      transition: background .25s, color .25s;
+    }
+
+    /* ───── HEADER ───── */
+    header {
+      position: sticky; top:0; z-index:200;
+      height: 58px;
+      display: flex; align-items:center; justify-content:space-between;
+      padding: 0 28px;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(8px);
+    }
+    .logo {
+      font-family: 'Bebas Neue', cursive;
+      font-size: 26px;
+      letter-spacing: 4px;
+      user-select: none;
+    }
+    .logo-trap { color: var(--accent); }
+    .logo-finder { color: var(--text); }
+    .header-right { display:flex; align-items:center; gap:10px; }
+    .badge-count {
+      background: var(--accent-dim);
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 20px;
+      display: none;
+    }
+    .badge-count.visible { display:block; }
+    #themeBtn {
+      width:38px; height:38px;
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      color: var(--text);
+      cursor: pointer;
+      border-radius: var(--radius-sm);
+      display:flex; align-items:center; justify-content:center;
+      font-size:17px;
+      transition: border-color .2s, background .2s;
+    }
+    #themeBtn:hover { border-color: var(--accent); background: var(--accent-glow); }
+
+    /* ───── MAIN ───── */
+    main { max-width:1080px; margin:0 auto; padding:36px 28px 80px; }
+
+    /* ───── HERO ───── */
+    .hero { margin-bottom:36px; }
+    .hero-headline {
+      font-family: 'Bebas Neue', cursive;
+      font-size: clamp(56px, 10vw, 108px);
+      line-height:.88;
+      letter-spacing: 3px;
+      margin-bottom:14px;
+    }
+    .hero-headline em { font-style:normal; color:var(--accent); }
+    .hero-sub {
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.7;
+      max-width:480px;
+      font-weight:300;
+    }
+    .hero-sub strong { color:var(--text); font-weight:500; }
+
+    /* ───── STATS BAR ───── */
+    .stats-bar {
+      display:flex; gap:0; flex-wrap:wrap;
+      margin-bottom:28px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow:hidden;
+    }
+    .stat-item {
+      flex:1; min-width:100px;
+      padding: 14px 20px;
+      border-right: 1px solid var(--border);
+      display:flex; flex-direction:column; gap:3px;
+    }
+    .stat-item:last-child { border-right:none; }
+    .stat-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 20px;
+      font-weight:700;
+      color: var(--accent);
+      letter-spacing:-0.5px;
+    }
+    .stat-label {
+      font-size:10px;
+      text-transform:uppercase;
+      letter-spacing:1.5px;
+      color:var(--muted);
+    }
+
+    /* ───── FILTERS ───── */
+    .filters-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom:20px;
+    }
+    .filters-head {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:14px 18px 12px;
+      border-bottom:1px solid var(--border);
+      cursor:pointer;
+      user-select:none;
+    }
+    .filters-head-left {
+      display:flex; align-items:center; gap:10px;
+    }
+    .filters-title {
+      font-size:11px; text-transform:uppercase;
+      letter-spacing:2px; color:var(--muted); font-weight:500;
+    }
+    .filters-active-dot {
+      width:6px;height:6px;
+      background:var(--accent);
+      border-radius:50%;
+      display:none;
+    }
+    .filters-active-dot.visible { display:block; }
+    .filters-toggle-icon {
+      color:var(--muted); font-size:12px;
+      transition:transform .2s;
+    }
+    .filters-wrap.collapsed .filters-toggle-icon { transform:rotate(-90deg); }
+    .filters-body {
+      padding:16px 18px 18px;
+    }
+    .filters-wrap.collapsed .filters-body { display:none; }
+    .filters-grid {
+      display:grid;
+      grid-template-columns: repeat(auto-fill, minmax(185px, 1fr));
+      gap:14px;
+    }
+    .filter-group { display:flex; flex-direction:column; gap:6px; }
+    .filter-label {
+      font-size:10px; text-transform:uppercase;
+      letter-spacing:1.5px; color:var(--muted);
+    }
+    .filter-range {
+      display:flex; align-items:center; gap:6px;
+    }
+    .filter-range-sep { color:var(--muted2); font-size:13px; }
+    input[type="number"], input[type="text"] {
+      background: var(--bg);
+      border: 1px solid var(--border2);
+      color: var(--text);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      padding: 7px 10px;
+      border-radius: var(--radius-sm);
+      outline: none;
+      width:100%;
+      transition: border-color .15s;
+      -moz-appearance:textfield;
+    }
+    input[type="number"]::-webkit-inner-spin-button { -webkit-appearance:none; }
+    input[type="number"]:focus, input[type="text"]:focus { border-color:var(--accent); }
+    input::placeholder { color:var(--muted); }
+    .filter-range input[type="number"] { width:68px; flex-shrink:0; }
+
+    .filters-actions {
+      display:flex; justify-content:flex-end; margin-top:14px;
+    }
+    .btn-ghost {
+      background:none; border:1px solid var(--border2);
+      color:var(--muted); cursor:pointer;
+      font-size:11px; letter-spacing:1px;
+      text-transform:uppercase;
+      padding:5px 12px; border-radius:var(--radius-sm);
+      font-family:'DM Sans',sans-serif;
+      transition:all .15s;
+    }
+    .btn-ghost:hover { color:var(--text); border-color:var(--text); }
+
+    /* ───── SORT / TOOLBAR ───── */
+    .toolbar {
+      display:flex; align-items:center; gap:8px;
+      margin-bottom:12px; flex-wrap:wrap;
+    }
+    .toolbar-label { font-size:10px; text-transform:uppercase; letter-spacing:1.5px; color:var(--muted); }
+    .sort-btn {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      cursor:pointer; font-size:12px;
+      padding:5px 12px; border-radius:20px;
+      font-family:'DM Sans',sans-serif;
+      transition: all .15s;
+      white-space:nowrap;
+    }
+    .sort-btn:hover { color:var(--text); }
+    .sort-btn.active {
+      background:var(--accent-dim);
+      border-color:var(--accent);
+      color:var(--accent);
+    }
+
+    /* ───── RESULTS INFO ───── */
+    .results-info {
+      font-size:12px; color:var(--muted);
+      margin-bottom:10px;
+    }
+    .results-info b { color:var(--text); font-family:'JetBrains Mono',monospace; font-weight:600; }
+
+    /* ───── TRAP LIST ───── */
+    .trap-list { display:flex; flex-direction:column; gap:5px; }
+
+    .trap-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow:hidden;
+      cursor:pointer;
+      transition: border-color .15s, background .15s;
+    }
+    .trap-card:hover { border-color:var(--border2); background:var(--surface2); }
+    .trap-card.open { border-color:var(--accent); }
+    .trap-card.open:hover { border-color:var(--accent); }
+
+    .trap-row {
+      display:flex; align-items:center;
+      padding:13px 16px;
+      gap:14px;
+    }
+    .trap-ending {
+      font-family:'JetBrains Mono',monospace;
+      font-size:18px; font-weight:700;
+      color:var(--accent);
+      letter-spacing:-0.5px;
+      min-width:110px;
+    }
+    .trap-ending .dash { color:var(--muted); font-weight:400; }
+    .trap-tags {
+      display:flex; gap:7px; flex:1; flex-wrap:wrap; align-items:center;
+    }
+    .tag {
+      background:var(--surface2);
+      border:1px solid var(--border);
+      border-radius:20px;
+      padding:2px 9px;
+      font-size:11px; color:var(--muted);
+      font-family:'JetBrains Mono',monospace;
+      white-space:nowrap;
+    }
+    .tag b { color:var(--text); }
+    .trap-arrow {
+      color:var(--muted);
+      font-size:12px;
+      flex-shrink:0;
+      transition:transform .2s;
+      margin-left:auto;
+    }
+    .trap-card.open .trap-arrow { transform:rotate(180deg); }
+
+    .trap-body {
+      display:none;
+      padding:0 16px 15px;
+      border-top:1px solid var(--border);
+    }
+    .trap-card.open .trap-body { display:block; }
+
+    .words-row {
+      display:flex; flex-wrap:wrap;
+      gap:5px; padding-top:13px;
+    }
+    .word-chip {
+      background:var(--bg);
+      border:1px solid var(--border);
+      border-radius:var(--radius-sm);
+      padding:4px 10px;
+      font-family:'JetBrains Mono',monospace;
+      font-size:13px;
+      color:var(--muted);
+      transition:border-color .12s;
+      cursor:default;
+    }
+    .word-chip:hover { border-color:var(--accent); }
+    .word-chip .stem { color:var(--text); }
+    .word-chip .end  { color:var(--accent); font-weight:700; }
+
+    /* ───── LOADING / EMPTY ───── */
+    .loading {
+      text-align:center; padding:70px 20px; color:var(--muted);
+    }
+    .spinner {
+      width:30px;height:30px;
+      border:2px solid var(--border2);
+      border-top-color:var(--accent);
+      border-radius:50%;
+      animation:spin .6s linear infinite;
+      margin:0 auto 14px;
+    }
+    @keyframes spin { to{ transform:rotate(360deg); } }
+    .loading p { font-size:13px; letter-spacing:.5px; }
+
+    .empty {
+      text-align:center; padding:70px 20px;
+    }
+    .empty-title {
+      font-family:'Bebas Neue',cursive;
+      font-size:40px; letter-spacing:3px;
+      color:var(--border2); margin-bottom:8px;
+    }
+    .empty p { color:var(--muted); font-size:13px; }
+
+    /* ───── RESPONSIVE ───── */
+    @media (max-width:620px) {
+      header { padding:0 16px; }
+      main   { padding:24px 16px 60px; }
+      .hero-headline { font-size:52px; }
+      .trap-ending { font-size:15px; min-width:80px; }
+      .trap-row { padding:11px 12px; gap:10px; }
+      .filters-grid { grid-template-columns:1fr 1fr; }
+      .stat-item { padding:12px 14px; }
+      .stat-value { font-size:17px; }
+      .sort-btn { font-size:11px; padding:4px 10px; }
+      .badge-count { display:none !important; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══ HEADER ═══ -->
+<header>
+  <div class="logo">
+    <span class="logo-trap">TRAP</span><span class="logo-finder">FINDER</span>
+  </div>
+  <div class="header-right">
+    <span class="badge-count" id="badgeCount">0 traps</span>
+    <button id="themeBtn" title="Toggle theme" aria-label="Toggle theme">🌙</button>
+  </div>
+</header>
+
+<!-- ═══ MAIN ═══ -->
+<main>
+
+  <!-- Hero -->
+  <div class="hero">
+    <h1 class="hero-headline">FIND<br>THE <em>TRAPS</em></h1>
+    <p class="hero-sub">
+      Discover word <strong>endings that are tricky to solve</strong>.
+      Each trap is an ending shared by multiple words — click any to reveal the solves.
+    </p>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-bar">
+    <div class="stat-item">
+      <div class="stat-value" id="sWords">—</div>
+      <div class="stat-label">Words loaded</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-value" id="sTraps">—</div>
+      <div class="stat-label">Total traps</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-value" id="sShowing">—</div>
+      <div class="stat-label">Showing</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-value" id="sOpen">0</div>
+      <div class="stat-label">Opened</div>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters-wrap" id="filtersWrap">
+    <div class="filters-head" id="filtersHead">
+      <div class="filters-head-left">
+        <span class="filters-title">Filters &amp; Search</span>
+        <div class="filters-active-dot" id="filtersDot"></div>
+      </div>
+      <span class="filters-toggle-icon">▾</span>
+    </div>
+    <div class="filters-body" id="filtersBody">
+      <div class="filters-grid">
+        <!-- Search -->
+        <div class="filter-group" style="grid-column:span 2;">
+          <label class="filter-label">Search trap ending</label>
+          <input type="text" id="fSearch" placeholder="e.g. ough, ez, tion, ize…" autocomplete="off" spellcheck="false" />
+        </div>
+        <!-- Trap length -->
+        <div class="filter-group">
+          <label class="filter-label">Trap length</label>
+          <div class="filter-range">
+            <input type="number" id="fTrapMin" placeholder="min" min="1" max="20" />
+            <span class="filter-range-sep">–</span>
+            <input type="number" id="fTrapMax" placeholder="max" min="1" max="20" />
+          </div>
+        </div>
+        <!-- Solves count -->
+        <div class="filter-group">
+          <label class="filter-label">Solves count</label>
+          <div class="filter-range">
+            <input type="number" id="fSolvMin" placeholder="min" min="1" value="3" />
+            <span class="filter-range-sep">–</span>
+            <input type="number" id="fSolvMax" placeholder="max" min="1" />
+          </div>
+        </div>
+        <!-- Word length -->
+        <div class="filter-group">
+          <label class="filter-label">Word length</label>
+          <div class="filter-range">
+            <input type="number" id="fWordMin" placeholder="min" min="1" />
+            <span class="filter-range-sep">–</span>
+            <input type="number" id="fWordMax" placeholder="max" min="1" />
+          </div>
+        </div>
+      </div>
+      <div class="filters-actions">
+        <button class="btn-ghost" id="resetBtn">Reset filters</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <span class="toolbar-label">Sort:</span>
+    <button class="sort-btn active" data-sort="solves-desc">Most solves</button>
+    <button class="sort-btn" data-sort="solves-asc">Fewest solves</button>
+    <button class="sort-btn" data-sort="len-desc">Longest trap</button>
+    <button class="sort-btn" data-sort="len-asc">Shortest trap</button>
+    <button class="sort-btn" data-sort="alpha">A – Z</button>
+  </div>
+
+  <p class="results-info" id="resultsInfo"></p>
+
+  <!-- Trap list -->
+  <div class="trap-list" id="trapList">
+    <div class="loading">
+      <div class="spinner"></div>
+      <p>Loading dictionary…</p>
+    </div>
+  </div>
+
+</main>
+
+<script>
+/* ─────────────────────────────────────────
+   CONFIG
+───────────────────────────────────────── */
+const DICT_URL = 'https://raw.githubusercontent.com/iamdookie1/Dictionary/refs/heads/main/Dict';
+const MAX_RENDER  = 500;    // max cards to render at once
+const MIN_END_LEN = 2;
+const MAX_END_LEN = 8;
+
+/* ─────────────────────────────────────────
+   STATE
+───────────────────────────────────────── */
+let allWords  = [];
+let allTraps  = [];     // [{ending, words:[]}]
+let sortKey   = 'solves-desc';
+let openSet   = new Set();  // endings currently open
+
+/* ─────────────────────────────────────────
+   THEME
+───────────────────────────────────────── */
+const themeBtn = document.getElementById('themeBtn');
+let isDark = true;
+themeBtn.addEventListener('click', () => {
+  isDark = !isDark;
+  document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+  themeBtn.textContent = isDark ? '🌙' : '☀️';
+});
+
+/* ─────────────────────────────────────────
+   FILTERS COLLAPSIBLE
+───────────────────────────────────────── */
+document.getElementById('filtersHead').addEventListener('click', () => {
+  document.getElementById('filtersWrap').classList.toggle('collapsed');
+});
+
+/* ─────────────────────────────────────────
+   LOAD WORDS
+───────────────────────────────────────── */
+async function loadWords() {
+  try {
+    const res  = await fetch(DICT_URL);
+    const text = await res.text();
+    allWords = text
+      .split('\n')
+      .map(w => w.trim().toLowerCase().replace(/[^a-z]/g, ''))
+      .filter(w => w.length >= 3);
+    document.getElementById('sWords').textContent = allWords.length.toLocaleString();
+    computeTraps();
+  } catch (err) {
+    document.getElementById('trapList').innerHTML =
+      `<div class="empty"><div class="empty-title">Load Failed</div><p>Could not fetch the dictionary. Check your connection.</p></div>`;
+  }
 }
-[data-theme="light"] {
-  --bg-primary: #FFFFFF;
-  --bg-secondary: #F6F5F3;
-  --bg-tertiary: #EFEDE9;
-  --text-primary: #1A1917;
-  --text-secondary: #706E69;
-  --border-light: rgba(0,0,0,0.07);
-  --border-mid: rgba(0,0,0,0.13);
+
+/* ─────────────────────────────────────────
+   COMPUTE TRAPS
+   Extract all endings of length 2–8 from
+   each word (ending must be ≤ 70% of word).
+   Group words by ending, keep only endings
+   shared by ≥ 2 words.
+───────────────────────────────────────── */
+function computeTraps() {
+  const map = new Map();   // ending -> Set<word>
+
+  for (const word of allWords) {
+    const maxEndLen = Math.min(MAX_END_LEN, Math.floor(word.length * 0.7));
+    for (let len = MIN_END_LEN; len <= maxEndLen; len++) {
+      if (len >= word.length) continue;
+      const ending = word.slice(-len);
+      if (!map.has(ending)) map.set(ending, new Set());
+      map.get(ending).add(word);
+    }
+  }
+
+  allTraps = [];
+  for (const [ending, wordSet] of map) {
+    if (wordSet.size < 2) continue;
+    // Skip trivial repeated-char endings like "aaa"
+    if (/^(.)\1+$/.test(ending)) continue;
+    allTraps.push({ ending, words: Array.from(wordSet).sort() });
+  }
+
+  document.getElementById('sTraps').textContent = allTraps.length.toLocaleString();
+  const badge = document.getElementById('badgeCount');
+  badge.textContent = allTraps.length.toLocaleString() + ' traps';
+  badge.classList.add('visible');
+
+  render();
+}
+
+/* ─────────────────────────────────────────
+   FILTERS
+───────────────────────────────────────── */
+function getFilters() {
+  const n = id => { const v = parseInt(document.getElementById(id).value); return isNaN(v) ? null : v; };
+  return {
+    search:   document.getElementById('fSearch').value.trim().toLowerCase(),
+    trapMin:  n('fTrapMin'),
+    trapMax:  n('fTrapMax'),
+    solvMin:  n('fSolvMin'),
+    solvMax:  n('fSolvMax'),
+    wordMin:  n('fWordMin'),
+    wordMax:  n('fWordMax'),
+  };
+}
+
+function filtersAreActive(f) {
+  return f.search || f.trapMin || f.trapMax ||
+         (f.solvMin && f.solvMin > 1) || f.solvMax ||
+         f.wordMin  || f.wordMax;
+}
+
+function filterTraps(traps, f) {
+  return traps.reduce((acc, t) => {
+    // Search
+    if (f.search && !t.ending.includes(f.search)) return acc;
+    // Trap length
+    if (f.trapMin && t.ending.length < f.trapMin) return acc;
+    if (f.trapMax && t.ending.length > f.trapMax) return acc;
+    // Filter words by word length
+    let words = t.words;
+    if (f.wordMin || f.wordMax) {
+      words = words.filter(w =>
+        (!f.wordMin || w.length >= f.wordMin) &&
+        (!f.wordMax || w.length <= f.wordMax)
+      );
+    }
+    // Solves count (on filtered words)
+    const count = words.length;
+    if (count < 2) return acc;
+    if (f.solvMin && count < f.solvMin) return acc;
+    if (f.solvMax && count > f.solvMax) return acc;
+    acc.push({ ...t, words });
+    return acc;
+  }, []);
+}
+
+function sortTraps(traps) {
+  return [...traps].sort((a, b) => {
+    if (sortKey === 'solves-desc') return b.words.length - a.words.length;
+    if (sortKey === 'solves-asc')  return a.words.length - b.words.length;
+    if (sortKey === 'len-desc')    return b.ending.length - a.ending.length;
+    if (sortKey === 'len-asc')     return a.ending.length - b.ending.length;
+    if (sortKey === 'alpha')       return a.ending.localeCompare(b.ending);
+    return 0;
+  });
+}
+
+/* ─────────────────────────────────────────
+   RENDER
+───────────────────────────────────────── */
+function render() {
+  const f         = getFilters();
+  const dot       = document.getElementById('filtersDot');
+  dot.classList.toggle('visible', !!filtersAreActive(f));
+
+  const filtered  = filterTraps(allTraps, f);
+  const sorted    = sortTraps(filtered);
+  const total     = sorted.length;
+  const slice     = sorted.slice(0, MAX_RENDER);
+
+  document.getElementById('sShowing').textContent = total.toLocaleString();
+  document.getElementById('sOpen').textContent    = openSet.size;
+  document.getElementById('resultsInfo').innerHTML =
+    `Showing <b>${slice.length}</b> of <b>${total}</b> traps${total > MAX_RENDER ? ` — top ${MAX_RENDER} displayed` : ''}`;
+
+  const listEl = document.getElementById('trapList');
+
+  if (slice.length === 0) {
+    listEl.innerHTML = `<div class="empty"><div class="empty-title">NO TRAPS</div><p>Try loosening your filters.</p></div>`;
+    return;
+  }
+
+  // Build fragment
+  const frag = document.createDocumentFragment();
+
+  for (const trap of slice) {
+    const isOpen = openSet.has(trap.ending);
+
+    const card = document.createElement('div');
+    card.className = 'trap-card' + (isOpen ? ' open' : '');
+    card.dataset.ending = trap.ending;
+
+    const wLens = trap.words.map(w => w.length);
+    const wMin  = Math.min(...wLens);
+    const wMax  = Math.max(...wLens);
+
+    card.innerHTML = `
+      <div class="trap-row">
+        <div class="trap-ending"><span class="dash">—</span>${trap.ending}</div>
+        <div class="trap-tags">
+          <span class="tag"><b>${trap.words.length}</b> solves</span>
+          <span class="tag">len <b>${trap.ending.length}</b></span>
+          <span class="tag">words <b>${wMin}</b>–<b>${wMax}</b></span>
+        </div>
+        <span class="trap-arrow">▾</span>
+      </div>
+      <div class="trap-body">
+        <div class="words-row">
+          ${trap.words.map(w => {
+            const stem = w.slice(0, -trap.ending.length);
+            return `<div class="word-chip"><span class="stem">${stem}</span><span class="end">${trap.ending}</span></div>`;
+          }).join('')}
+        </div>
+      </div>`;
+
+    card.addEventListener('click', () => toggleCard(card, trap.ending));
+    frag.appendChild(card);
+  }
+
+  listEl.innerHTML = '';
+  listEl.appendChild(frag);
+}
+
+function toggleCard(card, ending) {
+  const isOpen = card.classList.contains('open');
+  if (isOpen) {
+    card.classList.remove('open');
+    openSet.delete(ending);
+  } else {
+    card.classList.add('open');
+    openSet.add(ending);
+  }
+  document.getElementById('sOpen').textContent = openSet.size;
+}
+
+/* ─────────────────────────────────────────
+   EVENTS
+───────────────────────────────────────── */
+// Sort buttons
+document.querySelectorAll('.sort-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    sortKey = btn.dataset.sort;
+    render();
+  });
+});
+
+// Filter inputs (debounced)
+let renderTimer;
+function scheduleRender() {
+  clearTimeout(renderTimer);
+  renderTimer = setTimeout(render, 160);
+}
+['fSearch','fTrapMin','fTrapMax','fSolvMin','fSolvMax','fWordMin','fWordMax']
+  .forEach(id => document.getElementById(id).addEventListener('input', scheduleRender));
+
+// Reset
+document.getElementById('resetBtn').addEventListener('click', () => {
+  document.getElementById('fSearch').value  = '';
+  document.getElementById('fTrapMin').value = '';
+  document.getElementById('fTrapMax').value = '';
+  document.getElementById('fSolvMin').value = '3';
+  document.getElementById('fSolvMax').value = '';
+  document.getElementById('fWordMin').value = '';
+  document.getElementById('fWordMax').value = '';
+  render();
+});
+
+/* ─────────────────────────────────────────
+   INIT
+───────────────────────────────────────── */
+loadWords();
+</script>
+</body>
+</html>
 }
 
 *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
