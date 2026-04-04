@@ -338,8 +338,8 @@
       padding:5px 11px;
       font-family:'JetBrains Mono',monospace; font-size:13px;
     }
-    .chip .stem { color:var(--text); }
-    .chip .end  { color:var(--accent); font-weight:700; }
+    .chip .stem { color:var(--accent); font-weight:700; }
+    .chip .end  { color:var(--muted); }
 
     .chip-more {
       background:var(--surface2); border:1px solid var(--border);
@@ -524,7 +524,7 @@
       <button class="btn-primary" id="btnViewSolves">View all solves ↓</button>
     </div>
 
-    <div class="modal-solves" id="mSolves">
+    <div class="modal-solves" id="mSolvesSection">
       <div class="modal-solves-hd">
         <span class="modal-section-label">All solves</span>
         <span class="solves-count" id="mSolvesCount"></span>
@@ -753,15 +753,10 @@ function openModal(trap) {
   }
   previewEl.innerHTML = html;
 
-  // Reset state
-  document.getElementById('mSolves2') && (document.getElementById('mSolves2').textContent = '');
+  // Reset solves section
   document.getElementById('mSolvesGrid').innerHTML = '';
   document.getElementById('mSolvesCount').textContent = '';
-  document.getElementById('mSolves').closest('.modal-solves') &&
-    document.getElementById('mSolves').closest('.modal-solves').classList.remove('open');
-
-  const solvesSection = document.getElementById('mSolves');
-  solvesSection.classList.remove('open');
+  document.getElementById('mSolvesSection').classList.remove('open');
   document.getElementById('mActionsWrap').style.display = '';
 
   document.getElementById('backdrop').classList.add('open');
@@ -786,7 +781,7 @@ document.getElementById('btnViewSolves').addEventListener('click', () => {
   const grid = document.getElementById('mSolvesGrid');
   grid.innerHTML = words.map(w => chipHTML(w, ending)).join('');
   document.getElementById('mSolvesCount').textContent = words.length + ' words';
-  document.getElementById('mSolves').classList.add('open');
+  document.getElementById('mSolvesSection').classList.add('open');
   document.getElementById('mActionsWrap').style.display = 'none';
   grid.scrollTop = 0;
 });
