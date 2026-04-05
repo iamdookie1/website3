@@ -1,682 +1,384 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="dark">
-<head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>TrapFinder</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
-  <style>
-    :root{
-      --bg:#080809;--surf:#101013;--surf2:#17171b;
-      --bord:#212126;--bord2:#2d2d35;
-      --text:#dddad2;--muted:#525260;--muted2:#32323c;
-      --acc:#caef45;--acc-d:rgba(202,239,69,.13);--acc-g:rgba(202,239,69,.05);
-      --sol:#4db8ff;--sol-d:rgba(77,184,255,.12);
-      --r:10px;--rs:6px;
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
+
+const WORD_URL = "https://raw.githubusercontent.com/iamdookie1/Dictionary/refs/heads/main/Dict";
+const PAGE_SIZE = 80;
+
+export default function App() {
+  const [words, setWords] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [query, setQuery] = useState("");
+  const [filterMode, setFilterMode] = useState("contains");
+  const [minLen, setMinLen] = useState("");
+  const [maxLen, setMaxLen] = useState("");
+  const [sortBy, setSortBy] = useState("az");
+  const [page, setPage] = useState(1);
+  const [copied, setCopied] = useState(null);
+  const bottomRef = useRef(null);
+  const observerRef = useRef(null);
+
+  useEffect(() => {
+    fetch(WORD_URL)
+      .then(r => r.text())
+      .then(text => {
+        const list = text.split("\n").map(w => w.trim()).filter(Boolean);
+        setWords(list);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, []);
+
+  const filtered = useMemo(() => {
+    let r = words;
+    const q = query.trim().toLowerCase();
+    if (q) {
+      if (filterMode === "contains") r = r.filter(w => w.toLowerCase().includes(q));
+      else if (filterMode === "startsWith") r = r.filter(w => w.toLowerCase().startsWith(q));
+      else if (filterMode === "endsWith") r = r.filter(w => w.toLowerCase().endsWith(q));
     }
-    [data-theme="light"]{
-      --bg:#efece3;--surf:#e4e1d7;--surf2:#d8d5cb;
-      --bord:#c5c2b7;--bord2:#b2afa4;
-      --text:#141414;--muted:#848480;--muted2:#b8b5ac;
-      --acc:#2e5200;--acc-d:rgba(46,82,0,.1);--acc-g:rgba(46,82,0,.04);
-      --sol:#005fa3;--sol-d:rgba(0,95,163,.1);
-    }
-    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-    body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;
-      font-size:14px;min-height:100vh;overflow-x:hidden;transition:background .25s,color .25s}
+    if (minLen) r = r.filter(w => w.length >= +minLen);
+    if (maxLen) r = r.filter(w => w.length <= +maxLen);
+    const s = [...r];
+    if (sortBy === "az") s.sort((a, b) => a.localeCompare(b));
+    else if (sortBy === "za") s.sort((a, b) => b.localeCompare(a));
+    else if (sortBy === "short") s.sort((a, b) => a.length - b.length);
+    else if (sortBy === "long") s.sort((a, b) => b.length - a.length);
+    return s;
+  }, [words, query, filterMode, minLen, maxLen, sortBy]);
 
-    /* HEADER */
-    header{position:sticky;top:0;z-index:300;height:54px;
-      display:flex;align-items:center;justify-content:space-between;
-      padding:0 26px;background:var(--bg);border-bottom:1px solid var(--bord)}
-    .logo{font-family:'Bebas Neue',cursive;font-size:24px;letter-spacing:4px;user-select:none}
-    .logo b{color:var(--acc)}
-    #themeBtn{width:36px;height:36px;background:var(--surf);border:1px solid var(--bord2);
-      color:var(--text);cursor:pointer;border-radius:var(--rs);
-      display:flex;align-items:center;justify-content:center;font-size:16px;
-      transition:border-color .15s,background .15s}
-    #themeBtn:hover{border-color:var(--acc);background:var(--acc-g)}
+  useEffect(() => { setPage(1); }, [query, filterMode, minLen, maxLen, sortBy]);
 
-    main{max-width:1060px;margin:0 auto;padding:30px 26px 80px}
+  const displayed = useMemo(() => filtered.slice(0, page * PAGE_SIZE), [filtered, page]);
+  const hasMore = displayed.length < filtered.length;
 
-    /* HERO */
-    .hero{margin-bottom:28px}
-    .hero h1{font-family:'Bebas Neue',cursive;font-size:clamp(50px,10vw,100px);
-      line-height:.88;letter-spacing:3px;margin-bottom:11px}
-    .hero h1 em{font-style:normal;color:var(--acc)}
-    .hero-desc{color:var(--muted);font-size:13px;line-height:1.75;max-width:520px;font-weight:300}
-    .hero-desc strong{color:var(--text);font-weight:500}
-    /* legend pills in hero */
-    .legend{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-    .leg{display:inline-flex;align-items:center;gap:5px;
-      border:1px solid var(--bord2);border-radius:20px;padding:3px 10px;font-size:12px}
-    .leg-dot{width:8px;height:8px;border-radius:50%}
-    .leg-trap .leg-dot{background:var(--acc)}
-    .leg-solv .leg-dot{background:var(--sol)}
-
-    /* STATS */
-    .stats{display:flex;flex-wrap:wrap;margin-bottom:20px;
-      background:var(--surf);border:1px solid var(--bord);border-radius:var(--r);overflow:hidden}
-    .stat{flex:1;min-width:86px;padding:12px 17px;border-right:1px solid var(--bord);
-      display:flex;flex-direction:column;gap:3px}
-    .stat:last-child{border-right:none}
-    .stat-v{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:var(--acc)}
-    .stat-l{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted)}
-
-    /* PROGRESS */
-    #prog{width:100%;height:3px;background:var(--bord);border-radius:2px;overflow:hidden;display:none;margin-bottom:16px}
-    #prog.on{display:block}
-    #progBar{height:100%;width:0%;background:var(--acc);transition:width .07s}
-
-    /* FILTERS */
-    .fbox{background:var(--surf);border:1px solid var(--bord);border-radius:var(--r);margin-bottom:16px}
-    .fhead{display:flex;align-items:center;justify-content:space-between;
-      padding:12px 16px 10px;border-bottom:1px solid var(--bord);cursor:pointer;user-select:none}
-    .fhead-l{display:flex;align-items:center;gap:8px}
-    .ftitle{font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--muted);font-weight:500}
-    .fdot{width:6px;height:6px;background:var(--acc);border-radius:50%;display:none}
-    .fdot.on{display:block}
-    .fchev{color:var(--muted);font-size:12px;transition:transform .2s}
-    .fbox.closed .fchev{transform:rotate(-90deg)}
-    .fbody{padding:14px 16px 16px}
-    .fbox.closed .fbody{display:none}
-    .fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(178px,1fr));gap:12px}
-    .fg{display:flex;flex-direction:column;gap:5px}
-    .fl{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted)}
-    .fl-trap{color:var(--acc)}
-    .fl-solv{color:var(--sol)}
-    .fr{display:flex;align-items:center;gap:5px}
-    .sep{color:var(--muted2);font-size:12px}
-    input[type=number],input[type=text]{
-      background:var(--bg);border:1px solid var(--bord2);color:var(--text);
-      font-family:'JetBrains Mono',monospace;font-size:13px;
-      padding:6px 9px;border-radius:var(--rs);outline:none;width:100%;
-      transition:border-color .13s;-moz-appearance:textfield}
-    input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
-    input:focus{border-color:var(--acc)}
-    input::placeholder{color:var(--muted)}
-    .fr input[type=number]{width:62px;flex-shrink:0}
-    .fact{display:flex;justify-content:flex-end;margin-top:12px}
-    .btn-g{background:none;border:1px solid var(--bord2);color:var(--muted);cursor:pointer;
-      font-size:11px;letter-spacing:1px;text-transform:uppercase;
-      padding:5px 11px;border-radius:var(--rs);font-family:'DM Sans',sans-serif;transition:all .13s}
-    .btn-g:hover{color:var(--text);border-color:var(--text)}
-
-    /* TOOLBAR */
-    .toolbar{display:flex;align-items:center;gap:7px;margin-bottom:10px;flex-wrap:wrap}
-    .tlbl{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted)}
-    .sbtn{background:var(--surf2);border:1px solid var(--bord);color:var(--muted);
-      cursor:pointer;font-size:11px;padding:4px 10px;border-radius:20px;
-      font-family:'DM Sans',sans-serif;transition:all .13s;white-space:nowrap}
-    .sbtn:hover{color:var(--text)}
-    .sbtn.on{background:var(--acc-d);border-color:var(--acc);color:var(--acc)}
-
-    .rinfo{font-size:12px;color:var(--muted);margin-bottom:8px}
-    .rinfo b{color:var(--text);font-family:'JetBrains Mono',monospace;font-weight:600}
-
-    /* PATTERN CARDS */
-    .tlist{display:flex;flex-direction:column;gap:4px}
-    .tcard{background:var(--surf);border:1px solid var(--bord);border-radius:var(--r);
-      cursor:pointer;user-select:none;
-      transition:border-color .13s,background .13s,transform .1s}
-    .tcard:hover{border-color:var(--bord2);background:var(--surf2);transform:translateX(3px)}
-    .tcard:active{transform:translateX(1px) scale(.998)}
-    .trow{display:flex;align-items:center;padding:12px 15px;gap:11px;flex-wrap:wrap}
-    .tpat{font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:700;
-      color:var(--acc);min-width:90px}
-    .tpat .d{color:var(--muted);font-weight:400}
-    .ttags{display:flex;gap:6px;flex:1;flex-wrap:wrap;align-items:center}
-    /* trap tag = accent, solve tag = blue */
-    .tag{background:var(--surf2);border:1px solid var(--bord);
-      border-radius:20px;padding:2px 9px;
-      font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;white-space:nowrap}
-    .tag b{color:var(--text)}
-    .tag.trap-tag{border-color:rgba(202,239,69,.25);color:var(--acc)}
-    .tag.trap-tag b{color:var(--acc)}
-    .tag.solv-tag{border-color:rgba(77,184,255,.25);color:var(--sol)}
-    .tag.solv-tag b{color:var(--sol)}
-    .tcta{flex-shrink:0;font-size:11px;color:var(--muted);margin-left:auto;letter-spacing:.3px}
-
-    /* LOADING/EMPTY */
-    .loading{text-align:center;padding:60px 20px;color:var(--muted)}
-    .spin{width:28px;height:28px;border:2px solid var(--bord2);border-top-color:var(--acc);
-      border-radius:50%;animation:rot .6s linear infinite;margin:0 auto 12px}
-    @keyframes rot{to{transform:rotate(360deg)}}
-    .loading p{font-size:13px}
-    .empty{text-align:center;padding:60px 20px}
-    .empty h3{font-family:'Bebas Neue',cursive;font-size:36px;letter-spacing:3px;color:var(--bord2);margin-bottom:7px}
-    .empty p{color:var(--muted);font-size:13px}
-
-    /* ═══ MODAL ═══ */
-    .veil{position:fixed;inset:0;z-index:900;
-      background:rgba(0,0,0,.80);backdrop-filter:blur(5px);
-      display:flex;align-items:center;justify-content:center;padding:16px;
-      opacity:0;pointer-events:none;transition:opacity .17s}
-    .veil.open{opacity:1;pointer-events:all}
-    .mbox{background:var(--surf);border:1px solid var(--bord2);border-radius:14px;
-      width:100%;max-width:520px;max-height:92vh;
-      display:flex;flex-direction:column;overflow:hidden;
-      transform:translateY(16px) scale(.96);
-      transition:transform .22s cubic-bezier(.22,1,.36,1)}
-    .veil.open .mbox{transform:translateY(0) scale(1)}
-
-    /* modal header */
-    .mhd{display:flex;align-items:flex-start;justify-content:space-between;
-      padding:18px 20px 0;flex-shrink:0}
-    .mlbl{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:4px}
-    .mpat{font-family:'Bebas Neue',cursive;font-size:48px;line-height:1;letter-spacing:2px;color:var(--acc)}
-    .mpat .d{color:var(--muted)}
-    .mclose{background:none;border:1px solid var(--bord2);color:var(--muted);cursor:pointer;
-      width:30px;height:30px;border-radius:var(--rs);font-size:14px;
-      display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .13s}
-    .mclose:hover{color:var(--text);border-color:var(--text)}
-
-    /* stats strip */
-    .mstats{display:flex;flex-wrap:wrap;margin:14px 20px 0;
-      border:1px solid var(--bord);border-radius:var(--rs);overflow:hidden;flex-shrink:0}
-    .ms{flex:1;min-width:66px;padding:8px 12px;border-right:1px solid var(--bord);
-      display:flex;flex-direction:column;gap:2px}
-    .ms:last-child{border-right:none}
-    .ms-v{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700}
-    .ms-v.acc{color:var(--acc)}
-    .ms-v.sol{color:var(--sol)}
-    .ms-l{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}
-
-    /* scrollable body */
-    .mbody{overflow-y:auto;flex:1;min-height:0;padding:0 20px 20px}
-    .mbody::-webkit-scrollbar{width:4px}
-    .mbody::-webkit-scrollbar-track{background:transparent}
-    .mbody::-webkit-scrollbar-thumb{background:var(--bord2);border-radius:2px}
-
-    /* trap/solve sections inside modal */
-    .msec{margin-top:16px}
-    .msec-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
-    .msec-title{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;font-weight:500}
-    .msec-title.trap{color:var(--acc)}
-    .msec-title.solv{color:var(--sol)}
-    .msec-count{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)}
-    .chips{display:flex;flex-wrap:wrap;gap:5px}
-
-    /* word chips */
-    .chip{display:inline-flex;align-items:center;
-      background:var(--bg);border:1px solid var(--bord);border-radius:var(--rs);
-      padding:4px 9px;cursor:default;transition:border-color .12s;
-      font-family:'JetBrains Mono',monospace;font-size:13px}
-    .chip:hover{border-color:var(--bord2)}
-    /* trap chip: word ends in pattern — pattern part highlighted in acc */
-    .chip .pre{color:var(--muted)}
-    .chip .end-part{color:var(--acc);font-weight:700}
-    /* solve chip: word starts with pattern — pattern part highlighted in sol */
-    .chip .start-part{color:var(--sol);font-weight:700}
-    .chip .suf{color:var(--muted)}
-    /* neutral chip (word = pattern exactly) */
-    .chip .exact{color:var(--text);font-weight:700}
-
-    .chip-more{background:var(--surf2);border:1px solid var(--bord);border-radius:var(--rs);
-      padding:4px 9px;font-size:12px;color:var(--muted);font-family:'DM Sans',sans-serif;
-      display:inline-flex;align-items:center}
-
-    /* view-all button per section */
-    .btn-expand{width:100%;background:none;border:1px dashed var(--bord2);color:var(--muted);
-      cursor:pointer;font-size:12px;padding:7px 0;border-radius:var(--rs);
-      font-family:'DM Sans',sans-serif;transition:all .13s;margin-top:8px;letter-spacing:.3px}
-    .btn-expand:hover{border-color:var(--text);color:var(--text)}
-    .btn-expand.trap-btn:hover{border-color:var(--acc);color:var(--acc)}
-    .btn-expand.solv-btn:hover{border-color:var(--sol);color:var(--sol)}
-
-    /* empty section note */
-    .msec-empty{font-size:12px;color:var(--muted2);font-style:italic}
-
-    /* RESPONSIVE */
-    @media(max-width:600px){
-      header{padding:0 14px}
-      main{padding:20px 14px 60px}
-      .hero h1{font-size:48px}
-      .tpat{font-size:14px;min-width:72px}
-      .trow{padding:10px 12px;gap:8px}
-      .fgrid{grid-template-columns:1fr 1fr}
-      .stat{padding:10px 13px}
-      .stat-v{font-size:16px}
-      .sbtn{font-size:10px;padding:3px 8px}
-      .mpat{font-size:38px}
-      .mhd,.mbody{padding-left:14px;padding-right:14px}
-      .mstats{margin-left:14px;margin-right:14px}
-    }
-  </style>
-</head>
-<body>
-
-<header>
-  <div class="logo"><b>TRAP</b>FINDER</div>
-  <button id="themeBtn" aria-label="Toggle theme">🌙</button>
-</header>
-
-<main>
-  <div class="hero">
-    <h1>FIND<br>THE <em>TRAPS</em></h1>
-    <p class="hero-desc">
-      A <strong>trap</strong> is a word that <strong>ends in</strong> a pattern — like <em>inez</em> ends in <strong>ez</strong>.<br>
-      A <strong>solve</strong> is a word that <strong>starts with</strong> that pattern — like <em>ezan</em> starts with <strong>ez</strong>.
-    </p>
-    <div class="legend">
-      <div class="leg leg-trap"><div class="leg-dot"></div> Trap words (end in pattern)</div>
-      <div class="leg leg-solv"><div class="leg-dot"></div> Solve words (start with pattern)</div>
-    </div>
-  </div>
-
-  <div class="stats">
-    <div class="stat"><div class="stat-v" id="sWords">—</div><div class="stat-l">Words</div></div>
-    <div class="stat"><div class="stat-v" id="sPatterns">—</div><div class="stat-l">Patterns</div></div>
-    <div class="stat"><div class="stat-v" id="sShow">—</div><div class="stat-l">Showing</div></div>
-  </div>
-
-  <div id="prog"><div id="progBar"></div></div>
-
-  <!-- FILTERS -->
-  <div class="fbox" id="fbox">
-    <div class="fhead" id="fhead">
-      <div class="fhead-l">
-        <span class="ftitle">Filters &amp; Search</span>
-        <div class="fdot" id="fdot"></div>
-      </div>
-      <span class="fchev">▾</span>
-    </div>
-    <div class="fbody">
-      <div class="fgrid">
-        <div class="fg" style="grid-column:span 2">
-          <label class="fl">Search pattern</label>
-          <input type="text" id="fSearch" placeholder="e.g. ez, ough, tion…" autocomplete="off" spellcheck="false"/>
-        </div>
-        <div class="fg">
-          <label class="fl">Pattern length</label>
-          <div class="fr">
-            <input type="number" id="fPatMin" placeholder="min" min="2" max="8"/>
-            <span class="sep">–</span>
-            <input type="number" id="fPatMax" placeholder="max" min="2" max="8"/>
-          </div>
-        </div>
-        <div class="fg">
-          <label class="fl fl-trap">Trap count (ends in)</label>
-          <div class="fr">
-            <input type="number" id="fTrapMin" placeholder="min" min="1" max="100" value="1"/>
-            <span class="sep">–</span>
-            <input type="number" id="fTrapMax" placeholder="max" min="1" max="100" value="100"/>
-          </div>
-        </div>
-        <div class="fg">
-          <label class="fl fl-solv">Solve count (starts with)</label>
-          <div class="fr">
-            <input type="number" id="fSolvMin" placeholder="min" min="0" value="0"/>
-            <span class="sep">–</span>
-            <input type="number" id="fSolvMax" placeholder="max" min="0"/>
-          </div>
-        </div>
-        <div class="fg">
-          <label class="fl">Word length (traps)</label>
-          <div class="fr">
-            <input type="number" id="fWMin" placeholder="min" min="1"/>
-            <span class="sep">–</span>
-            <input type="number" id="fWMax" placeholder="max"/>
-          </div>
-        </div>
-      </div>
-      <div class="fact">
-        <button class="btn-g" id="resetBtn">Reset filters</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- SORT -->
-  <div class="toolbar">
-    <span class="tlbl">Sort:</span>
-    <button class="sbtn on" data-sort="traps-desc">Most traps</button>
-    <button class="sbtn" data-sort="traps-asc">Fewest traps</button>
-    <button class="sbtn" data-sort="solves-desc">Most solves</button>
-    <button class="sbtn" data-sort="solves-asc">Fewest solves</button>
-    <button class="sbtn" data-sort="len-desc">Longest pattern</button>
-    <button class="sbtn" data-sort="len-asc">Shortest pattern</button>
-    <button class="sbtn" data-sort="alpha">A–Z</button>
-  </div>
-
-  <p class="rinfo" id="rinfo"></p>
-  <div class="tlist" id="tlist">
-    <div class="loading"><div class="spin"></div><p>Loading dictionary…</p></div>
-  </div>
-</main>
-
-<!-- MODAL -->
-<div class="veil" id="veil" role="dialog" aria-modal="true">
-  <div class="mbox">
-    <div class="mhd">
-      <div>
-        <div class="mlbl">Pattern</div>
-        <div class="mpat"><span class="d">—</span><span id="mPat"></span></div>
-      </div>
-      <button class="mclose" id="mClose">✕</button>
-    </div>
-
-    <div class="mstats">
-      <div class="ms"><div class="ms-v acc" id="mTCount">—</div><div class="ms-l">Traps</div></div>
-      <div class="ms"><div class="ms-v sol" id="mSCount">—</div><div class="ms-l">Solves</div></div>
-      <div class="ms"><div class="ms-v" id="mPLen" style="color:var(--text)">—</div><div class="ms-l">Pat. len</div></div>
-    </div>
-
-    <div class="mbody" id="mbody">
-
-      <!-- TRAPS section -->
-      <div class="msec" id="trapSec">
-        <div class="msec-hd">
-          <span class="msec-title trap">▲ Traps — end in pattern</span>
-          <span class="msec-count" id="trapSecCount"></span>
-        </div>
-        <div class="chips" id="trapChips"></div>
-        <button class="btn-expand trap-btn" id="trapExpandBtn" style="display:none">View all traps ↓</button>
-      </div>
-
-      <!-- SOLVES section -->
-      <div class="msec" id="solvSec">
-        <div class="msec-hd">
-          <span class="msec-title solv">▲ Solves — start with pattern</span>
-          <span class="msec-count" id="solvSecCount"></span>
-        </div>
-        <div class="chips" id="solvChips"></div>
-        <button class="btn-expand solv-btn" id="solvExpandBtn" style="display:none">View all solves ↓</button>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-<script>
-/* ── CONFIG ── */
-const DICT    = 'https://raw.githubusercontent.com/iamdookie1/Dictionary/refs/heads/main/Dict';
-const CHUNK   = 700;
-const MINPAT  = 2;
-const MAXPAT  = 8;
-const MAXTRAPS= 100;   // cap on trap words per pattern (filters out "s","e","ed" etc)
-const MAXREND = 300;
-const PREV    = 6;     // preview count
-
-/* ── STATE ── */
-let allWords=[], patterns=[], sortKey='traps-desc', isDark=true, cur=null;
-// cur = { pattern, traps:[], solves:[] }
-
-/* ── THEME ── */
-document.getElementById('themeBtn').addEventListener('click',()=>{
-  isDark=!isDark;
-  document.documentElement.setAttribute('data-theme',isDark?'dark':'light');
-  document.getElementById('themeBtn').textContent=isDark?'🌙':'☀️';
-});
-
-document.getElementById('fhead').addEventListener('click',()=>
-  document.getElementById('fbox').classList.toggle('closed'));
-
-/* ── LOAD ── */
-async function load(){
-  try{
-    const txt=await(await fetch(DICT)).text();
-    allWords=txt.split('\n')
-      .map(w=>w.trim().toLowerCase().replace(/[^a-z]/g,''))
-      .filter(w=>w.length>=2);
-    document.getElementById('sWords').textContent=allWords.length.toLocaleString();
-    computeAsync();
-  }catch{
-    document.getElementById('tlist').innerHTML=
-      '<div class="empty"><h3>Load Failed</h3><p>Could not reach the dictionary.</p></div>';
-  }
-}
-
-/* ── CHUNKED COMPUTATION ── */
-function computeAsync(){
-  const pw=document.getElementById('prog');
-  const pb=document.getElementById('progBar');
-  pw.classList.add('on');
-
-  // trapMap[pattern] = Set of words that END in pattern
-  // solvMap[pattern] = Set of words that START with pattern
-  const trapMap=new Map();
-  const solvMap=new Map();
-
-  let i=0, total=allWords.length;
-  function tick(){
-    const end=Math.min(i+CHUNK,total);
-    for(;i<end;i++){
-      const w=allWords[i];
-      const L=w.length;
-      for(let len=MINPAT;len<=Math.min(MAXPAT,L-1);len++){
-        // suffix → trap pattern
-        const suf=w.slice(-len);
-        if(!trapMap.has(suf))trapMap.set(suf,new Set());
-        trapMap.get(suf).add(w);
-        // prefix → solve pattern
-        const pre=w.slice(0,len);
-        if(!solvMap.has(pre))solvMap.set(pre,new Set());
-        solvMap.get(pre).add(w);
+  useEffect(() => {
+    if (observerRef.current) observerRef.current.disconnect();
+    observerRef.current = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting && hasMore) {
+        setPage(p => p + 1);
       }
-    }
-    pb.style.width=((i/total)*100)+'%';
-    if(i<total){requestAnimationFrame(tick);return;}
+    }, { rootMargin: "200px" });
+    if (bottomRef.current) observerRef.current.observe(bottomRef.current);
+    return () => observerRef.current?.disconnect();
+  }, [hasMore, displayed.length]);
 
-    // Merge: every suffix pattern becomes a card entry
-    // Cap traps at MAXTRAPS (skip super-common endings)
-    patterns=[];
-    for(const[pat,tset]of trapMap){
-      if(tset.size<1||tset.size>MAXTRAPS)continue;
-      if(/^(.)\1+$/.test(pat))continue;  // skip "aaa" etc
-      const traps=Array.from(tset).sort();
-      const solves=solvMap.has(pat)?Array.from(solvMap.get(pat)).sort():[];
-      patterns.push({pattern:pat,traps,solves});
-    }
+  const handleCopy = useCallback((word) => {
+    navigator.clipboard?.writeText(word).then(() => {
+      setCopied(word);
+      setTimeout(() => setCopied(null), 1200);
+    });
+  }, []);
 
-    pw.classList.remove('on');
-    document.getElementById('sPatterns').textContent=patterns.length.toLocaleString();
-    render();
-  }
-  requestAnimationFrame(tick);
-}
+  const avgLen = useMemo(() =>
+    filtered.length ? (filtered.reduce((s, w) => s + w.length, 0) / filtered.length).toFixed(1) : 0,
+    [filtered]
+  );
 
-/* ── FILTER HELPERS ── */
-function num(id){const v=parseInt(document.getElementById(id).value);return isNaN(v)?null:v;}
-function getF(){
-  return{
-    search:  document.getElementById('fSearch').value.trim().toLowerCase(),
-    patMin:  num('fPatMin'), patMax: num('fPatMax'),
-    trapMin: num('fTrapMin'),trapMax:num('fTrapMax'),
-    solvMin: num('fSolvMin'),solvMax:num('fSolvMax'),
-    wMin:    num('fWMin'),   wMax:   num('fWMax'),
-  };
-}
+  const longestWord = useMemo(() =>
+    filtered.reduce((a, b) => b.length > a.length ? b : a, filtered[0] || ""),
+    [filtered]
+  );
 
-function applyF(pts,f){
-  return pts.reduce((acc,p)=>{
-    if(f.search&&!p.pattern.includes(f.search))return acc;
-    if(f.patMin!=null&&p.pattern.length<f.patMin)return acc;
-    if(f.patMax!=null&&p.pattern.length>f.patMax)return acc;
+  if (loading) return (
+    <div style={{ display:"flex", alignItems:"center", justifyContent:"center", height:"100vh", background:"#07070e", flexDirection:"column", gap:16 }}>
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+      <div style={{ width:32, height:32, border:"1.5px solid #b8935a", borderTop:"1.5px solid transparent", borderRadius:"50%", animation:"spin 0.9s linear infinite" }} />
+      <span style={{ fontFamily:"monospace", fontSize:11, color:"#333", letterSpacing:"0.2em" }}>LOADING WORDS</span>
+    </div>
+  );
 
-    // word-length filter on traps
-    let traps=p.traps;
-    if(f.wMin!=null||f.wMax!=null)
-      traps=traps.filter(w=>(f.wMin==null||w.length>=f.wMin)&&(f.wMax==null||w.length<=f.wMax));
+  return (
+    <div style={{ minHeight:"100vh", background:"#07070e", color:"#d8d4cc" }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&display=swap');
 
-    const tc=traps.length;
-    const sc=p.solves.length;
+        *, *::before, *::after { box-sizing: border-box; margin:0; padding:0; }
 
-    // trap count filter
-    const tmin=f.trapMin??1;
-    const tmax=Math.min(f.trapMax??MAXTRAPS,MAXTRAPS);
-    if(tc<tmin||tc>tmax)return acc;
+        ::-webkit-scrollbar { width:3px; }
+        ::-webkit-scrollbar-track { background:#07070e; }
+        ::-webkit-scrollbar-thumb { background:#222230; border-radius:2px; }
 
-    // solve count filter
-    if(f.solvMin!=null&&sc<f.solvMin)return acc;
-    if(f.solvMax!=null&&sc>f.solvMax)return acc;
+        body { background:#07070e; }
 
-    acc.push({...p,traps});
-    return acc;
-  },[]);
-}
+        ::selection { background:#b8935a33; color:#f0e8d0; }
 
-function doSort(pts){
-  return[...pts].sort((a,b)=>{
-    if(sortKey==='traps-desc')  return b.traps.length-a.traps.length;
-    if(sortKey==='traps-asc')   return a.traps.length-b.traps.length;
-    if(sortKey==='solves-desc') return b.solves.length-a.solves.length;
-    if(sortKey==='solves-asc')  return a.solves.length-b.solves.length;
-    if(sortKey==='len-desc')    return b.pattern.length-a.pattern.length;
-    if(sortKey==='len-asc')     return a.pattern.length-b.pattern.length;
-    if(sortKey==='alpha')       return a.pattern.localeCompare(b.pattern);
-    return 0;
-  });
-}
+        input, select, button { font-family: inherit; outline:none; }
+        input::placeholder { color:#2e2e3e; }
 
-/* ── RENDER ── */
-function render(){
-  const f=getF();
-  const anyOn=!!(f.search||f.patMin||f.patMax||
-    (f.trapMin!=null&&f.trapMin>1)||(f.trapMax!=null&&f.trapMax<MAXTRAPS)||
-    f.solvMin||f.solvMax||f.wMin||f.wMax);
-  document.getElementById('fdot').classList.toggle('on',anyOn);
+        @keyframes fadeUp {
+          from { opacity:0; transform:translateY(16px); }
+          to   { opacity:1; transform:translateY(0); }
+        }
+        @keyframes spin { to { transform:rotate(360deg); } }
+        @keyframes pulse {
+          0%,100% { opacity:0.3; }
+          50%      { opacity:0.8; }
+        }
+        @keyframes flash {
+          0%,100% { opacity:1; }
+          50%      { opacity:0.5; }
+        }
 
-  const filtered=applyF(patterns,f);
-  const sorted=doSort(filtered);
-  const total=sorted.length;
-  const slice=sorted.slice(0,MAXREND);
+        .fade-in { animation: fadeUp 0.5s ease both; }
+        .fade-in-2 { animation: fadeUp 0.5s 0.08s ease both; }
+        .fade-in-3 { animation: fadeUp 0.5s 0.15s ease both; }
+        .fade-in-4 { animation: fadeUp 0.5s 0.22s ease both; }
 
-  document.getElementById('sShow').textContent=total.toLocaleString();
-  document.getElementById('rinfo').innerHTML=
-    `Showing <b>${slice.length.toLocaleString()}</b> of <b>${total.toLocaleString()}</b> patterns`+
-    (total>MAXREND?' — refine filters to narrow results':'');
+        .search-box:focus-within {
+          border-color:#b8935a !important;
+        }
 
-  const listEl=document.getElementById('tlist');
-  if(!slice.length){
-    listEl.innerHTML='<div class="empty"><h3>NO PATTERNS</h3><p>Try loosening your filters.</p></div>';
-    return;
-  }
+        .filter-btn {
+          padding: 5px 12px;
+          border: 1px solid #1e1e2c;
+          border-radius: 3px;
+          background: transparent;
+          color: #555566;
+          font-family: 'DM Mono', monospace;
+          font-size: 10px;
+          letter-spacing: 0.08em;
+          cursor: pointer;
+          transition: all 0.15s ease;
+          white-space: nowrap;
+        }
+        .filter-btn:hover {
+          border-color: #b8935a66;
+          color: #b8935a;
+          background: #b8935a0a;
+        }
+        .filter-btn.active {
+          border-color: #b8935a;
+          color: #b8935a;
+          background: #b8935a15;
+        }
 
-  const frag=document.createDocumentFragment();
-  for(const p of slice){
-    const c=document.createElement('div');
-    c.className='tcard';
-    c.innerHTML=`
-      <div class="trow">
-        <div class="tpat"><span class="d">—</span>${esc(p.pattern)}</div>
-        <div class="ttags">
-          <span class="tag trap-tag"><b>${p.traps.length}</b> traps</span>
-          <span class="tag solv-tag"><b>${p.solves.length}</b> solves</span>
-          <span class="tag">len <b>${p.pattern.length}</b></span>
+        .sort-select {
+          padding: 5px 10px;
+          background: #0e0e18;
+          border: 1px solid #1e1e2c;
+          color: #666677;
+          font-family: 'DM Mono', monospace;
+          font-size: 10px;
+          letter-spacing: 0.06em;
+          border-radius: 3px;
+          cursor: pointer;
+          transition: border-color 0.15s;
+          -webkit-appearance: none;
+          appearance: none;
+          padding-right: 24px;
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23444'/%3E%3C/svg%3E");
+          background-repeat: no-repeat;
+          background-position: right 8px center;
+        }
+        .sort-select:focus {
+          border-color: #b8935a;
+          color: #b8935a;
+        }
+
+        .len-input {
+          width: 60px;
+          padding: 5px 8px;
+          background: #0e0e18;
+          border: 1px solid #1e1e2c;
+          color: #c8c4bc;
+          font-family: 'DM Mono', monospace;
+          font-size: 11px;
+          border-radius: 3px;
+          transition: border-color 0.15s;
+          -moz-appearance: textfield;
+        }
+        .len-input::-webkit-outer-spin-button,
+        .len-input::-webkit-inner-spin-button { -webkit-appearance:none; }
+        .len-input:focus { border-color: #b8935a; }
+
+        .word-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 9px 0;
+          border-bottom: 1px solid #0f0f1a;
+          cursor: pointer;
+          transition: padding-left 0.12s ease, border-color 0.12s ease;
+          gap: 12px;
+        }
+        .word-row:hover {
+          padding-left: 10px;
+          border-bottom-color: #b8935a44;
+        }
+        .word-row:hover .wtext { color: #f0e8d0; }
+        .word-row:hover .wlen  { color: #b8935a; }
+
+        .wtext {
+          font-family: 'DM Mono', monospace;
+          font-size: 12.5px;
+          font-weight: 300;
+          color: #9090a0;
+          letter-spacing: 0.03em;
+          transition: color 0.12s;
+          word-break: break-all;
+          line-height: 1.4;
+        }
+        .wlen {
+          font-family: 'DM Mono', monospace;
+          font-size: 10px;
+          color: #2a2a3a;
+          flex-shrink: 0;
+          transition: color 0.12s;
+        }
+        .wcopy {
+          font-family: 'DM Mono', monospace;
+          font-size: 9px;
+          color: #b8935a;
+          flex-shrink: 0;
+          opacity: 0;
+          transition: opacity 0.12s;
+          letter-spacing: 0.1em;
+          animation: flash 0.4s ease;
+        }
+        .word-row:hover .wcopy { opacity: 1; }
+
+        .stat-box {
+          background: #0e0e18;
+          border: 1px solid #1a1a28;
+          border-radius: 4px;
+          padding: 12px 16px;
+          flex: 1;
+          min-width: 120px;
+        }
+
+        .clear-btn {
+          background: none;
+          border: none;
+          color: #333344;
+          cursor: pointer;
+          font-size: 16px;
+          padding: 0 4px;
+          line-height: 1;
+          transition: color 0.12s;
+        }
+        .clear-btn:hover { color: #888899; }
+
+        @media (max-width: 600px) {
+          .filter-row { flex-direction: column; }
+          .stat-box { min-width: 0; }
+        }
+      `}</style>
+
+      <div style={{ maxWidth:880, margin:"0 auto", padding:"clamp(28px, 5vw, 60px) clamp(16px, 4vw, 32px) 100px" }}>
+
+        {/* ── Header ── */}
+        <div className="fade-in" style={{ marginBottom:36, borderBottom:"1px solid #111120", paddingBottom:28 }}>
+          <h1 style={{ fontFamily:"'DM Serif Display', serif", fontWeight:400, fontSize:"clamp(44px, 7vw, 80px)", letterSpacing:"-0.01em", color:"#ede7db", lineHeight:0.95, marginBottom:10 }}>
+            Lexicon
+          </h1>
+          <p style={{ fontFamily:"'DM Mono', monospace", fontSize:11, color:"#333344", letterSpacing:"0.12em" }}>
+            {words.length.toLocaleString()} WORDS &nbsp;·&nbsp; RARE &amp; COMPLEX VOCABULARY
+          </p>
         </div>
-        <div class="tcta">view ↗</div>
-      </div>`;
-    c.addEventListener('click',()=>openModal(p));
-    frag.appendChild(c);
-  }
-  listEl.innerHTML='';
-  listEl.appendChild(frag);
+
+        {/* ── Search ── */}
+        <div className="fade-in-2" style={{ marginBottom:16 }}>
+          <div className="search-box" style={{ display:"flex", alignItems:"center", background:"#0d0d17", border:"1px solid #1e1e2c", borderRadius:5, padding:"0 14px", transition:"border-color 0.15s" }}>
+            <span style={{ color:"#333344", fontSize:16, marginRight:10, fontFamily:"sans-serif", userSelect:"none" }}>⌕</span>
+            <input
+              style={{ flex:1, background:"transparent", border:"none", padding:"13px 0", color:"#ddd8cc", fontFamily:"'DM Mono', monospace", fontSize:13, letterSpacing:"0.03em" }}
+              placeholder={`Search — ${filterMode === "startsWith" ? "starts with" : filterMode === "endsWith" ? "ends with" : "contains"}...`}
+              value={query}
+              onChange={e => setQuery(e.target.value)}
+              autoComplete="off"
+              spellCheck="false"
+            />
+            {query && <button className="clear-btn" onClick={() => setQuery("")}>×</button>}
+          </div>
+        </div>
+
+        {/* ── Filters ── */}
+        <div className="fade-in-3 filter-row" style={{ display:"flex", flexWrap:"wrap", gap:12, marginBottom:28, paddingBottom:20, borderBottom:"1px solid #111120", alignItems:"center" }}>
+          <div style={{ display:"flex", alignItems:"center", gap:6, flexWrap:"wrap" }}>
+            <span style={{ fontFamily:"'DM Mono', monospace", fontSize:9, color:"#333344", letterSpacing:"0.15em", marginRight:2 }}>MATCH</span>
+            {[["contains","contains"],["startsWith","starts with"],["endsWith","ends with"]].map(([val, lbl]) => (
+              <button key={val} className={`filter-btn ${filterMode===val?"active":""}`} onClick={() => setFilterMode(val)}>{lbl}</button>
+            ))}
+          </div>
+
+          <div style={{ display:"flex", alignItems:"center", gap:6 }}>
+            <span style={{ fontFamily:"'DM Mono', monospace", fontSize:9, color:"#333344", letterSpacing:"0.15em", marginRight:2 }}>LENGTH</span>
+            <input className="len-input" type="number" placeholder="min" value={minLen} onChange={e => setMinLen(e.target.value)} min="1" />
+            <span style={{ color:"#333344", fontFamily:"'DM Mono', monospace", fontSize:11 }}>–</span>
+            <input className="len-input" type="number" placeholder="max" value={maxLen} onChange={e => setMaxLen(e.target.value)} min="1" />
+          </div>
+
+          <div style={{ display:"flex", alignItems:"center", gap:6 }}>
+            <span style={{ fontFamily:"'DM Mono', monospace", fontSize:9, color:"#333344", letterSpacing:"0.15em", marginRight:2 }}>SORT</span>
+            <select className="sort-select" value={sortBy} onChange={e => setSortBy(e.target.value)}>
+              <option value="az">A → Z</option>
+              <option value="za">Z → A</option>
+              <option value="short">Shortest first</option>
+              <option value="long">Longest first</option>
+            </select>
+          </div>
+
+          {(query || minLen || maxLen) && (
+            <button className="filter-btn" onClick={() => { setQuery(""); setMinLen(""); setMaxLen(""); }}>
+              ✕ clear all
+            </button>
+          )}
+        </div>
+
+        {/* ── Stats ── */}
+        <div className="fade-in-4" style={{ display:"flex", gap:10, flexWrap:"wrap", marginBottom:28 }}>
+          {[
+            ["RESULTS", filtered.length.toLocaleString()],
+            ["SHOWING", displayed.length.toLocaleString()],
+            ["AVG LENGTH", avgLen],
+            ["LONGEST", longestWord?.length || 0],
+          ].map(([label, val]) => (
+            <div key={label} className="stat-box">
+              <div style={{ fontFamily:"'DM Mono', monospace", fontSize:9, color:"#333344", letterSpacing:"0.15em", marginBottom:4 }}>{label}</div>
+              <div style={{ fontFamily:"'DM Serif Display', serif", fontSize:22, color:"#b8935a", lineHeight:1 }}>{val}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* ── Word List ── */}
+        <div>
+          {displayed.length === 0 ? (
+            <div style={{ textAlign:"center", padding:"80px 0", fontFamily:"'DM Mono', monospace", fontSize:12, color:"#222233" }}>
+              No words match.
+            </div>
+          ) : (
+            <>
+              {displayed.map((word, i) => (
+                <div
+                  key={i}
+                  className="word-row"
+                  onClick={() => handleCopy(word)}
+                  title="Click to copy"
+                >
+                  <span className="wtext">{word}</span>
+                  <span className="wcopy">{copied===word ? "COPIED" : "COPY"}</span>
+                  <span className="wlen">{word.length}</span>
+                </div>
+              ))}
+
+              {hasMore && (
+                <div ref={bottomRef} style={{ textAlign:"center", padding:"36px 0" }}>
+                  <span style={{ fontFamily:"'DM Mono', monospace", fontSize:10, color:"#222233", letterSpacing:"0.15em", animation:"pulse 1.6s ease infinite" }}>
+                    LOADING MORE
+                  </span>
+                </div>
+              )}
+
+              {!hasMore && displayed.length > 0 && (
+                <div style={{ textAlign:"center", padding:"40px 0 0" }}>
+                  <span style={{ fontFamily:"'DM Mono', monospace", fontSize:10, color:"#222233", letterSpacing:"0.12em" }}>
+                    — {filtered.length.toLocaleString()} WORDS —
+                  </span>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
 }
-
-/* ── MODAL ── */
-function openModal(p){
-  cur=p;
-  document.getElementById('mPat').textContent=p.pattern;
-  document.getElementById('mTCount').textContent=p.traps.length;
-  document.getElementById('mSCount').textContent=p.solves.length;
-  document.getElementById('mPLen').textContent=p.pattern.length;
-
-  // render trap section preview
-  renderSection('trap', p.traps, p.pattern, PREV);
-  // render solve section preview
-  renderSection('solv', p.solves, p.pattern, PREV);
-
-  document.getElementById('veil').classList.add('open');
-  document.body.style.overflow='hidden';
-  document.getElementById('mbody').scrollTop=0;
-}
-
-function renderSection(type, words, pattern, limit){
-  const isExpanded = limit===Infinity;
-  const chipsEl  = document.getElementById(type+'Chips');
-  const countEl  = document.getElementById(type+'SecCount');
-  const btnEl    = document.getElementById(type+'ExpandBtn');
-
-  countEl.textContent=words.length+' words';
-
-  if(!words.length){
-    chipsEl.innerHTML='<span class="msec-empty">None found</span>';
-    btnEl.style.display='none';
-    return;
-  }
-
-  const shown=isExpanded?words:words.slice(0,limit);
-  chipsEl.innerHTML=shown.map(w=>
-    type==='trap' ? trapChipHTML(w,pattern) : solvChipHTML(w,pattern)
-  ).join('');
-
-  if(!isExpanded&&words.length>limit){
-    btnEl.style.display='';
-    btnEl.textContent=`View all ${words.length} ${type==='trap'?'traps':'solves'} ↓`;
-    btnEl.onclick=()=>{
-      renderSection(type, words, pattern, Infinity);
-    };
-  }else{
-    btnEl.style.display='none';
-  }
-}
-
-function closeModal(){
-  document.getElementById('veil').classList.remove('open');
-  document.body.style.overflow='';
-  cur=null;
-}
-document.getElementById('mClose').addEventListener('click',closeModal);
-document.getElementById('veil').addEventListener('click',e=>{
-  if(e.target===document.getElementById('veil'))closeModal();
-});
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
-
-/* ── CHIP HTML ── */
-// Trap chip: word ENDS in pattern — show prefix (muted) + pattern (acc)
-function trapChipHTML(word, pattern){
-  const pre=word.slice(0,-pattern.length);
-  if(!pre)return`<div class="chip"><span class="exact">${esc(word)}</span></div>`;
-  return`<div class="chip"><span class="pre">${esc(pre)}</span><span class="end-part">${esc(pattern)}</span></div>`;
-}
-// Solve chip: word STARTS with pattern — show pattern (sol) + suffix (muted)
-function solvChipHTML(word, pattern){
-  const suf=word.slice(pattern.length);
-  if(!suf)return`<div class="chip"><span class="exact">${esc(word)}</span></div>`;
-  return`<div class="chip"><span class="start-part">${esc(pattern)}</span><span class="suf">${esc(suf)}</span></div>`;
-}
-
-function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
-
-/* ── EVENTS ── */
-document.querySelectorAll('.sbtn').forEach(b=>b.addEventListener('click',()=>{
-  document.querySelectorAll('.sbtn').forEach(x=>x.classList.remove('on'));
-  b.classList.add('on');
-  sortKey=b.dataset.sort;
-  render();
-}));
-
-let timer;
-function sched(){clearTimeout(timer);timer=setTimeout(render,170);}
-['fSearch','fPatMin','fPatMax','fTrapMin','fTrapMax','fSolvMin','fSolvMax','fWMin','fWMax']
-  .forEach(id=>{
-    const el=document.getElementById(id);
-    el.addEventListener('input',sched);
-    el.addEventListener('change',sched);
-  });
-
-document.getElementById('resetBtn').addEventListener('click',()=>{
-  ['fSearch'].forEach(id=>document.getElementById(id).value='');
-  ['fPatMin','fPatMax','fWMin','fWMax','fSolvMax'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('fTrapMin').value='1';
-  document.getElementById('fTrapMax').value='100';
-  document.getElementById('fSolvMin').value='0';
-  render();
-});
-
-/* ── INIT ── */
-load();
-</script>
-</body>
-</html>
