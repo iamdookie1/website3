@@ -1,384 +1,621 @@
-import { useState, useEffect, useMemo, useCallback, useRef } from "react";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Lexicon</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-const WORD_URL = "https://raw.githubusercontent.com/iamdookie1/Dictionary/refs/heads/main/Dict";
-const PAGE_SIZE = 80;
+  :root {
+    --bg: #07070e;
+    --bg2: #0d0d17;
+    --bg3: #0e0e18;
+    --border: #1a1a28;
+    --border2: #1e1e2c;
+    --text: #d8d4cc;
+    --text-dim: #9090a0;
+    --text-muted: #555566;
+    --text-faint: #333344;
+    --text-faintest: #222233;
+    --accent: #b8935a;
+    --accent-hover: #cda870;
+    --accent-bg: #b8935a15;
+    --title: #ede7db;
+  }
 
-export default function App() {
-  const [words, setWords] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [query, setQuery] = useState("");
-  const [filterMode, setFilterMode] = useState("contains");
-  const [minLen, setMinLen] = useState("");
-  const [maxLen, setMaxLen] = useState("");
-  const [sortBy, setSortBy] = useState("az");
-  const [page, setPage] = useState(1);
-  const [copied, setCopied] = useState(null);
-  const bottomRef = useRef(null);
-  const observerRef = useRef(null);
+  html { scroll-behavior: smooth; }
 
-  useEffect(() => {
-    fetch(WORD_URL)
-      .then(r => r.text())
-      .then(text => {
-        const list = text.split("\n").map(w => w.trim()).filter(Boolean);
-        setWords(list);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
-  }, []);
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    min-height: 100vh;
+  }
 
-  const filtered = useMemo(() => {
-    let r = words;
+  ::selection { background: #b8935a30; color: #f0e8d0; }
+
+  ::-webkit-scrollbar { width: 3px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: #222230; border-radius: 2px; }
+
+  /* ── Layout ── */
+  .container {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: clamp(28px, 5vw, 60px) clamp(16px, 4vw, 32px) 100px;
+  }
+
+  /* ── Header ── */
+  .header {
+    margin-bottom: 36px;
+    border-bottom: 1px solid #111120;
+    padding-bottom: 28px;
+    animation: fadeUp 0.5s ease both;
+  }
+  .title {
+    font-family: 'DM Serif Display', serif;
+    font-weight: 400;
+    font-size: clamp(44px, 7vw, 80px);
+    letter-spacing: -0.01em;
+    color: var(--title);
+    line-height: 0.95;
+    margin-bottom: 10px;
+  }
+  .subtitle {
+    font-size: 11px;
+    color: var(--text-faint);
+    letter-spacing: 0.12em;
+  }
+
+  /* ── Search ── */
+  .search-wrap {
+    margin-bottom: 16px;
+    animation: fadeUp 0.5s 0.08s ease both;
+  }
+  .search-box {
+    display: flex;
+    align-items: center;
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: 5px;
+    padding: 0 14px;
+    transition: border-color 0.15s;
+  }
+  .search-box:focus-within { border-color: var(--accent); }
+  .search-icon { color: var(--text-faint); font-size: 18px; margin-right: 10px; user-select: none; font-style: normal; }
+  #searchInput {
+    flex: 1;
+    background: transparent;
+    border: none;
+    padding: 13px 0;
+    color: #ddd8cc;
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 0.03em;
+    outline: none;
+  }
+  #searchInput::placeholder { color: var(--text-faintest); }
+  #clearBtn {
+    background: none;
+    border: none;
+    color: var(--text-faint);
+    cursor: pointer;
+    font-size: 18px;
+    padding: 0 4px;
+    line-height: 1;
+    transition: color 0.12s;
+    display: none;
+  }
+  #clearBtn:hover { color: #888899; }
+
+  /* ── Filter Bar ── */
+  .filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 28px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #111120;
+    align-items: center;
+    animation: fadeUp 0.5s 0.15s ease both;
+  }
+  .filter-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .filter-label {
+    font-size: 9px;
+    color: var(--text-faint);
+    letter-spacing: 0.15em;
+    margin-right: 2px;
+  }
+  .filter-btn {
+    padding: 5px 12px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    background: transparent;
+    color: var(--text-muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+  }
+  .filter-btn:hover { border-color: #b8935a66; color: var(--accent); background: var(--accent-bg); }
+  .filter-btn.active { border-color: var(--accent); color: var(--accent); background: var(--accent-bg); }
+
+  .sort-select {
+    padding: 5px 24px 5px 10px;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    color: var(--text-muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: border-color 0.15s;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23444'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    outline: none;
+  }
+  .sort-select:focus { border-color: var(--accent); color: var(--accent); }
+
+  .len-input {
+    width: 60px;
+    padding: 5px 8px;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    color: #c8c4bc;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    border-radius: 3px;
+    transition: border-color 0.15s;
+    outline: none;
+    -moz-appearance: textfield;
+  }
+  .len-input::-webkit-outer-spin-button,
+  .len-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+  .len-input:focus { border-color: var(--accent); }
+
+  #clearFiltersBtn { display: none; }
+
+  /* ── Stats ── */
+  .stats {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 28px;
+    animation: fadeUp 0.5s 0.22s ease both;
+  }
+  .stat-box {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 12px 16px;
+    flex: 1;
+    min-width: 100px;
+  }
+  .stat-label {
+    font-size: 9px;
+    color: var(--text-faint);
+    letter-spacing: 0.15em;
+    margin-bottom: 4px;
+  }
+  .stat-value {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  /* ── Word List ── */
+  #wordList { animation: fadeUp 0.5s 0.28s ease both; }
+
+  .word-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 9px 0;
+    border-bottom: 1px solid #0f0f1a;
+    cursor: pointer;
+    transition: padding-left 0.12s ease, border-color 0.12s ease;
+    gap: 12px;
+    text-decoration: none;
+  }
+  .word-row:hover {
+    padding-left: 10px;
+    border-bottom-color: #b8935a44;
+  }
+  .word-row:hover .wtext { color: #f0e8d0; }
+  .word-row:hover .wlen  { color: var(--accent); }
+  .word-row:hover .wcopy { opacity: 1; }
+
+  .wtext {
+    font-size: 12.5px;
+    font-weight: 300;
+    color: var(--text-dim);
+    letter-spacing: 0.03em;
+    transition: color 0.12s;
+    word-break: break-all;
+    line-height: 1.4;
+    flex: 1;
+  }
+  .wcopy {
+    font-size: 9px;
+    color: var(--accent);
+    flex-shrink: 0;
+    opacity: 0;
+    transition: opacity 0.12s;
+    letter-spacing: 0.1em;
+  }
+  .wlen {
+    font-size: 10px;
+    color: var(--text-faintest);
+    flex-shrink: 0;
+    transition: color 0.12s;
+    min-width: 20px;
+    text-align: right;
+  }
+
+  .empty-msg {
+    text-align: center;
+    padding: 80px 0;
+    font-size: 12px;
+    color: var(--text-faintest);
+  }
+
+  /* ── Loader / Sentinel ── */
+  #loadingSpinner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 16px;
+    height: 100vh;
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    z-index: 100;
+    transition: opacity 0.4s ease;
+  }
+  .spinner-ring {
+    width: 32px; height: 32px;
+    border: 1.5px solid var(--accent);
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.9s linear infinite;
+  }
+  .spinner-text { font-size: 11px; color: var(--text-faintest); letter-spacing: 0.2em; }
+
+  #sentinel {
+    text-align: center;
+    padding: 36px 0;
+    font-size: 10px;
+    color: var(--text-faintest);
+    letter-spacing: 0.15em;
+    animation: pulse 1.6s ease infinite;
+    display: none;
+  }
+  #endMsg {
+    text-align: center;
+    padding: 40px 0 0;
+    font-size: 10px;
+    color: var(--text-faintest);
+    letter-spacing: 0.12em;
+    display: none;
+  }
+
+  /* ── Animations ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes pulse {
+    0%, 100% { opacity: 0.3; }
+    50%       { opacity: 0.8; }
+  }
+  @keyframes flash {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.4; }
+  }
+  .flash { animation: flash 0.35s ease; }
+
+  /* ── Responsive ── */
+  @media (max-width: 560px) {
+    .filter-bar { flex-direction: column; align-items: flex-start; }
+    .stat-box { min-width: 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Loading overlay -->
+<div id="loadingSpinner">
+  <div class="spinner-ring"></div>
+  <span class="spinner-text">LOADING WORDS</span>
+</div>
+
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <h1 class="title">Lexicon</h1>
+    <p class="subtitle" id="headerSub">— WORDS</p>
+  </div>
+
+  <!-- Search -->
+  <div class="search-wrap">
+    <div class="search-box">
+      <i class="search-icon">⌕</i>
+      <input id="searchInput" type="text" placeholder="Search words..." autocomplete="off" spellcheck="false" />
+      <button id="clearBtn" title="Clear search">×</button>
+    </div>
+  </div>
+
+  <!-- Filter Bar -->
+  <div class="filter-bar">
+    <div class="filter-group">
+      <span class="filter-label">MATCH</span>
+      <button class="filter-btn active" data-mode="contains">contains</button>
+      <button class="filter-btn" data-mode="startsWith">starts with</button>
+      <button class="filter-btn" data-mode="endsWith">ends with</button>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label">LENGTH</span>
+      <input class="len-input" id="minLen" type="number" placeholder="min" min="1" />
+      <span class="filter-label">–</span>
+      <input class="len-input" id="maxLen" type="number" placeholder="max" min="1" />
+    </div>
+    <div class="filter-group">
+      <span class="filter-label">SORT</span>
+      <select class="sort-select" id="sortSelect">
+        <option value="az">A → Z</option>
+        <option value="za">Z → A</option>
+        <option value="short">Shortest first</option>
+        <option value="long">Longest first</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <button class="filter-btn" id="clearFiltersBtn">✕ clear all</button>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat-box"><div class="stat-label">RESULTS</div><div class="stat-value" id="statResults">0</div></div>
+    <div class="stat-box"><div class="stat-label">SHOWING</div><div class="stat-value" id="statShowing">0</div></div>
+    <div class="stat-box"><div class="stat-label">AVG LENGTH</div><div class="stat-value" id="statAvg">0</div></div>
+    <div class="stat-box"><div class="stat-label">LONGEST</div><div class="stat-value" id="statLongest">0</div></div>
+  </div>
+
+  <!-- Word List -->
+  <div id="wordList"></div>
+  <div id="sentinel">LOADING MORE</div>
+  <div id="endMsg">— <span id="endCount">0</span> WORDS —</div>
+
+</div>
+
+<script>
+  const WORD_URL = "https://raw.githubusercontent.com/iamdookie1/Dictionary/refs/heads/main/Dict";
+  const PAGE = 80;
+
+  let allWords = [];
+  let filtered = [];
+  let showing = 0;
+  let filterMode = "contains";
+  let query = "";
+  let minLen = "";
+  let maxLen = "";
+  let sortBy = "az";
+  let isRendering = false;
+
+  // ── DOM refs ──
+  const spinner     = document.getElementById("loadingSpinner");
+  const wordList    = document.getElementById("wordList");
+  const searchInput = document.getElementById("searchInput");
+  const clearBtn    = document.getElementById("clearBtn");
+  const minLenInput = document.getElementById("minLen");
+  const maxLenInput = document.getElementById("maxLen");
+  const sortSelect  = document.getElementById("sortSelect");
+  const sentinel    = document.getElementById("sentinel");
+  const endMsg      = document.getElementById("endMsg");
+  const headerSub   = document.getElementById("headerSub");
+  const cfBtn       = document.getElementById("clearFiltersBtn");
+
+  const statResults = document.getElementById("statResults");
+  const statShowing = document.getElementById("statShowing");
+  const statAvg     = document.getElementById("statAvg");
+  const statLongest = document.getElementById("statLongest");
+
+  // ── Fetch ──
+  fetch(WORD_URL)
+    .then(r => r.text())
+    .then(text => {
+      allWords = text.split("\n").map(w => w.trim()).filter(Boolean);
+      spinner.style.opacity = "0";
+      setTimeout(() => spinner.style.display = "none", 400);
+      headerSub.textContent = `${allWords.length.toLocaleString()} WORDS · RARE & COMPLEX VOCABULARY`;
+      applyFilters();
+    })
+    .catch(() => {
+      spinner.innerHTML = '<span style="color:#b8935a;font-size:12px;letter-spacing:.1em">FAILED TO LOAD</span>';
+    });
+
+  // ── Filter & Sort ──
+  function applyFilters() {
     const q = query.trim().toLowerCase();
+    let r = allWords;
+
     if (q) {
-      if (filterMode === "contains") r = r.filter(w => w.toLowerCase().includes(q));
-      else if (filterMode === "startsWith") r = r.filter(w => w.toLowerCase().startsWith(q));
-      else if (filterMode === "endsWith") r = r.filter(w => w.toLowerCase().endsWith(q));
+      if (filterMode === "contains")   r = r.filter(w => w.toLowerCase().includes(q));
+      if (filterMode === "startsWith") r = r.filter(w => w.toLowerCase().startsWith(q));
+      if (filterMode === "endsWith")   r = r.filter(w => w.toLowerCase().endsWith(q));
     }
     if (minLen) r = r.filter(w => w.length >= +minLen);
     if (maxLen) r = r.filter(w => w.length <= +maxLen);
-    const s = [...r];
-    if (sortBy === "az") s.sort((a, b) => a.localeCompare(b));
-    else if (sortBy === "za") s.sort((a, b) => b.localeCompare(a));
-    else if (sortBy === "short") s.sort((a, b) => a.length - b.length);
-    else if (sortBy === "long") s.sort((a, b) => b.length - a.length);
-    return s;
-  }, [words, query, filterMode, minLen, maxLen, sortBy]);
 
-  useEffect(() => { setPage(1); }, [query, filterMode, minLen, maxLen, sortBy]);
+    const s = r.slice();
+    if (sortBy === "az")    s.sort((a, b) => a.localeCompare(b));
+    if (sortBy === "za")    s.sort((a, b) => b.localeCompare(a));
+    if (sortBy === "short") s.sort((a, b) => a.length - b.length);
+    if (sortBy === "long")  s.sort((a, b) => b.length - a.length);
 
-  const displayed = useMemo(() => filtered.slice(0, page * PAGE_SIZE), [filtered, page]);
-  const hasMore = displayed.length < filtered.length;
+    filtered = s;
+    showing = 0;
+    wordList.innerHTML = "";
+    updateStats();
+    renderChunk();
+    updateClearBtn();
+  }
 
-  useEffect(() => {
-    if (observerRef.current) observerRef.current.disconnect();
-    observerRef.current = new IntersectionObserver(entries => {
-      if (entries[0].isIntersecting && hasMore) {
-        setPage(p => p + 1);
+  // ── Render chunk ──
+  function renderChunk() {
+    if (isRendering) return;
+    const end = Math.min(showing + PAGE, filtered.length);
+    if (showing >= filtered.length) {
+      updateSentinel();
+      return;
+    }
+    isRendering = true;
+
+    // Use fragment for fast DOM insertion
+    const frag = document.createDocumentFragment();
+    for (let i = showing; i < end; i++) {
+      const word = filtered[i];
+      const row = document.createElement("div");
+      row.className = "word-row";
+      row.innerHTML =
+        `<span class="wtext">${word}</span>` +
+        `<span class="wcopy">COPY</span>` +
+        `<span class="wlen">${word.length}</span>`;
+      row.addEventListener("click", () => copyWord(row, word));
+      frag.appendChild(row);
+    }
+
+    if (showing === 0 && filtered.length === 0) {
+      const empty = document.createElement("div");
+      empty.className = "empty-msg";
+      empty.textContent = "No words match.";
+      frag.appendChild(empty);
+    }
+
+    wordList.appendChild(frag);
+    showing = end;
+    isRendering = false;
+
+    updateStats();
+    updateSentinel();
+  }
+
+  function updateSentinel() {
+    if (showing < filtered.length) {
+      sentinel.style.display = "block";
+      endMsg.style.display = "none";
+    } else {
+      sentinel.style.display = "none";
+      if (filtered.length > 0) {
+        endMsg.style.display = "block";
+        document.getElementById("endCount").textContent = filtered.length.toLocaleString();
+      } else {
+        endMsg.style.display = "none";
       }
-    }, { rootMargin: "200px" });
-    if (bottomRef.current) observerRef.current.observe(bottomRef.current);
-    return () => observerRef.current?.disconnect();
-  }, [hasMore, displayed.length]);
+    }
+  }
 
-  const handleCopy = useCallback((word) => {
+  // ── Stats ──
+  function updateStats() {
+    statResults.textContent = filtered.length.toLocaleString();
+    statShowing.textContent = Math.min(showing, filtered.length).toLocaleString();
+    if (filtered.length) {
+      const avg = (filtered.reduce((s, w) => s + w.length, 0) / filtered.length).toFixed(1);
+      statAvg.textContent = avg;
+      statLongest.textContent = Math.max(...filtered.map(w => w.length));
+    } else {
+      statAvg.textContent = "0";
+      statLongest.textContent = "0";
+    }
+  }
+
+  // ── Copy ──
+  function copyWord(row, word) {
+    const copyEl = row.querySelector(".wcopy");
     navigator.clipboard?.writeText(word).then(() => {
-      setCopied(word);
-      setTimeout(() => setCopied(null), 1200);
+      copyEl.textContent = "COPIED";
+      copyEl.classList.add("flash");
+      setTimeout(() => {
+        copyEl.textContent = "COPY";
+        copyEl.classList.remove("flash");
+      }, 1200);
     });
-  }, []);
+  }
 
-  const avgLen = useMemo(() =>
-    filtered.length ? (filtered.reduce((s, w) => s + w.length, 0) / filtered.length).toFixed(1) : 0,
-    [filtered]
-  );
+  // ── Infinite scroll (IntersectionObserver) ──
+  const io = new IntersectionObserver(entries => {
+    if (entries[0].isIntersecting && showing < filtered.length) {
+      renderChunk();
+      updateStats();
+    }
+  }, { rootMargin: "300px" });
+  io.observe(sentinel);
 
-  const longestWord = useMemo(() =>
-    filtered.reduce((a, b) => b.length > a.length ? b : a, filtered[0] || ""),
-    [filtered]
-  );
+  // ── Search input (debounced) ──
+  let debounceTimer;
+  searchInput.addEventListener("input", () => {
+    query = searchInput.value;
+    clearBtn.style.display = query ? "block" : "none";
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(applyFilters, 120);
+  });
 
-  if (loading) return (
-    <div style={{ display:"flex", alignItems:"center", justifyContent:"center", height:"100vh", background:"#07070e", flexDirection:"column", gap:16 }}>
-      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-      <div style={{ width:32, height:32, border:"1.5px solid #b8935a", borderTop:"1.5px solid transparent", borderRadius:"50%", animation:"spin 0.9s linear infinite" }} />
-      <span style={{ fontFamily:"monospace", fontSize:11, color:"#333", letterSpacing:"0.2em" }}>LOADING WORDS</span>
-    </div>
-  );
+  clearBtn.addEventListener("click", () => {
+    searchInput.value = "";
+    query = "";
+    clearBtn.style.display = "none";
+    applyFilters();
+    searchInput.focus();
+  });
 
-  return (
-    <div style={{ minHeight:"100vh", background:"#07070e", color:"#d8d4cc" }}>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&display=swap');
+  // ── Filter mode buttons ──
+  document.querySelectorAll(".filter-btn[data-mode]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".filter-btn[data-mode]").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      filterMode = btn.dataset.mode;
+      applyFilters();
+    });
+  });
 
-        *, *::before, *::after { box-sizing: border-box; margin:0; padding:0; }
+  // ── Length inputs ──
+  minLenInput.addEventListener("input", () => { minLen = minLenInput.value; applyFilters(); });
+  maxLenInput.addEventListener("input", () => { maxLen = maxLenInput.value; applyFilters(); });
 
-        ::-webkit-scrollbar { width:3px; }
-        ::-webkit-scrollbar-track { background:#07070e; }
-        ::-webkit-scrollbar-thumb { background:#222230; border-radius:2px; }
+  // ── Sort ──
+  sortSelect.addEventListener("change", () => { sortBy = sortSelect.value; applyFilters(); });
 
-        body { background:#07070e; }
+  // ── Clear all filters ──
+  function updateClearBtn() {
+    cfBtn.style.display = (query || minLen || maxLen) ? "inline-block" : "none";
+  }
 
-        ::selection { background:#b8935a33; color:#f0e8d0; }
-
-        input, select, button { font-family: inherit; outline:none; }
-        input::placeholder { color:#2e2e3e; }
-
-        @keyframes fadeUp {
-          from { opacity:0; transform:translateY(16px); }
-          to   { opacity:1; transform:translateY(0); }
-        }
-        @keyframes spin { to { transform:rotate(360deg); } }
-        @keyframes pulse {
-          0%,100% { opacity:0.3; }
-          50%      { opacity:0.8; }
-        }
-        @keyframes flash {
-          0%,100% { opacity:1; }
-          50%      { opacity:0.5; }
-        }
-
-        .fade-in { animation: fadeUp 0.5s ease both; }
-        .fade-in-2 { animation: fadeUp 0.5s 0.08s ease both; }
-        .fade-in-3 { animation: fadeUp 0.5s 0.15s ease both; }
-        .fade-in-4 { animation: fadeUp 0.5s 0.22s ease both; }
-
-        .search-box:focus-within {
-          border-color:#b8935a !important;
-        }
-
-        .filter-btn {
-          padding: 5px 12px;
-          border: 1px solid #1e1e2c;
-          border-radius: 3px;
-          background: transparent;
-          color: #555566;
-          font-family: 'DM Mono', monospace;
-          font-size: 10px;
-          letter-spacing: 0.08em;
-          cursor: pointer;
-          transition: all 0.15s ease;
-          white-space: nowrap;
-        }
-        .filter-btn:hover {
-          border-color: #b8935a66;
-          color: #b8935a;
-          background: #b8935a0a;
-        }
-        .filter-btn.active {
-          border-color: #b8935a;
-          color: #b8935a;
-          background: #b8935a15;
-        }
-
-        .sort-select {
-          padding: 5px 10px;
-          background: #0e0e18;
-          border: 1px solid #1e1e2c;
-          color: #666677;
-          font-family: 'DM Mono', monospace;
-          font-size: 10px;
-          letter-spacing: 0.06em;
-          border-radius: 3px;
-          cursor: pointer;
-          transition: border-color 0.15s;
-          -webkit-appearance: none;
-          appearance: none;
-          padding-right: 24px;
-          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23444'/%3E%3C/svg%3E");
-          background-repeat: no-repeat;
-          background-position: right 8px center;
-        }
-        .sort-select:focus {
-          border-color: #b8935a;
-          color: #b8935a;
-        }
-
-        .len-input {
-          width: 60px;
-          padding: 5px 8px;
-          background: #0e0e18;
-          border: 1px solid #1e1e2c;
-          color: #c8c4bc;
-          font-family: 'DM Mono', monospace;
-          font-size: 11px;
-          border-radius: 3px;
-          transition: border-color 0.15s;
-          -moz-appearance: textfield;
-        }
-        .len-input::-webkit-outer-spin-button,
-        .len-input::-webkit-inner-spin-button { -webkit-appearance:none; }
-        .len-input:focus { border-color: #b8935a; }
-
-        .word-row {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          padding: 9px 0;
-          border-bottom: 1px solid #0f0f1a;
-          cursor: pointer;
-          transition: padding-left 0.12s ease, border-color 0.12s ease;
-          gap: 12px;
-        }
-        .word-row:hover {
-          padding-left: 10px;
-          border-bottom-color: #b8935a44;
-        }
-        .word-row:hover .wtext { color: #f0e8d0; }
-        .word-row:hover .wlen  { color: #b8935a; }
-
-        .wtext {
-          font-family: 'DM Mono', monospace;
-          font-size: 12.5px;
-          font-weight: 300;
-          color: #9090a0;
-          letter-spacing: 0.03em;
-          transition: color 0.12s;
-          word-break: break-all;
-          line-height: 1.4;
-        }
-        .wlen {
-          font-family: 'DM Mono', monospace;
-          font-size: 10px;
-          color: #2a2a3a;
-          flex-shrink: 0;
-          transition: color 0.12s;
-        }
-        .wcopy {
-          font-family: 'DM Mono', monospace;
-          font-size: 9px;
-          color: #b8935a;
-          flex-shrink: 0;
-          opacity: 0;
-          transition: opacity 0.12s;
-          letter-spacing: 0.1em;
-          animation: flash 0.4s ease;
-        }
-        .word-row:hover .wcopy { opacity: 1; }
-
-        .stat-box {
-          background: #0e0e18;
-          border: 1px solid #1a1a28;
-          border-radius: 4px;
-          padding: 12px 16px;
-          flex: 1;
-          min-width: 120px;
-        }
-
-        .clear-btn {
-          background: none;
-          border: none;
-          color: #333344;
-          cursor: pointer;
-          font-size: 16px;
-          padding: 0 4px;
-          line-height: 1;
-          transition: color 0.12s;
-        }
-        .clear-btn:hover { color: #888899; }
-
-        @media (max-width: 600px) {
-          .filter-row { flex-direction: column; }
-          .stat-box { min-width: 0; }
-        }
-      `}</style>
-
-      <div style={{ maxWidth:880, margin:"0 auto", padding:"clamp(28px, 5vw, 60px) clamp(16px, 4vw, 32px) 100px" }}>
-
-        {/* ── Header ── */}
-        <div className="fade-in" style={{ marginBottom:36, borderBottom:"1px solid #111120", paddingBottom:28 }}>
-          <h1 style={{ fontFamily:"'DM Serif Display', serif", fontWeight:400, fontSize:"clamp(44px, 7vw, 80px)", letterSpacing:"-0.01em", color:"#ede7db", lineHeight:0.95, marginBottom:10 }}>
-            Lexicon
-          </h1>
-          <p style={{ fontFamily:"'DM Mono', monospace", fontSize:11, color:"#333344", letterSpacing:"0.12em" }}>
-            {words.length.toLocaleString()} WORDS &nbsp;·&nbsp; RARE &amp; COMPLEX VOCABULARY
-          </p>
-        </div>
-
-        {/* ── Search ── */}
-        <div className="fade-in-2" style={{ marginBottom:16 }}>
-          <div className="search-box" style={{ display:"flex", alignItems:"center", background:"#0d0d17", border:"1px solid #1e1e2c", borderRadius:5, padding:"0 14px", transition:"border-color 0.15s" }}>
-            <span style={{ color:"#333344", fontSize:16, marginRight:10, fontFamily:"sans-serif", userSelect:"none" }}>⌕</span>
-            <input
-              style={{ flex:1, background:"transparent", border:"none", padding:"13px 0", color:"#ddd8cc", fontFamily:"'DM Mono', monospace", fontSize:13, letterSpacing:"0.03em" }}
-              placeholder={`Search — ${filterMode === "startsWith" ? "starts with" : filterMode === "endsWith" ? "ends with" : "contains"}...`}
-              value={query}
-              onChange={e => setQuery(e.target.value)}
-              autoComplete="off"
-              spellCheck="false"
-            />
-            {query && <button className="clear-btn" onClick={() => setQuery("")}>×</button>}
-          </div>
-        </div>
-
-        {/* ── Filters ── */}
-        <div className="fade-in-3 filter-row" style={{ display:"flex", flexWrap:"wrap", gap:12, marginBottom:28, paddingBottom:20, borderBottom:"1px solid #111120", alignItems:"center" }}>
-          <div style={{ display:"flex", alignItems:"center", gap:6, flexWrap:"wrap" }}>
-            <span style={{ fontFamily:"'DM Mono', monospace", fontSize:9, color:"#333344", letterSpacing:"0.15em", marginRight:2 }}>MATCH</span>
-            {[["contains","contains"],["startsWith","starts with"],["endsWith","ends with"]].map(([val, lbl]) => (
-              <button key={val} className={`filter-btn ${filterMode===val?"active":""}`} onClick={() => setFilterMode(val)}>{lbl}</button>
-            ))}
-          </div>
-
-          <div style={{ display:"flex", alignItems:"center", gap:6 }}>
-            <span style={{ fontFamily:"'DM Mono', monospace", fontSize:9, color:"#333344", letterSpacing:"0.15em", marginRight:2 }}>LENGTH</span>
-            <input className="len-input" type="number" placeholder="min" value={minLen} onChange={e => setMinLen(e.target.value)} min="1" />
-            <span style={{ color:"#333344", fontFamily:"'DM Mono', monospace", fontSize:11 }}>–</span>
-            <input className="len-input" type="number" placeholder="max" value={maxLen} onChange={e => setMaxLen(e.target.value)} min="1" />
-          </div>
-
-          <div style={{ display:"flex", alignItems:"center", gap:6 }}>
-            <span style={{ fontFamily:"'DM Mono', monospace", fontSize:9, color:"#333344", letterSpacing:"0.15em", marginRight:2 }}>SORT</span>
-            <select className="sort-select" value={sortBy} onChange={e => setSortBy(e.target.value)}>
-              <option value="az">A → Z</option>
-              <option value="za">Z → A</option>
-              <option value="short">Shortest first</option>
-              <option value="long">Longest first</option>
-            </select>
-          </div>
-
-          {(query || minLen || maxLen) && (
-            <button className="filter-btn" onClick={() => { setQuery(""); setMinLen(""); setMaxLen(""); }}>
-              ✕ clear all
-            </button>
-          )}
-        </div>
-
-        {/* ── Stats ── */}
-        <div className="fade-in-4" style={{ display:"flex", gap:10, flexWrap:"wrap", marginBottom:28 }}>
-          {[
-            ["RESULTS", filtered.length.toLocaleString()],
-            ["SHOWING", displayed.length.toLocaleString()],
-            ["AVG LENGTH", avgLen],
-            ["LONGEST", longestWord?.length || 0],
-          ].map(([label, val]) => (
-            <div key={label} className="stat-box">
-              <div style={{ fontFamily:"'DM Mono', monospace", fontSize:9, color:"#333344", letterSpacing:"0.15em", marginBottom:4 }}>{label}</div>
-              <div style={{ fontFamily:"'DM Serif Display', serif", fontSize:22, color:"#b8935a", lineHeight:1 }}>{val}</div>
-            </div>
-          ))}
-        </div>
-
-        {/* ── Word List ── */}
-        <div>
-          {displayed.length === 0 ? (
-            <div style={{ textAlign:"center", padding:"80px 0", fontFamily:"'DM Mono', monospace", fontSize:12, color:"#222233" }}>
-              No words match.
-            </div>
-          ) : (
-            <>
-              {displayed.map((word, i) => (
-                <div
-                  key={i}
-                  className="word-row"
-                  onClick={() => handleCopy(word)}
-                  title="Click to copy"
-                >
-                  <span className="wtext">{word}</span>
-                  <span className="wcopy">{copied===word ? "COPIED" : "COPY"}</span>
-                  <span className="wlen">{word.length}</span>
-                </div>
-              ))}
-
-              {hasMore && (
-                <div ref={bottomRef} style={{ textAlign:"center", padding:"36px 0" }}>
-                  <span style={{ fontFamily:"'DM Mono', monospace", fontSize:10, color:"#222233", letterSpacing:"0.15em", animation:"pulse 1.6s ease infinite" }}>
-                    LOADING MORE
-                  </span>
-                </div>
-              )}
-
-              {!hasMore && displayed.length > 0 && (
-                <div style={{ textAlign:"center", padding:"40px 0 0" }}>
-                  <span style={{ fontFamily:"'DM Mono', monospace", fontSize:10, color:"#222233", letterSpacing:"0.12em" }}>
-                    — {filtered.length.toLocaleString()} WORDS —
-                  </span>
-                </div>
-              )}
-            </>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
+  cfBtn.addEventListener("click", () => {
+    searchInput.value = ""; query = "";
+    minLenInput.value = ""; minLen = "";
+    maxLenInput.value = ""; maxLen = "";
+    clearBtn.style.display = "none";
+    applyFilters();
+  });
+</script>
+</body>
+</html>
